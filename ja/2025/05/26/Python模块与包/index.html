@@ -1,0 +1,1520 @@
+
+  <!DOCTYPE html>
+  <html lang="ja"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本ブログのすべての文書は、特に指定されていない限り、BY-NC-SA ライセンスに従っています。引用の際は出典を明記してください！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    Python 模块、包与常用模块 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="模块与包的组织方式，加上 time、random、os、sys、json 五个常用模块的用法速查与踩坑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 模块、包与常用模块">
+<meta property="og:url" content="https://utdog.github.io/ja/2025/05/26/Python%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%8C%85/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="模块与包的组织方式，加上 time、random、os、sys、json 五个常用模块的用法速查与踩坑。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2025-05-26T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T10:51:37.712Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="模块">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/">ホーム</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/archives">アーカイブ</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/about">プロフィール</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/friend">フレンド</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="検索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" class="selected">日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/26/Python模块与包/';
+            
+              langMap['en'] = '/en/2025/05/26/Python模块与包/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/26/Python模块与包/';
+            
+              langMap['ja'] = '/ja/2025/05/26/Python模块与包/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/55.jpg" alt="Python 模块、包与常用模块">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Python 模块、包与常用模块</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A8%A1%E5%9D%97%E4%B8%80%E4%B8%AA-python-%E6%96%87%E4%BB%B6%E5%B0%B1%E6%98%AF%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text"> 一、模块：一个 Python 文件就是一个模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E5%88%86%E4%B8%89%E7%B1%BB"><span class="toc-number">2.1.</span> <span class="toc-text"> 模块分三类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AF%BC%E5%85%A5%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text"> 二、模块的导入与使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%A0%E4%B8%AA%E5%AF%BC%E5%85%A5%E4%B9%A0%E6%83%AF"><span class="toc-number">3.1.</span> <span class="toc-text"> 几个导入习惯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E6%A8%A1%E5%9D%97%E6%97%B6%E8%A7%A3%E9%87%8A%E5%99%A8%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">3.2.</span> <span class="toc-text"> 导入模块时，解释器做了什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-__name__%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E6%98%AF%E7%A8%8B%E5%BA%8F%E8%BF%98%E6%98%AF%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text"> 三、__name__：这个文件是程序还是模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%8C%85%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9D%97%E7%9A%84%E7%89%B9%E6%AE%8A%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">5.</span> <span class="toc-text"> 四、包：管理模块的特殊文件夹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B8%B8%E7%94%A8%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0%E8%A1%A5%E9%81%97"><span class="toc-number">6.</span> <span class="toc-text"> 五、常用内置函数补遗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-time%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9D%97"><span class="toc-number">7.</span> <span class="toc-text"> 六、time：时间模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-random%E9%9A%8F%E6%9C%BA%E6%95%B0%E6%A8%A1%E5%9D%97"><span class="toc-number">8.</span> <span class="toc-text"> 七、random：随机数模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-os%E5%92%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%89%93%E4%BA%A4%E9%81%93"><span class="toc-number">9.</span> <span class="toc-text"> 八、os：和操作系统打交道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-sys%E5%92%8C-python-%E8%A7%A3%E9%87%8A%E5%99%A8%E6%89%93%E4%BA%A4%E9%81%93"><span class="toc-number">10.</span> <span class="toc-text"> 九、sys：和 Python 解释器打交道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-json%E4%BF%9D%E7%95%99%E7%B1%BB%E5%9E%8B%E5%9C%B0%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="toc-number">11.</span> <span class="toc-text"> 十、json：保留类型地存数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">12.</span> <span class="toc-text"> 十一、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C-%E5%B0%8F%E7%BB%93"><span class="toc-number">13.</span> <span class="toc-text"> 十二、小结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E6%96%87%E7%9A%84%E8%8C%83%E5%9B%B4%E8%A1%A5%E8%AE%B0"><span class="toc-number">13.1.</span> <span class="toc-text"> 关于本文的范围（补记）</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">33</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">29</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Python模块与包" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-26T12:00:00.000Z" itemprop="datePublished">2025-05-26</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/ja/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>上一篇把函数讲到了装饰器，这篇解决另一个问题：<strong>代码怎么组织</strong>。</p>
+<p>单个 <code>.py</code> 文件从几十行写到几百行之后，全堆在一起就没法维护了。Python 的答案是「模块」和「包」——把功能拆到不同文件里，需要的时候导入。课件 <code>day-14模块与包</code> 讲组织方式，<code>day-15常用模块</code> 讲五个必须会用的内置模块，两天的笔记合成这一篇。</p>
+<h2 id="一-模块一个-python-文件就是一个模块"><a class="markdownIt-Anchor" href="#一-模块一个-python-文件就是一个模块"></a> 一、模块：一个 Python 文件就是一个模块</h2>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">模块: 就是一个 python 文件</span><br><span class="line">模块名: 就是对应的文件名, 不带后缀</span><br><span class="line">  demo.py  ==&gt;  模块名 demo</span><br></pre></td></tr></table></figure>
+<p>三个东西的容量是层层放大的：</p>
+<table>
+<thead>
+<tr>
+<th>单位</th>
+<th>能装什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>变量</td>
+<td>一个或多个数据</td>
+</tr>
+<tr>
+<td>函数</td>
+<td>有功能的多行代码</td>
+</tr>
+<tr>
+<td>模块</td>
+<td>变量、函数，什么都能装</td>
+</tr>
+</tbody>
+</table>
+<p>导入一个模块之后，就能用它里面的变量和函数。</p>
+<h3 id="模块分三类"><a class="markdownIt-Anchor" href="#模块分三类"></a> 模块分三类</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内置模块</td>
+<td>Python 自带，不用下载，导入即可用</td>
+<td><code>time</code>、<code>random</code></td>
+</tr>
+<tr>
+<td>第三方模块</td>
+<td>别人开发好的，必须先下载</td>
+<td><code>pygame</code>（游戏）、<code>requests</code>（爬虫）</td>
+</tr>
+<tr>
+<td>自定义模块</td>
+<td>我们自己写的 <code>.py</code> 文件</td>
+<td><code>text.py</code></td>
+</tr>
+</tbody>
+</table>
+<p>下载第三方模块用 pip：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本用法</span></span><br><span class="line">pip install 模块名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看已经装了哪些模块</span></span><br><span class="line">pip list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 升级 pip 自己（不要动不动就升级，版本过新也会出问题）</span></span><br><span class="line">python -m pip install --upgrade pip</span><br></pre></td></tr></table></figure>
+<p>模块大多部署在国外，国内直连很慢，<strong>用镜像加速</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>镜像</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阿里云</td>
+<td><code>http://mirrors.aliyun.com/pypi/simple/</code></td>
+</tr>
+<tr>
+<td>中国科技大学</td>
+<td><code>https://pypi.mirrors.ustc.edu.cn/simple/</code></td>
+</tr>
+<tr>
+<td>豆瓣</td>
+<td><code>https://pypi.doubanio.com/simple/</code></td>
+</tr>
+<tr>
+<td>清华大学</td>
+<td><code>https://pypi.tuna.tsinghua.edu.cn/simple/</code></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install 模块名 -i https://pypi.tuna.tsinghua.edu.cn/simple/</span><br></pre></td></tr></table></figure>
+<p>PyCharm 里也可以图形化安装：<code>File → Settings → Project → Project Interpreter → 右侧 + 号 → 搜索模块名 → Install</code>。</p>
+<h2 id="二-模块的导入与使用"><a class="markdownIt-Anchor" href="#二-模块的导入与使用"></a> 二、模块的导入与使用</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 导入</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 使用：模块名.变量名 / 模块名.函数名()</span></span><br><span class="line"><span class="built_in">print</span>(time.time())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自定义模块 text.py</span></span><br><span class="line"><span class="keyword">import</span> text</span><br><span class="line"><span class="built_in">print</span>(text.my_name)   <span class="comment"># 用模块里的变量</span></span><br><span class="line">text.fun()            <span class="comment"># 调用模块里的函数</span></span><br></pre></td></tr></table></figure>
+<p>模块名太长或太难记时用 <code>as</code> 取别名：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests <span class="keyword">as</span> req</span><br></pre></td></tr></table></figure>
+<p><strong>重复导入同一个模块，导入语句只会执行一次</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time   <span class="comment"># 无效</span></span><br><span class="line"><span class="keyword">import</span> time   <span class="comment"># 无效</span></span><br><span class="line"><span class="keyword">import</span> time   <span class="comment"># 有效</span></span><br></pre></td></tr></table></figure>
+<h3 id="几个导入习惯"><a class="markdownIt-Anchor" href="#几个导入习惯"></a> 几个导入习惯</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 多个模块建议分开导入（一行导入多个太长，不方便查看）</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以从模块里只导入单个功能</span></span><br><span class="line"><span class="keyword">from</span> text <span class="keyword">import</span> my_name</span><br><span class="line"><span class="keyword">from</span> text <span class="keyword">import</span> fun</span><br><span class="line"><span class="built_in">print</span>(my_name)</span><br><span class="line">fun()</span><br></pre></td></tr></table></figure>
+<p><code>from ... import ...</code> 的<strong>弊端是容易和自己的变量同名</strong>，同名时模块里的内容会被覆盖。所以使用顺序是：先导入 → 再调用 → <strong>优先用自己的</strong> → 最后才用模块里的。</p>
+<p>（补充：<code>import time, random</code> 这种一行导入多个模块语法本身是合法的，课件不建议只是为了可读性。）</p>
+<h3 id="导入模块时解释器做了什么"><a class="markdownIt-Anchor" href="#导入模块时解释器做了什么"></a> 导入模块时，解释器做了什么</h3>
+<ol>
+<li>把模块里的全部内容读取一遍，确保没有异常；</li>
+<li>生成一个名称空间，名字和模块名一致；</li>
+<li>等待程序调用：<code>模块名.变量名</code> / <code>模块名.函数名()</code>。</li>
+</ol>
+<h2 id="三-__name__这个文件是程序还是模块"><a class="markdownIt-Anchor" href="#三-__name__这个文件是程序还是模块"></a> 三、<code>__name__</code>：这个文件是程序还是模块</h2>
+<p>Python 用 <code>__name__</code> 属性来区分：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以「程序」身份直接运行时</span></span><br><span class="line"><span class="built_in">print</span>(__name__)      <span class="comment"># __main__</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 以「模块」身份被别的文件导入时</span></span><br><span class="line"><span class="comment"># 打印的是模块名，例如 text</span></span><br></pre></td></tr></table></figure>
+<p>于是有了这个到处都能见到的写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 只有当前文件被当作启动程序时才会执行</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;我是程序，不是模块&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>三条要点：</p>
+<ol>
+<li>别和别的语言的 <code>main</code> 搞混，性质不一样；</li>
+<li><code>__name__</code> 是 <code>__main__</code> 就是启动程序，否则是模块；</li>
+<li>把「只有作为程序运行才需要」的代码放进这个判断里。</li>
+</ol>
+<p>在 PyCharm 里输入 <code>main</code> 按回车/Tab 就会自动生成这段。它通常写在文件<strong>最后</strong>——既整洁，也能确保前面用到的函数、变量都已经定义好。模块里加这段更多是为了<strong>测试模块中的代码能否正常跑</strong>。</p>
+<p>另外 <code>__file__</code> 可以拿到文件所在的位置。</p>
+<h2 id="四-包管理模块的特殊文件夹"><a class="markdownIt-Anchor" href="#四-包管理模块的特殊文件夹"></a> 四、包：管理模块的特殊文件夹</h2>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">包的本质: 一个特殊的文件夹</span><br><span class="line">作用: 把功能相同的模块放在一起, 方便维护和管理</span><br></pre></td></tr></table></figure>
+<p>在 PyCharm 里 <code>New → Python Package</code> 创建，会自动生成一个 <code>__init__.py</code>：</p>
+<ul>
+<li><code>__init__.py</code> 负责管理包里的模块；</li>
+<li><strong>导入包的时候，它里面的内容会自动执行</strong>；</li>
+<li>可以在里面写这个包的使用说明或注意事项。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入包里的模块</span></span><br><span class="line"><span class="keyword">from</span> 包名 <span class="keyword">import</span> 模块名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入包里的模块中的单个功能</span></span><br><span class="line"><span class="keyword">from</span> 包名.模块名 <span class="keyword">import</span> 变量名</span><br></pre></td></tr></table></figure>
+<p>看不懂某个功能在哪定义？<strong>按住 Ctrl 把鼠标放到函数名上点一下</strong>，直接跳到它的源码。</p>
+<h2 id="五-常用内置函数补遗"><a class="markdownIt-Anchor" href="#五-常用内置函数补遗"></a> 五、常用内置函数补遗</h2>
+<p><code>day-14</code> 顺手把内置函数过了一遍，这些后面到处都是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">min</span>([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])            <span class="comment"># 1  最小值</span></span><br><span class="line"><span class="built_in">max</span>([<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>])            <span class="comment"># 3  最大值</span></span><br><span class="line"><span class="built_in">len</span>(<span class="string">&#x27;hello&#x27;</span>)              <span class="comment"># 5  元素个数</span></span><br><span class="line"><span class="built_in">sum</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])            <span class="comment"># 6  求和</span></span><br><span class="line"><span class="built_in">type</span>(<span class="number">123</span>)                 <span class="comment"># &lt;class &#x27;int&#x27;&gt;  数据类型</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">isinstance</span>(<span class="number">18</span>, <span class="built_in">int</span>)       <span class="comment"># True  判断是否是指定类型，结果是 bool</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">int</span>(<span class="string">&#x27;18&#x27;</span>)                 <span class="comment"># 类型转换</span></span><br><span class="line"><span class="built_in">float</span>(<span class="string">&#x27;1.5&#x27;</span>); <span class="built_in">bool</span>(<span class="number">0</span>); <span class="built_in">str</span>(<span class="number">18</span>)</span><br><span class="line"><span class="built_in">list</span>((<span class="number">1</span>, <span class="number">2</span>)); <span class="built_in">tuple</span>([<span class="number">1</span>, <span class="number">2</span>]); <span class="built_in">dict</span>(); <span class="built_in">set</span>()</span><br><span class="line"></span><br><span class="line"><span class="built_in">chr</span>(<span class="number">65</span>)                   <span class="comment"># &#x27;A&#x27;  由 ASCII 码拿字符</span></span><br><span class="line"><span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>)                  <span class="comment"># 65   由字符拿 ASCII / Unicode 码</span></span><br></pre></td></tr></table></figure>
+<h2 id="六-time时间模块"><a class="markdownIt-Anchor" href="#六-time时间模块"></a> 六、time：时间模块</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">time.time()                    <span class="comment"># 时间戳：1970-01-01 到现在的秒数</span></span><br><span class="line">time.sleep(<span class="number">3</span>)                  <span class="comment"># 让程序休眠 3 秒（一般传整数）</span></span><br><span class="line">time.localtime()               <span class="comment"># 当前的详细时间，以元组形式返回</span></span><br><span class="line">time.asctime(time.localtime()) <span class="comment"># 直接转成可读字符串</span></span><br></pre></td></tr></table></figure>
+<p><code>time.localtime()</code> 返回的元组字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tm_year</code></td>
+<td>年</td>
+</tr>
+<tr>
+<td><code>tm_mon</code></td>
+<td>月</td>
+</tr>
+<tr>
+<td><code>tm_mday</code></td>
+<td>日</td>
+</tr>
+<tr>
+<td><code>tm_hour</code> / <code>tm_min</code> / <code>tm_sec</code></td>
+<td>时 / 分 / 秒</td>
+</tr>
+<tr>
+<td><code>tm_wday</code></td>
+<td>星期（0–6）</td>
+</tr>
+<tr>
+<td><code>tm_yday</code></td>
+<td>今年的第几天</td>
+</tr>
+<tr>
+<td><code>tm_isdst</code></td>
+<td>夏令时/冬令时标记</td>
+</tr>
+</tbody>
+</table>
+<p>格式化输出用 <code>strftime</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">time.strftime(<span class="string">&#x27;%Y-%m-%d&#x27;</span>, time.localtime())   <span class="comment"># 2025-05-26</span></span><br><span class="line">time.strftime(<span class="string">&#x27;%H:%M:%S&#x27;</span>, time.localtime())   <span class="comment"># 20:00:00</span></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>含义</th>
+<th>占位符</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>%y</code></td>
+<td>两位年份</td>
+<td><code>%H</code></td>
+<td>时</td>
+</tr>
+<tr>
+<td><code>%Y</code></td>
+<td>四位年份</td>
+<td><code>%M</code></td>
+<td>分</td>
+</tr>
+<tr>
+<td><code>%m</code></td>
+<td>月</td>
+<td><code>%S</code></td>
+<td>秒</td>
+</tr>
+<tr>
+<td><code>%d</code></td>
+<td>日</td>
+<td><code>%w</code></td>
+<td>周</td>
+</tr>
+<tr>
+<td><code>%x</code></td>
+<td>当地日期</td>
+<td><code>%X</code></td>
+<td>当地时间</td>
+</tr>
+</tbody>
+</table>
+<h2 id="七-random随机数模块"><a class="markdownIt-Anchor" href="#七-random随机数模块"></a> 七、random：随机数模块</h2>
+<p>考试点名、抽奖、验证码、猜拳都靠它。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">random.random()        <span class="comment"># 大于 0 小于 1 的随机小数</span></span><br><span class="line">random.randint(<span class="number">1</span>, <span class="number">30</span>)  <span class="comment"># 指定范围的随机整数（第一个值必须比第二个小）</span></span><br><span class="line"></span><br><span class="line">random.uniform(<span class="number">20</span>, <span class="number">8.8</span>)     <span class="comment"># 指定范围的随机小数，第一个值不一定比第二个小</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;%.2f&#x27;</span> % random.uniform(<span class="number">20</span>, <span class="number">8.8</span>))   <span class="comment"># 保留两位</span></span><br><span class="line"></span><br><span class="line">random.choice((<span class="number">12</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">8</span>, <span class="number">99</span>))          <span class="comment"># 从元组/列表里随机抽一个</span></span><br><span class="line"></span><br><span class="line">f = [<span class="number">4</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">1</span>, <span class="number">3</span>]</span><br><span class="line">random.shuffle(f)      <span class="comment"># 打乱列表顺序（洗牌），列表本身可变</span></span><br><span class="line"><span class="built_in">print</span>(f)</span><br></pre></td></tr></table></figure>
+<h2 id="八-os和操作系统打交道"><a class="markdownIt-Anchor" href="#八-os和操作系统打交道"></a> 八、os：和操作系统打交道</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">os.system(<span class="string">&#x27;start calc&#x27;</span>)     <span class="comment"># 打开计算器（Windows）</span></span><br><span class="line">os.system(<span class="string">&#x27;start osk&#x27;</span>)      <span class="comment"># 打开屏幕键盘</span></span><br><span class="line"></span><br><span class="line">os.getcwd()                       <span class="comment"># 当前文件所在目录</span></span><br><span class="line">os.mkdir(<span class="string">&#x27;text&#x27;</span>)                  <span class="comment"># 新建文件夹，已存在会报错</span></span><br><span class="line">os.rmdir(<span class="string">&#x27;demo&#x27;</span>)                  <span class="comment"># 删除文件夹，只能删空文件夹</span></span><br><span class="line">os.rename(<span class="string">&#x27;demo.py&#x27;</span>, <span class="string">&#x27;class.py&#x27;</span>)  <span class="comment"># 重命名</span></span><br><span class="line"></span><br><span class="line">os.path.exists(<span class="string">&#x27;class.py&#x27;</span>)        <span class="comment"># 判断路径/文件是否存在</span></span><br><span class="line"></span><br><span class="line">os.path.join(<span class="string">&#x27;Project&#x27;</span>, <span class="string">&#x27;time_1.py&#x27;</span>)          <span class="comment"># 把散的部分拼成完整路径</span></span><br><span class="line">os.path.dirname(<span class="string">&#x27;PycharmProjects/Project/os_3.py&#x27;</span>)    <span class="comment"># 去掉文件名，留下目录</span></span><br><span class="line">os.path.basename(<span class="string">&#x27;PycharmProjects/Project/os_3.py&#x27;</span>)   <span class="comment"># 去掉路径，留下文件名</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 常用组合：拿当前文件的目录，再拼一个新文件名</span></span><br><span class="line">os.path.join(os.path.dirname(<span class="string">&#x27;PycharmProjects/Project/os_3.py&#x27;</span>), <span class="string">&#x27;random_2.py&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>（补充：<code>os.path.join</code> 拼出来的路径<strong>不要求真实存在</strong>，它只是按当前系统的分隔符拼接；<code>os.makedirs('a/b/c')</code> 可以一次创建多层目录，比 <code>mkdir</code> 更好用；目录相关操作整理成 <code>pathlib.Path</code> 会更现代，课件没讲。）</p>
+<h2 id="九-sys和-python-解释器打交道"><a class="markdownIt-Anchor" href="#九-sys和-python-解释器打交道"></a> 九、sys：和 Python 解释器打交道</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">sys.path       <span class="comment"># 模块的搜索路径（列表）</span></span><br><span class="line">sys.argv       <span class="comment"># 命令行参数，第一个元素是脚本名</span></span><br><span class="line">sys.version    <span class="comment"># Python 版本</span></span><br><span class="line">sys.platform   <span class="comment"># 当前平台，Windows 下是 win32</span></span><br></pre></td></tr></table></figure>
+<p>注意 <code>sys.platform</code> 说的是<strong>解释器运行在什么系统上</strong>，不是「你电脑里装的系统」——这两个概念别混。</p>
+<h2 id="十-json保留类型地存数据"><a class="markdownIt-Anchor" href="#十-json保留类型地存数据"></a> 十、json：保留类型地存数据</h2>
+<p>先看不用 json 的问题：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">names = [<span class="string">&#x27;永无止境&#x27;</span>, <span class="string">&#x27;荒天帝&#x27;</span>, <span class="string">&#x27;纯爱&#x27;</span>, <span class="string">&#x27;上课不睡觉&#x27;</span>, <span class="string">&#x27;落界曲&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;class.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="built_in">str</span>(names))          <span class="comment"># 存进去是一整串字符串</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;class.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    a = f.read()</span><br><span class="line">    a = <span class="built_in">list</span>(a)                  <span class="comment"># 读出来变成一堆单个字符，类型丢了</span></span><br><span class="line">    <span class="built_in">print</span>(a)</span><br></pre></td></tr></table></figure>
+<p><code>json</code> 解决的问题就是：<strong>存进去是列表，取出来还是列表</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">names = [<span class="string">&#x27;永无止境&#x27;</span>, <span class="string">&#x27;荒天帝&#x27;</span>, <span class="string">&#x27;纯爱&#x27;</span>, <span class="string">&#x27;上课不睡觉&#x27;</span>, <span class="string">&#x27;落界曲&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;class.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    json.dump(names, f)          <span class="comment"># 序列化后写入文件</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;class.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    class_1 = json.load(f)       <span class="comment"># 反序列化，还是列表</span></span><br><span class="line">    <span class="built_in">print</span>(class_1[<span class="number">3</span>])            <span class="comment"># 上课不睡觉</span></span><br></pre></td></tr></table></figure>
+<p>四个功能，两两一对：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>方向</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dumps</code></td>
+<td>序列化</td>
+<td>数据类型 → 字符串</td>
+</tr>
+<tr>
+<td><code>dump</code></td>
+<td>序列化</td>
+<td>数据类型 → 字符串并写入文件</td>
+</tr>
+<tr>
+<td><code>loads</code></td>
+<td>反序列化</td>
+<td>字符串 → 数据类型</td>
+</tr>
+<tr>
+<td><code>load</code></td>
+<td>反序列化</td>
+<td>从文件读取 → 数据类型</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid">flowchart LR
+    A["Python 数据<br/>列表 / 字典 / 数字"] -->|"dumps / dump"| B["JSON 字符串<br/>序列化后的文本"]
+    B -->|"loads / load"| A</pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">88</span></span><br><span class="line">data = json.dumps(a)     <span class="comment"># &#x27;88&#x27;      序列化</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data))        <span class="comment"># &lt;class &#x27;str&#x27;&gt;</span></span><br><span class="line"></span><br><span class="line">data_1 = json.loads(data)  <span class="comment"># 88       反序列化</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(data_1))        <span class="comment"># &lt;class &#x27;int&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>序列化</strong>就是计算机底层认识的机器码，<strong>反序列化</strong>是人能看懂的形态。json 支持几乎所有数据类型，只有两个例外要注意：<strong>集合（<code>set</code>）不支持</strong>；<code>None</code> 会被转成 <code>null</code>，意思都是空。</p>
+<h2 id="十一-踩坑表"><a class="markdownIt-Anchor" href="#十一-踩坑表"></a> 十一、踩坑表</h2>
+<table>
+<thead>
+<tr>
+<th>坑</th>
+<th>现象</th>
+<th>正确做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模块名带后缀</td>
+<td><code>import text.py</code> 报 <code>ModuleNotFoundError</code></td>
+<td>导入时只写模块名 <code>import text</code></td>
+</tr>
+<tr>
+<td>模块名用大小写/驼峰</td>
+<td>别人导入容易出错</td>
+<td>全小写，多词用下划线，如 <code>user_login</code></td>
+</tr>
+<tr>
+<td><code>from 模块 import x</code> 与自己的变量重名</td>
+<td>模块里的内容被覆盖</td>
+<td>优先用自己的；需要时改用 <code>import 模块</code></td>
+</tr>
+<tr>
+<td>忘了先下载第三方模块</td>
+<td><code>ModuleNotFoundError: No module named 'requests'</code></td>
+<td>先 <code>pip install</code>，国内加 <code>-i</code> 镜像</td>
+</tr>
+<tr>
+<td>把 <code>if __name__ == '__main__':</code> 写错成 <code>=</code></td>
+<td>判断永远为假/语法错</td>
+<td>比较运算符是两个等号</td>
+</tr>
+<tr>
+<td>以为导入包会执行 <code>__init__.py</code> 里的所有功能</td>
+<td>只想写说明却执行了代码</td>
+<td><code>__init__.py</code> 里放轻量内容或说明</td>
+</tr>
+<tr>
+<td><code>open</code> 打开后忘了 <code>close</code></td>
+<td>文件被占用、内存泄漏</td>
+<td>用 <code>with open(...) as f:</code> 自动关闭</td>
+</tr>
+<tr>
+<td><code>w</code> 模式打开已有文件</td>
+<td>原内容被清空</td>
+<td>追加用 <code>a</code> 模式</td>
+</tr>
+<tr>
+<td><code>json.dump</code> 分多次写同一个文件</td>
+<td><code>json.load</code> 报 <code>Extra data</code></td>
+<td>攒好数据后一次写，或改用 JSON Lines 逐行读</td>
+</tr>
+<tr>
+<td><code>json</code> 存了 <code>set</code></td>
+<td><code>TypeError: Object of type set is not JSON serializable</code></td>
+<td>先转成 <code>list</code> 再存</td>
+</tr>
+</tbody>
+</table>
+<h2 id="十二-小结"><a class="markdownIt-Anchor" href="#十二-小结"></a> 十二、小结</h2>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">模块 --&gt; 一个 .py 文件，用 import 拿进来用，用 as 起别名</span><br><span class="line">包   --&gt; 一个带 __init__.py 的文件夹，用 from 包 import 模块</span><br><span class="line">__name__ --&gt; 判断自己是程序还是模块</span><br><span class="line">json --&gt; 解决「存进去是什么类型，取出来还是什么类型」</span><br></pre></td></tr></table></figure>
+<p>到这里，基础班的变量、序列、流程控制、函数、模块全部串起来了。下一篇写这套笔记里最后两块：迭代器/生成器与文件操作。</p>
+<h3 id="关于本文的范围补记"><a class="markdownIt-Anchor" href="#关于本文的范围补记"></a> 关于本文的范围（补记）</h3>
+<p>课件覆盖：模块分类与 pip 安装、<code>import</code> / <code>from ... import</code>、<code>as</code> 别名、<code>__name__</code> 与 <code>__main__</code>、包与 <code>__init__.py</code>、内置函数补遗，以及 <code>time</code>、<code>random</code>、<code>os</code>、<code>sys</code>、<code>json</code> 五个模块的常用方法。文中标注「补充」的内容（<code>import a, b</code> 的合法性讨论、<code>os.makedirs</code> 与 <code>pathlib</code>、模块搜索路径细节、<code>__all__</code> 与相对导入）属于自学扩展，课程未涉及。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>著者: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>パーマリンク: </strong><a href="https://utdog.github.io/ja/2025/05/26/Python%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%8C%85/">https://utdog.github.io/ja/2025/05/26/Python%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%8C%85/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>ライセンス: </strong>本ブログのすべての文書は、特に指定されていない限り、<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> ライセンスに従っています。引用の際は出典を明記してください！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">スポンサー</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">コーヒーを買ってください</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=Python%20%E6%A8%A1%E5%9D%97%E3%80%81%E5%8C%85%E4%B8%8E%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97&amp;desc=%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%8C%85%E7%9A%84%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F%EF%BC%8C%E5%8A%A0%E4%B8%8A%20time%E3%80%81random%E3%80%81os%E3%80%81sys%E3%80%81json%20%E4%BA%94%E4%B8%AA%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97%E7%9A%84%E7%94%A8%E6%B3%95%E9%80%9F%E6%9F%A5%E4%B8%8E%E8%B8%A9%E5%9D%91%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="Python 模块、包与常用模块">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="Python 模块、包与常用模块">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/%E6%A8%A1%E5%9D%97/" rel="tag">模块</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/50.jpg" data-sizes="auto" alt="Python 迭代器、生成器与文件操作" class="lazyload">
+        
+        <a href="/ja/2025/05/27/Python%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/"></a>
+        <div class="article-nav-caption">次の記事</div>
+        <h3 class="article-nav-title">
+          
+            Python 迭代器、生成器与文件操作
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/556.jpg" data-sizes="auto" alt="Python 函数：参数、返回值、作用域与装饰器" class="lazyload">
+      
+      <a href="/ja/2025/05/25/Python%E5%87%BD%E6%95%B0%E8%BF%9B%E9%98%B6/"></a>
+      <div class="article-nav-caption">前の記事</div>
+      <h3 class="article-nav-title">
+        
+          Python 函数：参数、返回值、作用域与装饰器
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        108.2k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        428分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A8%A1%E5%9D%97%E4%B8%80%E4%B8%AA-python-%E6%96%87%E4%BB%B6%E5%B0%B1%E6%98%AF%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text"> 一、模块：一个 Python 文件就是一个模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E5%88%86%E4%B8%89%E7%B1%BB"><span class="toc-number">2.1.</span> <span class="toc-text"> 模块分三类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AF%BC%E5%85%A5%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text"> 二、模块的导入与使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%A0%E4%B8%AA%E5%AF%BC%E5%85%A5%E4%B9%A0%E6%83%AF"><span class="toc-number">3.1.</span> <span class="toc-text"> 几个导入习惯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E6%A8%A1%E5%9D%97%E6%97%B6%E8%A7%A3%E9%87%8A%E5%99%A8%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">3.2.</span> <span class="toc-text"> 导入模块时，解释器做了什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-__name__%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E6%98%AF%E7%A8%8B%E5%BA%8F%E8%BF%98%E6%98%AF%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text"> 三、__name__：这个文件是程序还是模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%8C%85%E7%AE%A1%E7%90%86%E6%A8%A1%E5%9D%97%E7%9A%84%E7%89%B9%E6%AE%8A%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">5.</span> <span class="toc-text"> 四、包：管理模块的特殊文件夹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B8%B8%E7%94%A8%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0%E8%A1%A5%E9%81%97"><span class="toc-number">6.</span> <span class="toc-text"> 五、常用内置函数补遗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-time%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9D%97"><span class="toc-number">7.</span> <span class="toc-text"> 六、time：时间模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-random%E9%9A%8F%E6%9C%BA%E6%95%B0%E6%A8%A1%E5%9D%97"><span class="toc-number">8.</span> <span class="toc-text"> 七、random：随机数模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-os%E5%92%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%89%93%E4%BA%A4%E9%81%93"><span class="toc-number">9.</span> <span class="toc-text"> 八、os：和操作系统打交道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-sys%E5%92%8C-python-%E8%A7%A3%E9%87%8A%E5%99%A8%E6%89%93%E4%BA%A4%E9%81%93"><span class="toc-number">10.</span> <span class="toc-text"> 九、sys：和 Python 解释器打交道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-json%E4%BF%9D%E7%95%99%E7%B1%BB%E5%9E%8B%E5%9C%B0%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="toc-number">11.</span> <span class="toc-text"> 十、json：保留类型地存数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">12.</span> <span class="toc-text"> 十一、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C-%E5%B0%8F%E7%BB%93"><span class="toc-number">13.</span> <span class="toc-text"> 十二、小结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E6%96%87%E7%9A%84%E8%8C%83%E5%9B%B4%E8%A1%A5%E8%AE%B0"><span class="toc-number">13.1.</span> <span class="toc-text"> 关于本文的范围（补记）</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">33</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">29</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "Python 模块、包与常用模块",
+          url: "https://utdog.github.io/2025/05/26/Python%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%8C%85/",
+          excerpt: "",
+          description: "模块与包的组织方式，加上 time、random、os、sys、json 五个常用模块的用法速查与踩坑。",
+          stripContent: " 前言 上一篇把函数讲到了装饰器，这篇解决另一个问题：代码怎么组织。 单个 .py 文件从几十行写到几百行之后，全堆在一起就没法维护了。Python 的答案是「模块」和「包」——把功能拆到不同文件里，需要的时候导入。课件 day-14模块与包 讲组织方式，day-15常用模块 讲五个必须会用的内置模块，两天的笔记合成这一篇。  一、模块：一个 Python 文件就是一个模块 123模块: 就是一个 python 文件模块名: 就是对应的文件名, 不带后缀  demo.py  ==&amp;gt;  模块",
+          date: "Mon May 26 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 18:51:37 GMT+0800",
+          cover: "/images/55.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+
