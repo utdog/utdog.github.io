@@ -1,0 +1,1353 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    python全栈爬虫 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="python全栈爬虫  前言 爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚哪些事不能做。所有示例都以公开的、允许抓取的页面为例。  一、爬虫的基本流程 graph LR     A[分析目标页面] --">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python全栈爬虫">
+<meta property="og:url" content="https://utdog.github.io/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="python全栈爬虫  前言 爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚哪些事不能做。所有示例都以公开的、允许抓取的页面为例。  一、爬虫的基本流程 graph LR     A[分析目标页面] --">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-04T16:38:11.000Z">
+<meta property="article:modified_time" content="2026-10-15T07:23:30.925Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="&lt;twitter:card&gt;">
+<meta name="twitter:image" content="https://utdog.github.io/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/%3Ctwitter:image%3E">
+<meta name="twitter:creator" content="@&lt;twitter:creator&gt;">
+<meta name="twitter:site" content="<twitter:site>">
+<meta property="fb:admins" content="&lt;fb:admin_id&gt;">
+<meta property="fb:app_id" content="&lt;fb:app_id&gt;">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">简体中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" class="selected">简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/05/python全栈爬虫/';
+            
+              langMap['en'] = '/en/2025/05/05/python全栈爬虫/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/05/python全栈爬虫/';
+            
+              langMap['ja'] = '/ja/2025/05/05/python全栈爬虫/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/42.jpg" alt="python全栈爬虫">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">python全栈爬虫</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB"><span class="toc-number">1.</span> <span class="toc-text"> python全栈爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%88%AC%E8%99%AB%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、爬虫的基本流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-requests%E6%8A%8A%E8%AF%B7%E6%B1%82%E5%8F%91%E5%87%BA%E5%8E%BB"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、Requests：把请求发出去</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%A7%A3%E6%9E%90%E4%BB%8E-html-%E9%87%8C%E6%8C%91%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、解析：从 HTML 里挑出数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#beautifulsoup%E6%9C%80%E5%8F%8B%E5%A5%BD"><span class="toc-number">1.3.1.</span> <span class="toc-text"> BeautifulSoup：最友好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E5%8F%96%E6%AD%A3%E6%96%87lxml-xpath"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 抽取正文：lxml + XPath</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E5%A4%84%E7%90%86%E9%9D%9E-html-%E7%9A%84%E6%96%87%E6%9C%AC"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 正则：处理非 HTML 的文本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BF%BB%E9%A1%B5-%E9%99%90%E9%80%9F%E4%B8%8E%E9%87%8D%E8%AF%95"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、翻页、限速与重试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、动态页面怎么办</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%8F%8D%E7%88%AC%E7%9A%84%E5%B8%B8%E8%A7%81%E5%BD%A2%E5%BC%8F%E4%B8%8E%E6%AD%A3%E7%A1%AE%E5%A4%84%E7%90%86"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、反爬的常见形式与正确处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-scrapy%E6%8A%8A%E7%88%AC%E8%99%AB%E5%B7%A5%E7%A8%8B%E5%8C%96"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、Scrapy：把爬虫工程化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E6%B8%85%E6%B4%97%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、清洗与存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%B9%B6%E5%8F%91%E6%8F%90%E9%80%9F"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、并发提速</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E5%90%88%E8%A7%84%E5%BA%95%E7%BA%BF"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、合规底线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.11.</span> <span class="toc-text"> 十一、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.12.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-python全栈爬虫" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-04T16:38:11.000Z" itemprop="datePublished">2025-05-05</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="python全栈爬虫"><a class="markdownIt-Anchor" href="#python全栈爬虫"></a> python全栈爬虫</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚<strong>哪些事不能做</strong>。所有示例都以公开的、允许抓取的页面为例。</p>
+<h2 id="一-爬虫的基本流程"><a class="markdownIt-Anchor" href="#一-爬虫的基本流程"></a> 一、爬虫的基本流程</h2>
+<pre class="mermaid">graph LR
+    A[分析目标页面] --> B[发送请求]
+    B --> C{拿到响应?}
+    C -->|失败| D[重试 / 换代理 / 降速]
+    D --> B
+    C -->|成功| E[解析 HTML/JSON]
+    E --> F[清洗成结构化数据]
+    F --> G[入库 CSV / MySQL]</pre>
+<p>四步走：<strong>请求 → 解析 → 清洗 → 存储</strong>。写之前先做一件事：打开 <code>robots.txt</code>（<code>https://站点/robots.txt</code>）和目标页面的用户协议，确认没有禁止抓取。</p>
+<h2 id="二-requests把请求发出去"><a class="markdownIt-Anchor" href="#二-requests把请求发出去"></a> 二、Requests：把请求发出去</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install requests</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">HEADERS = &#123;</span><br><span class="line">    <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) &quot;</span></span><br><span class="line">                  <span class="string">&quot;AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Accept-Language&quot;</span>: <span class="string">&quot;zh-CN,zh;q=0.9&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resp = requests.get(<span class="string">&quot;https://httpbin.org/get&quot;</span>, headers=HEADERS, timeout=<span class="number">10</span>)</span><br><span class="line">resp.raise_for_status()          <span class="comment"># 4xx/5xx 直接抛异常，别静默失败</span></span><br><span class="line">resp.encoding = resp.apparent_encoding   <span class="comment"># 中文乱码时用它纠正</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(resp.status_code, resp.headers.get(<span class="string">&quot;Content-Type&quot;</span>))</span><br><span class="line"><span class="built_in">print</span>(resp.json())               <span class="comment"># 接口返回 JSON 时直接用</span></span><br></pre></td></tr></table></figure>
+<p>带参数、带 Cookie、走 Session 保持登录态：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">params = &#123;<span class="string">&quot;q&quot;</span>: <span class="string">&quot;python 爬虫&quot;</span>, <span class="string">&quot;page&quot;</span>: <span class="number">1</span>&#125;</span><br><span class="line">resp = requests.get(<span class="string">&quot;https://httpbin.org/get&quot;</span>, params=params, headers=HEADERS)</span><br><span class="line"></span><br><span class="line">session = requests.Session()</span><br><span class="line">session.headers.update(HEADERS)</span><br><span class="line">session.post(<span class="string">&quot;https://httpbin.org/post&quot;</span>, data=&#123;<span class="string">&quot;username&quot;</span>: <span class="string">&quot;demo&quot;</span>, <span class="string">&quot;password&quot;</span>: <span class="string">&quot;***&quot;</span>&#125;)</span><br><span class="line">resp = session.get(<span class="string">&quot;https://httpbin.org/cookies&quot;</span>)   <span class="comment"># 自动带上 Cookie</span></span><br></pre></td></tr></table></figure>
+<p><strong>超时一定要写</strong>，否则程序可能卡死；<code>headers</code> 里带上 UA 是最基本的礼貌，也能避免一半的 403。</p>
+<h2 id="三-解析从-html-里挑出数据"><a class="markdownIt-Anchor" href="#三-解析从-html-里挑出数据"></a> 三、解析：从 HTML 里挑出数据</h2>
+<h3 id="beautifulsoup最友好"><a class="markdownIt-Anchor" href="#beautifulsoup最友好"></a> BeautifulSoup：最友好</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install beautifulsoup4 lxml</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line">html = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">&lt;ul class=&quot;list&quot;&gt;</span></span><br><span class="line"><span class="string">  &lt;li&gt;&lt;a href=&quot;/post/1&quot;&gt;Python 装饰器入门&lt;/a&gt;&lt;span class=&quot;date&quot;&gt;2025-05-01&lt;/span&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">  &lt;li&gt;&lt;a href=&quot;/post/2&quot;&gt;MySQL 索引笔记&lt;/a&gt;&lt;span class=&quot;date&quot;&gt;2025-05-03&lt;/span&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">&lt;/ul&gt;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">soup = BeautifulSoup(html, <span class="string">&quot;lxml&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> li <span class="keyword">in</span> soup.select(<span class="string">&quot;ul.list &gt; li&quot;</span>):</span><br><span class="line">    a = li.find(<span class="string">&quot;a&quot;</span>)</span><br><span class="line">    date = li.select_one(<span class="string">&quot;span.date&quot;</span>).get_text(strip=<span class="literal">True</span>)</span><br><span class="line">    <span class="built_in">print</span>(a[<span class="string">&quot;href&quot;</span>], a.get_text(strip=<span class="literal">True</span>), date)</span><br></pre></td></tr></table></figure>
+<p><code>select</code> 用的是 CSS 选择器语法，和前端学的完全一致：<code>#id</code>、<code>.class</code>、<code>div a</code>、<code>li:nth-child(2)</code>。定位不到元素时优先怀疑两件事：<strong>选择器写错了</strong>，或者<strong>页面是 JS 动态渲染的</strong>。</p>
+<h3 id="抽取正文lxml-xpath"><a class="markdownIt-Anchor" href="#抽取正文lxml-xpath"></a> 抽取正文：lxml + XPath</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line">tree = etree.HTML(html)</span><br><span class="line">titles = tree.xpath(<span class="string">&#x27;//ul[@class=&quot;list&quot;]/li/a/text()&#x27;</span>)</span><br><span class="line">links = tree.xpath(<span class="string">&#x27;//ul[@class=&quot;list&quot;]/li/a/@href&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="正则处理非-html-的文本"><a class="markdownIt-Anchor" href="#正则处理非-html-的文本"></a> 正则：处理非 HTML 的文本</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">text = <span class="string">&quot;共 123 条记录，耗时 0.45 秒&quot;</span></span><br><span class="line">total = <span class="built_in">int</span>(re.search(<span class="string">r&quot;共\s*(\d+)\s*条&quot;</span>, text).group(<span class="number">1</span>))</span><br><span class="line">phone = re.findall(<span class="string">r&quot;1[3-9]\d&#123;9&#125;&quot;</span>, <span class="string">&quot;联系方式：19817126750 / 13800138000&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>原则：<strong>能用解析库就不用正则</strong>。HTML 的结构用正则去匹配，一旦标签换行或加个属性就全崩。</p>
+<h2 id="四-翻页-限速与重试"><a class="markdownIt-Anchor" href="#四-翻页-限速与重试"></a> 四、翻页、限速与重试</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> requests.adapters <span class="keyword">import</span> HTTPAdapter</span><br><span class="line"><span class="keyword">from</span> urllib3.util.retry <span class="keyword">import</span> Retry</span><br><span class="line"></span><br><span class="line">session = requests.Session()</span><br><span class="line">session.mount(<span class="string">&quot;https://&quot;</span>, HTTPAdapter(max_retries=Retry(</span><br><span class="line">    total=<span class="number">3</span>, backoff_factor=<span class="number">1</span>,</span><br><span class="line">    status_forcelist=[<span class="number">429</span>, <span class="number">500</span>, <span class="number">502</span>, <span class="number">503</span>, <span class="number">504</span>],</span><br><span class="line">)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">url, **kwargs</span>):</span><br><span class="line">    resp = session.get(url, timeout=<span class="number">10</span>, **kwargs)</span><br><span class="line">    time.sleep(random.uniform(<span class="number">1</span>, <span class="number">3</span>))    <span class="comment"># 随机间隔，别做压测式抓取</span></span><br><span class="line">    <span class="keyword">return</span> resp</span><br></pre></td></tr></table></figure>
+<p>翻页的三种常见形式：URL 里带 <code>page=</code>；POST 请求带页码；下一页的链接藏在 <code>rel=&quot;next&quot;</code> 里。先用手点两页，看浏览器地址栏和开发者工具里 Network 面板的变化，再决定用哪种。</p>
+<h2 id="五-动态页面怎么办"><a class="markdownIt-Anchor" href="#五-动态页面怎么办"></a> 五、动态页面怎么办</h2>
+<p>如果拿到的 HTML 里没有数据，说明内容由 JavaScript 渲染。两条路：</p>
+<ol>
+<li><strong>找接口</strong>：打开开发者工具的 Network，筛选 <code>Fetch/XHR</code>，多半能找到返回 JSON 的接口，直接请求它比解析 HTML 省事一百倍。</li>
+<li><strong>上浏览器</strong>：Playwright 或 Selenium 驱动真实浏览器，等元素出现再取。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Playwright 示例（需要先 playwright install chromium）</span></span><br><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> sync_playwright() <span class="keyword">as</span> p:</span><br><span class="line">    browser = p.chromium.launch(headless=<span class="literal">True</span>)</span><br><span class="line">    page = browser.new_page()</span><br><span class="line">    page.goto(<span class="string">&quot;https://example.com/list&quot;</span>, wait_until=<span class="string">&quot;networkidle&quot;</span>)</span><br><span class="line">    page.wait_for_selector(<span class="string">&quot;.item&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> page.query_selector_all(<span class="string">&quot;.item&quot;</span>):</span><br><span class="line">        <span class="built_in">print</span>(item.inner_text())</span><br><span class="line">    browser.close()</span><br></pre></td></tr></table></figure>
+<p>浏览器方案资源占用高、速度慢，<strong>能找接口就别开浏览器</strong>。</p>
+<h2 id="六-反爬的常见形式与正确处理"><a class="markdownIt-Anchor" href="#六-反爬的常见形式与正确处理"></a> 六、反爬的常见形式与正确处理</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>常见原因</th>
+<th>正确做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>403 Forbidden</td>
+<td>UA / Referer 缺失</td>
+<td>补齐请求头，模拟正常浏览器</td>
+</tr>
+<tr>
+<td>返回登录页</td>
+<td>需要登录态</td>
+<td>用 Session 登录，或带合法 Cookie</td>
+</tr>
+<tr>
+<td>429 Too Many Requests</td>
+<td>请求太快</td>
+<td>降并发、加随机间隔、尊重 <code>Retry-After</code></td>
+</tr>
+<tr>
+<td>数据是乱码</td>
+<td>编码识别错</td>
+<td><code>resp.apparent_encoding</code> 或手动指定</td>
+</tr>
+<tr>
+<td>内容为空</td>
+<td>JS 渲染</td>
+<td>找接口或上浏览器</td>
+</tr>
+<tr>
+<td>需要验证码</td>
+<td>风控</td>
+<td><strong>停下</strong>，不要尝试绕过验证码或破解风控</td>
+</tr>
+<tr>
+<td>封 IP</td>
+<td>触发风控</td>
+<td>降低频率；代理只用于合法场景</td>
+</tr>
+</tbody>
+</table>
+<p>需要明确的是：<strong>绕过验证码、破解加密参数、伪造身份、抓取非公开数据，都是不该做的事。</strong> 技术能做的和应该做的，中间隔着法律和道德。</p>
+<h2 id="七-scrapy把爬虫工程化"><a class="markdownIt-Anchor" href="#七-scrapy把爬虫工程化"></a> 七、Scrapy：把爬虫工程化</h2>
+<p>当目标站点有几十个列表页、需要断点续爬和统一去重时，就该上 Scrapy 了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install scrapy</span><br><span class="line">scrapy startproject tutorial</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tutorial/spiders/quotes.py</span></span><br><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">QuotesSpider</span>(scrapy.Spider):</span><br><span class="line">    name = <span class="string">&quot;quotes&quot;</span></span><br><span class="line">    start_urls = [<span class="string">&quot;https://quotes.toscrape.com/page/1/&quot;</span>]</span><br><span class="line">    custom_settings = &#123;</span><br><span class="line">        <span class="string">&quot;DOWNLOAD_DELAY&quot;</span>: <span class="number">1.5</span>,                      <span class="comment"># 礼貌爬取</span></span><br><span class="line">        <span class="string">&quot;AUTOTHROTTLE_ENABLED&quot;</span>: <span class="literal">True</span>,</span><br><span class="line">        <span class="string">&quot;CONCURRENT_REQUESTS_PER_DOMAIN&quot;</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="string">&quot;USER_AGENT&quot;</span>: <span class="string">&quot;MyLearningBot/1.0 (+https://utdog.github.io/about)&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse</span>(<span class="params">self, response</span>):</span><br><span class="line">        <span class="keyword">for</span> quote <span class="keyword">in</span> response.css(<span class="string">&quot;div.quote&quot;</span>):</span><br><span class="line">            <span class="keyword">yield</span> &#123;</span><br><span class="line">                <span class="string">&quot;text&quot;</span>: quote.css(<span class="string">&quot;span.text::text&quot;</span>).get(),</span><br><span class="line">                <span class="string">&quot;author&quot;</span>: quote.css(<span class="string">&quot;small.author::text&quot;</span>).get(),</span><br><span class="line">                <span class="string">&quot;tags&quot;</span>: quote.css(<span class="string">&quot;div.tags a.tag::text&quot;</span>).getall(),</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        next_page = response.css(<span class="string">&quot;li.next a::attr(href)&quot;</span>).get()</span><br><span class="line">        <span class="keyword">if</span> next_page:</span><br><span class="line">            <span class="keyword">yield</span> response.follow(next_page, <span class="variable language_">self</span>.parse)</span><br></pre></td></tr></table></figure>
+<p>它的分工很清晰：<strong>Spider</strong> 定义抓谁和怎么解析，<strong>Item/Pipeline</strong> 负责清洗和入库，<strong>Middleware</strong> 统一处理请求头、代理和重试。用 <code>scrapy crawl quotes -O quotes.json</code> 跑一次，输出直接落盘。</p>
+<h2 id="八-清洗与存储"><a class="markdownIt-Anchor" href="#八-清洗与存储"></a> 八、清洗与存储</h2>
+<p>爬下来的数据十有八九是脏的，先过一遍清洗函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">clean_price</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;&#x27;￥1,299.00 元&#x27; -&gt; 1299.0&quot;&quot;&quot;</span></span><br><span class="line">    num = re.sub(<span class="string">r&quot;[^\d.]&quot;</span>, <span class="string">&quot;&quot;</span>, text <span class="keyword">or</span> <span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">float</span>(num) <span class="keyword">if</span> num <span class="keyword">else</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">clean_date</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;&#x27;2025年5月3日&#x27; -&gt; date(2025, 5, 3)&quot;&quot;&quot;</span></span><br><span class="line">    m = re.search(<span class="string">r&quot;(\d&#123;4&#125;)\D+(\d&#123;1,2&#125;)\D+(\d&#123;1,2&#125;)&quot;</span>, text <span class="keyword">or</span> <span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> datetime(*<span class="built_in">map</span>(<span class="built_in">int</span>, m.groups())).date() <span class="keyword">if</span> m <span class="keyword">else</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<p>存 CSV 和 MySQL：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"></span><br><span class="line">rows = [&#123;<span class="string">&quot;title&quot;</span>: <span class="string">&quot;Python 装饰器入门&quot;</span>, <span class="string">&quot;date&quot;</span>: <span class="string">&quot;2025-05-01&quot;</span>&#125;]</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;out.csv&quot;</span>, <span class="string">&quot;w&quot;</span>, newline=<span class="string">&quot;&quot;</span>, encoding=<span class="string">&quot;utf-8-sig&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    writer = csv.DictWriter(f, fieldnames=[<span class="string">&quot;title&quot;</span>, <span class="string">&quot;date&quot;</span>])</span><br><span class="line">    writer.writeheader()</span><br><span class="line">    writer.writerows(rows)</span><br><span class="line"></span><br><span class="line">conn = pymysql.connect(host=<span class="string">&quot;localhost&quot;</span>, user=<span class="string">&quot;root&quot;</span>, password=<span class="string">&quot;pwd&quot;</span>,</span><br><span class="line">                       database=<span class="string">&quot;spider&quot;</span>, charset=<span class="string">&quot;utf8mb4&quot;</span>)</span><br><span class="line"><span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cur:</span><br><span class="line">    cur.executemany(</span><br><span class="line">        <span class="string">&quot;INSERT INTO article (title, pub_date) VALUES (%s, %s) &quot;</span></span><br><span class="line">        <span class="string">&quot;ON DUPLICATE KEY UPDATE title = VALUES(title)&quot;</span>,</span><br><span class="line">        [(r[<span class="string">&quot;title&quot;</span>], r[<span class="string">&quot;date&quot;</span>]) <span class="keyword">for</span> r <span class="keyword">in</span> rows],</span><br><span class="line">    )</span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<p><code>utf-8-sig</code> 是为了让 Excel 打开 CSV 不乱码；<code>ON DUPLICATE KEY UPDATE</code> 配合唯一索引可以实现幂等去重，重复跑脚本不会产生脏数据。</p>
+<h2 id="九-并发提速"><a class="markdownIt-Anchor" href="#九-并发提速"></a> 九、并发提速</h2>
+<p>IO 密集的爬虫，用线程池或异步都能提速数倍，但<strong>并发越高越容易被封</strong>，务必配合限速：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> aiohttp</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">fetch</span>(<span class="params">session, url</span>):</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> session.get(url, timeout=<span class="number">10</span>) <span class="keyword">as</span> resp:</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">await</span> resp.text()</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">urls</span>):</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> aiohttp.ClientSession() <span class="keyword">as</span> session:</span><br><span class="line">        tasks = [fetch(session, u) <span class="keyword">for</span> u <span class="keyword">in</span> urls]</span><br><span class="line">        <span class="keyword">for</span> coro <span class="keyword">in</span> asyncio.as_completed(tasks):</span><br><span class="line">            html = <span class="keyword">await</span> coro</span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">len</span>(html))</span><br><span class="line"></span><br><span class="line">asyncio.run(main([<span class="string">&quot;https://example.com&quot;</span>] * <span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="十-合规底线"><a class="markdownIt-Anchor" href="#十-合规底线"></a> 十、合规底线</h2>
+<p>写爬虫前我会先问自己四个问题：</p>
+<ol>
+<li><code>robots.txt</code> 允许吗？用户协议禁止抓取吗？</li>
+<li>数据公开吗？涉及个人信息、付费内容、隐私数据的一律不碰。</li>
+<li>频率会不会影响对方服务？加延迟、限制并发，别做压测式请求。</li>
+<li>拿到的数据怎么用？只做学习统计，不二次分发、不商用。</li>
+</ol>
+<p><strong>合规的爬虫是自动化工具，不合规的爬虫是攻击。</strong> 这条线不能模糊。</p>
+<h2 id="十一-踩坑记录"><a class="markdownIt-Anchor" href="#十一-踩坑记录"></a> 十一、踩坑记录</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中文乱码</td>
+<td>编码判断错</td>
+<td><code>resp.encoding = resp.apparent_encoding</code></td>
+</tr>
+<tr>
+<td><code>SSLError</code></td>
+<td>证书校验</td>
+<td>优先补证书；<code>verify=False</code> 只用于本地调试</td>
+</tr>
+<tr>
+<td>选择器取到 <code>None</code></td>
+<td>元素不存在或结构变了</td>
+<td>用 <code>get_text()</code> 前判空，加 <code>try/except</code></td>
+</tr>
+<tr>
+<td>请求一直卡住</td>
+<td>没设超时</td>
+<td>所有请求加 <code>timeout</code></td>
+</tr>
+<tr>
+<td>第二次跑全是重复数据</td>
+<td>没有唯一约束</td>
+<td>建唯一索引 + <code>ON DUPLICATE KEY UPDATE</code></td>
+</tr>
+<tr>
+<td>内存暴涨</td>
+<td>把几十万条结果堆在 list 里</td>
+<td>边爬边写盘，或用生成器</td>
+</tr>
+<tr>
+<td>被 429 封</td>
+<td>并发太高</td>
+<td>降速、加重试、读 <code>Retry-After</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>爬虫的功夫一半在“请求与解析”，一半在“清洗与存储”——后者才决定数据能不能用。工具上我的顺序是：<strong>接口优先 → Requests + BeautifulSoup → 工程化了再上 Scrapy → 页面必须渲染才用浏览器</strong>。下一步打算把抓到的数据接进 Django 做可视化，顺便复习一遍 MySQL 的索引优化。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文链接：</strong><a href="https://utdog.github.io/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/">https://utdog.github.io/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版权：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 许可协议。转载请注明出处！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">赞助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">请作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB&amp;desc=python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="python全栈爬虫">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="python全栈爬虫">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/1.jpg" data-sizes="auto" alt="OCS网课助手的使用" class="lazyload">
+        
+        <a href="/2025/05/15/OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            OCS网课助手的使用
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/37.jpg" data-sizes="auto" alt="python全栈框架" class="lazyload">
+      
+      <a href="/2025/05/05/python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          python全栈框架
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        16.3k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        65分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB"><span class="toc-number">1.</span> <span class="toc-text"> python全栈爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%88%AC%E8%99%AB%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、爬虫的基本流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-requests%E6%8A%8A%E8%AF%B7%E6%B1%82%E5%8F%91%E5%87%BA%E5%8E%BB"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、Requests：把请求发出去</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%A7%A3%E6%9E%90%E4%BB%8E-html-%E9%87%8C%E6%8C%91%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、解析：从 HTML 里挑出数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#beautifulsoup%E6%9C%80%E5%8F%8B%E5%A5%BD"><span class="toc-number">1.3.1.</span> <span class="toc-text"> BeautifulSoup：最友好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%BD%E5%8F%96%E6%AD%A3%E6%96%87lxml-xpath"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 抽取正文：lxml + XPath</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E5%A4%84%E7%90%86%E9%9D%9E-html-%E7%9A%84%E6%96%87%E6%9C%AC"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 正则：处理非 HTML 的文本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E7%BF%BB%E9%A1%B5-%E9%99%90%E9%80%9F%E4%B8%8E%E9%87%8D%E8%AF%95"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、翻页、限速与重试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、动态页面怎么办</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%8F%8D%E7%88%AC%E7%9A%84%E5%B8%B8%E8%A7%81%E5%BD%A2%E5%BC%8F%E4%B8%8E%E6%AD%A3%E7%A1%AE%E5%A4%84%E7%90%86"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、反爬的常见形式与正确处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-scrapy%E6%8A%8A%E7%88%AC%E8%99%AB%E5%B7%A5%E7%A8%8B%E5%8C%96"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、Scrapy：把爬虫工程化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E6%B8%85%E6%B4%97%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、清洗与存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%B9%B6%E5%8F%91%E6%8F%90%E9%80%9F"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、并发提速</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E5%90%88%E8%A7%84%E5%BA%95%E7%BA%BF"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、合规底线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.11.</span> <span class="toc-text"> 十一、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.12.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "python全栈爬虫",
+          url: "https://utdog.github.io/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/",
+          excerpt: "",
+          description: "",
+          stripContent: " python全栈爬虫  前言 爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚哪些事不能做。所有示例都以公开的、允许抓取的页面为例。  一、爬虫的基本流程 graph LR     A[分析目标页面] --&gt; B[发送请求]     B --&gt; C{拿到响应?}     C --&gt;|失败| D[重试 / ",
+          date: "Mon May 05 2025 00:38:11 GMT+0800",
+          updated: "Thu Oct 15 2026 15:23:30 GMT+0800",
+          cover: "/images/42.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

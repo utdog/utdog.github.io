@@ -1,0 +1,1341 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-TW"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本部落格所有文章除特別聲明外，均採用 BY-NC-SA 授權協議。轉載請註明出處！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    python全栈框架 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="python全栈框架  前言 学完语法之后，我一直想知道“一个网站到底是怎么跑起来的”。这篇笔记记录我用 Django 搭第一个 Web 应用的完整过程：从项目结构、路由、模型、视图、模板这条主线走一遍，再补上后台管理、表单校验、用户认证和部署要点。文中拿一个“课程笔记管理”小项目当例子，表结构沿用前面 MySQL 那篇。  一、一次请求发生了什么 graph LR     A[浏览器] --&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python全栈框架">
+<meta property="og:url" content="https://utdog.github.io/zh-TW/2025/05/05/python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="python全栈框架  前言 学完语法之后，我一直想知道“一个网站到底是怎么跑起来的”。这篇笔记记录我用 Django 搭第一个 Web 应用的完整过程：从项目结构、路由、模型、视图、模板这条主线走一遍，再补上后台管理、表单校验、用户认证和部署要点。文中拿一个“课程笔记管理”小项目当例子，表结构沿用前面 MySQL 那篇。  一、一次请求发生了什么 graph LR     A[浏览器] --&gt;">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-05-04T16:37:38.000Z">
+<meta property="article:modified_time" content="2026-10-15T07:23:30.924Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="&lt;twitter:card&gt;">
+<meta name="twitter:image" content="https://utdog.github.io/zh-TW/2025/05/05/python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6/%3Ctwitter:image%3E">
+<meta name="twitter:creator" content="@&lt;twitter:creator&gt;">
+<meta name="twitter:site" content="<twitter:site>">
+<meta property="fb:admins" content="&lt;fb:admin_id&gt;">
+<meta property="fb:app_id" content="&lt;fb:app_id&gt;">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈禱中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/">首頁</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/archives">歸檔</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/about">關於</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/friend">友鏈</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 訂閱" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜尋"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">正體中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" class="selected">正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/05/python全栈框架/';
+            
+              langMap['en'] = '/en/2025/05/05/python全栈框架/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/05/python全栈框架/';
+            
+              langMap['ja'] = '/ja/2025/05/05/python全栈框架/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/37.jpg" alt="python全栈框架">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">python全栈框架</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6"><span class="toc-number">1.</span> <span class="toc-text"> python全栈框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%80%E6%AC%A1%E8%AF%B7%E6%B1%82%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、一次请求发生了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-django-%E8%BF%98%E6%98%AF-flask"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、Django 还是 Flask</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%8E%AF%E5%A2%83%E4%B8%8E%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、环境与项目结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E8%B7%AF%E7%94%B1-urlconf"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、路由 URLconf</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%A8%A1%E5%9E%8B%E5%B1%82%E4%B8%8E-orm"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、模型层与 ORM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%A7%86%E5%9B%BE%E5%B1%82"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、视图层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%A8%A1%E6%9D%BF%E5%B1%82"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、模板层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-admin-%E5%90%8E%E5%8F%B0"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、Admin 后台</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E8%A1%A8%E5%8D%95%E4%B8%8E%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、表单与校验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、用户认证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E4%B8%8E%E5%AA%92%E4%BD%93%E6%96%87%E4%BB%B6"><span class="toc-number">1.11.</span> <span class="toc-text"> 十一、静态文件与媒体文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C-%E9%83%A8%E7%BD%B2%E8%A6%81%E7%82%B9"><span class="toc-number">1.12.</span> <span class="toc-text"> 十二、部署要点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%89-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.13.</span> <span class="toc-text"> 十三、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.14.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-python全栈框架" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-04T16:37:38.000Z" itemprop="datePublished">2025-05-05</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/zh-TW/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="python全栈框架"><a class="markdownIt-Anchor" href="#python全栈框架"></a> python全栈框架</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>学完语法之后，我一直想知道“一个网站到底是怎么跑起来的”。这篇笔记记录我用 Django 搭第一个 Web 应用的完整过程：从项目结构、路由、模型、视图、模板这条主线走一遍，再补上后台管理、表单校验、用户认证和部署要点。文中拿一个“课程笔记管理”小项目当例子，表结构沿用前面 MySQL 那篇。</p>
+<h2 id="一-一次请求发生了什么"><a class="markdownIt-Anchor" href="#一-一次请求发生了什么"></a> 一、一次请求发生了什么</h2>
+<pre class="mermaid">graph LR
+    A[浏览器] -->|HTTP 请求| B[URLconf 路由]
+    B --> C[View 视图]
+    C --> D[Model 模型 / ORM]
+    D --> E[(数据库)]
+    C --> F[Template 模板]
+    F -->|HTTP 响应| A</pre>
+<p>Django 把这个模式叫 <strong>MTV</strong>：Model（数据）、Template（展示）、View（逻辑）。它和 MVC 的区别只是“C 由框架自己当了”——路由分发那部分是 Django 替你做的。</p>
+<h2 id="二-django-还是-flask"><a class="markdownIt-Anchor" href="#二-django-还是-flask"></a> 二、Django 还是 Flask</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Django</th>
+<th>Flask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位</td>
+<td>大而全的框架</td>
+<td>微框架，按需拼装</td>
+</tr>
+<tr>
+<td>自带 ORM</td>
+<td>有</td>
+<td>无（SQLAlchemy 等自选）</td>
+</tr>
+<tr>
+<td>后台管理</td>
+<td>自带 Admin</td>
+<td>需要自己写或装扩展</td>
+</tr>
+<tr>
+<td>用户认证</td>
+<td>自带</td>
+<td>需要 Flask-Login 等</td>
+</tr>
+<tr>
+<td>上手速度</td>
+<td>慢一点，但省心</td>
+<td>很快，但选型要自己拿主意</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>内容型站点、管理系统</td>
+<td>小型 API、微服务</td>
+</tr>
+</tbody>
+</table>
+<p>结论：<strong>要做完整的业务系统选 Django，只写一个接口服务选 Flask。</strong></p>
+<h2 id="三-环境与项目结构"><a class="markdownIt-Anchor" href="#三-环境与项目结构"></a> 三、环境与项目结构</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">python -m venv venv</span><br><span class="line">venv\Scripts\activate          <span class="comment"># Windows</span></span><br><span class="line">pip install django</span><br><span class="line"></span><br><span class="line">django-admin startproject config .    <span class="comment"># 项目配置叫 config，注意最后那个点</span></span><br><span class="line">python manage.py startapp notes       <span class="comment"># 建一个应用</span></span><br><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysite/</span><br><span class="line">├── config/            # 项目级配置</span><br><span class="line">│   ├── settings.py    # 全局设置</span><br><span class="line">│   ├── urls.py        # 根路由</span><br><span class="line">│   └── wsgi.py        # 部署入口</span><br><span class="line">├── notes/             # 业务应用</span><br><span class="line">│   ├── models.py      # 数据模型</span><br><span class="line">│   ├── views.py       # 视图</span><br><span class="line">│   ├── urls.py        # 应用路由</span><br><span class="line">│   ├── admin.py       # 后台注册</span><br><span class="line">│   └── templates/     # 模板</span><br><span class="line">├── media/             # 用户上传文件</span><br><span class="line">├── static/            # 静态资源</span><br><span class="line">├── manage.py</span><br><span class="line">└── requirements.txt</span><br></pre></td></tr></table></figure>
+<p>一个项目可以包含多个应用，<strong>应用之间不要互相 import 模型</strong>，需要共用就抽成第三个应用。</p>
+<h2 id="四-路由-urlconf"><a class="markdownIt-Anchor" href="#四-路由-urlconf"></a> 四、路由 URLconf</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config/urls.py</span></span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> path, include</span><br><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"><span class="keyword">from</span> django.conf.urls.static <span class="keyword">import</span> static</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">&quot;admin/&quot;</span>, admin.site.urls),</span><br><span class="line">    path(<span class="string">&quot;notes/&quot;</span>, include(<span class="string">&quot;notes.urls&quot;</span>)),</span><br><span class="line">] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># notes/urls.py</span></span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> path</span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">app_name = <span class="string">&quot;notes&quot;</span></span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">&quot;&quot;</span>, views.note_list, name=<span class="string">&quot;list&quot;</span>),</span><br><span class="line">    path(<span class="string">&quot;&lt;int:pk&gt;/&quot;</span>, views.note_detail, name=<span class="string">&quot;detail&quot;</span>),</span><br><span class="line">    path(<span class="string">&quot;new/&quot;</span>, views.NoteCreate.as_view(), name=<span class="string">&quot;create&quot;</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p><code>name</code> 是给模板和代码用的“反向解析”别名，模板里写：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% raw %&#125;<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;% url &#x27;notes:detail&#x27; note.pk %&#125;&quot;</span>&gt;</span>&#123;&#123; note.title &#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span>&#123;% endraw %&#125;</span><br></pre></td></tr></table></figure>
+<p>路径参数写在尖括号里，<code>&lt;int:pk&gt;</code> 表示只接受整数，类型不匹配直接 404。</p>
+<h2 id="五-模型层与-orm"><a class="markdownIt-Anchor" href="#五-模型层与-orm"></a> 五、模型层与 ORM</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># notes/models.py</span></span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Category</span>(models.Model):</span><br><span class="line">    name = models.CharField(<span class="string">&quot;分类名&quot;</span>, max_length=<span class="number">30</span>, unique=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        verbose_name_plural = <span class="string">&quot;分类&quot;</span></span><br><span class="line">        ordering = [<span class="string">&quot;name&quot;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.name</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Note</span>(models.Model):</span><br><span class="line">    title = models.CharField(<span class="string">&quot;标题&quot;</span>, max_length=<span class="number">100</span>)</span><br><span class="line">    body = models.TextField(<span class="string">&quot;正文&quot;</span>)</span><br><span class="line">    category = models.ForeignKey(Category, on_delete=models.SET_NULL,</span><br><span class="line">                                 null=<span class="literal">True</span>, related_name=<span class="string">&quot;notes&quot;</span>)</span><br><span class="line">    author = models.ForeignKey(User, on_delete=models.CASCADE)</span><br><span class="line">    created = models.DateTimeField(auto_now_add=<span class="literal">True</span>)</span><br><span class="line">    updated = models.DateTimeField(auto_now=<span class="literal">True</span>)</span><br><span class="line">    published = models.BooleanField(<span class="string">&quot;已发布&quot;</span>, default=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        ordering = [<span class="string">&quot;-created&quot;</span>]        <span class="comment"># 新的在前</span></span><br><span class="line">        indexes = [models.Index(fields=[<span class="string">&quot;-created&quot;</span>])]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.title</span><br></pre></td></tr></table></figure>
+<p>改完模型一定要生成并执行迁移：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python manage.py makemigrations</span><br><span class="line">python manage.py migrate</span><br><span class="line">python manage.py shell        <span class="comment"># 进交互式终端试 ORM</span></span><br></pre></td></tr></table></figure>
+<p>常用查询，注意 <strong>QuerySet 是惰性的</strong>，不遍历就不查库：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Note.objects.<span class="built_in">all</span>()[:<span class="number">5</span>]                          <span class="comment"># 切片，不会查全部</span></span><br><span class="line">Note.objects.<span class="built_in">filter</span>(published=<span class="literal">True</span>, category__name=<span class="string">&quot;Python&quot;</span>)</span><br><span class="line">Note.objects.exclude(title__startswith=<span class="string">&quot;草稿&quot;</span>)</span><br><span class="line">Note.objects.get(pk=<span class="number">1</span>)                          <span class="comment"># 查不到会抛 DoesNotExist</span></span><br><span class="line">Note.objects.select_related(<span class="string">&quot;author&quot;</span>, <span class="string">&quot;category&quot;</span>)  <span class="comment"># 外键一次查完，避免 N+1</span></span><br><span class="line">Note.objects.values(<span class="string">&quot;title&quot;</span>, <span class="string">&quot;created&quot;</span>)         <span class="comment"># 返回字典，不建对象</span></span><br><span class="line">Note.objects.annotate(num=Count(<span class="string">&quot;id&quot;</span>))          <span class="comment"># 聚合</span></span><br></pre></td></tr></table></figure>
+<p>两个必须养成的习惯：</p>
+<ol>
+<li>列表页用 <code>select_related</code> / <code>prefetch_related</code>，否则循环里每次访问外键都会多查一次库（N+1 问题）；</li>
+<li>不要用 <code>len(qs)</code> 判空，用 <code>qs.exists()</code>。</li>
+</ol>
+<h2 id="六-视图层"><a class="markdownIt-Anchor" href="#六-视图层"></a> 六、视图层</h2>
+<p>函数视图最直观：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># notes/views.py</span></span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render, get_object_or_404</span><br><span class="line"><span class="keyword">from</span> django.core.paginator <span class="keyword">import</span> Paginator</span><br><span class="line"><span class="keyword">from</span> django.contrib.auth.decorators <span class="keyword">import</span> login_required</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> Note</span><br><span class="line"></span><br><span class="line"><span class="meta">@login_required</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">note_list</span>(<span class="params">request</span>):</span><br><span class="line">    qs = Note.objects.<span class="built_in">filter</span>(published=<span class="literal">True</span>).select_related(<span class="string">&quot;author&quot;</span>, <span class="string">&quot;category&quot;</span>)</span><br><span class="line">    keyword = request.GET.get(<span class="string">&quot;q&quot;</span>, <span class="string">&quot;&quot;</span>).strip()</span><br><span class="line">    <span class="keyword">if</span> keyword:</span><br><span class="line">        qs = qs.<span class="built_in">filter</span>(title__icontains=keyword)</span><br><span class="line"></span><br><span class="line">    paginator = Paginator(qs, <span class="number">10</span>)</span><br><span class="line">    page = paginator.get_page(request.GET.get(<span class="string">&quot;page&quot;</span>))</span><br><span class="line">    <span class="keyword">return</span> render(request, <span class="string">&quot;notes/list.html&quot;</span>, &#123;<span class="string">&quot;page&quot;</span>: page, <span class="string">&quot;keyword&quot;</span>: keyword&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">note_detail</span>(<span class="params">request, pk</span>):</span><br><span class="line">    note = get_object_or_404(Note, pk=pk, published=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> render(request, <span class="string">&quot;notes/detail.html&quot;</span>, &#123;<span class="string">&quot;note&quot;</span>: note&#125;)</span><br></pre></td></tr></table></figure>
+<p>类视图用继承换掉了分支判断：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.views.generic <span class="keyword">import</span> ListView, CreateView</span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> reverse_lazy</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NoteCreate</span>(<span class="title class_ inherited__">CreateView</span>):</span><br><span class="line">    model = Note</span><br><span class="line">    fields = [<span class="string">&quot;title&quot;</span>, <span class="string">&quot;body&quot;</span>, <span class="string">&quot;category&quot;</span>]</span><br><span class="line">    success_url = reverse_lazy(<span class="string">&quot;notes:list&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">form_valid</span>(<span class="params">self, form</span>):</span><br><span class="line">        form.instance.author = <span class="variable language_">self</span>.request.user   <span class="comment"># 作者自动填当前用户</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>().form_valid(form)</span><br></pre></td></tr></table></figure>
+<h2 id="七-模板层"><a class="markdownIt-Anchor" href="#七-模板层"></a> 七、模板层</h2>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;% raw %&#125;&#123;% extends &quot;base.html&quot; %&#125;</span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line">  <span class="tag">&lt;<span class="name">h2</span>&gt;</span>&#123;&#123; category.name &#125;&#125; 共 &#123;&#123; page.paginator.count &#125;&#125; 篇<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">  &#123;% for note in page %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">article</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">h3</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&#123;% url &#x27;notes:detail&#x27; note.pk %&#125;&quot;</span>&gt;</span>&#123;&#123; note.title &#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;&#123; note.body|truncatechars:80 &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">small</span>&gt;</span>&#123;&#123; note.created|date:&quot;Y-m-d&quot; &#125;&#125; · &#123;&#123; note.author.username &#125;&#125;<span class="tag">&lt;/<span class="name">small</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">article</span>&gt;</span></span><br><span class="line">  &#123;% empty %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>还没有笔记。<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  &#123;% endfor %&#125;</span><br><span class="line"></span><br><span class="line">  &#123;% if page.has_next %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;?page=&#123;&#123; page.next_page_number &#125;&#125;&quot;</span>&gt;</span>下一页<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">  &#123;% endif %&#125;</span><br><span class="line">&#123;% endblock %&#125;&#123;% endraw %&#125;</span><br></pre></td></tr></table></figure>
+<p>三个高频过滤器：<code>truncatechars</code>（截断）、<code>date</code>（格式化时间）、<code>safe</code>（不转义，慎用）。变量默认是转义的，这是防 XSS 的第一道防线，<strong>不要随手加 <code>|safe</code></strong>。</p>
+<h2 id="八-admin-后台"><a class="markdownIt-Anchor" href="#八-admin-后台"></a> 八、Admin 后台</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> Note, Category</span><br><span class="line"></span><br><span class="line"><span class="meta">@admin.register(<span class="params">Note</span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NoteAdmin</span>(admin.ModelAdmin):</span><br><span class="line">    list_display = (<span class="string">&quot;title&quot;</span>, <span class="string">&quot;category&quot;</span>, <span class="string">&quot;author&quot;</span>, <span class="string">&quot;published&quot;</span>, <span class="string">&quot;created&quot;</span>)</span><br><span class="line">    list_filter = (<span class="string">&quot;published&quot;</span>, <span class="string">&quot;category&quot;</span>)</span><br><span class="line">    search_fields = (<span class="string">&quot;title&quot;</span>, <span class="string">&quot;body&quot;</span>)</span><br><span class="line">    date_hierarchy = <span class="string">&quot;created&quot;</span></span><br><span class="line">    raw_id_fields = (<span class="string">&quot;author&quot;</span>,)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py createsuperuser</span><br></pre></td></tr></table></figure>
+<p>几十行代码换来一个能搜索、筛选、分页的运营后台，这是 Django 最划算的部分。</p>
+<h2 id="九-表单与校验"><a class="markdownIt-Anchor" href="#九-表单与校验"></a> 九、表单与校验</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django <span class="keyword">import</span> forms</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> Note</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NoteForm</span>(forms.ModelForm):</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        model = Note</span><br><span class="line">        fields = [<span class="string">&quot;title&quot;</span>, <span class="string">&quot;body&quot;</span>, <span class="string">&quot;category&quot;</span>]</span><br><span class="line">        widgets = &#123;<span class="string">&quot;body&quot;</span>: forms.Textarea(attrs=&#123;<span class="string">&quot;rows&quot;</span>: <span class="number">12</span>&#125;)&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">clean_title</span>(<span class="params">self</span>):</span><br><span class="line">        title = <span class="variable language_">self</span>.cleaned_data[<span class="string">&quot;title&quot;</span>]</span><br><span class="line">        <span class="keyword">if</span> Note.objects.<span class="built_in">filter</span>(title=title).exists():</span><br><span class="line">            <span class="keyword">raise</span> forms.ValidationError(<span class="string">&quot;这个标题已经用过了&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> title</span><br></pre></td></tr></table></figure>
+<p>视图里 <code>form.is_valid()</code> 之后用 <code>form.save()</code> 落库，模板里 <code>&#123;&#123; form.as_p &#125;&#125;</code> 就能渲染，错误信息自动带出来。<strong>校验永远放在服务端</strong>，前端的限制只是体验优化。</p>
+<h2 id="十-用户认证"><a class="markdownIt-Anchor" href="#十-用户认证"></a> 十、用户认证</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.auth <span class="keyword">import</span> login, logout, authenticate</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">do_login</span>(<span class="params">request</span>):</span><br><span class="line">    user = authenticate(request,</span><br><span class="line">                        username=request.POST[<span class="string">&quot;username&quot;</span>],</span><br><span class="line">                        password=request.POST[<span class="string">&quot;password&quot;</span>])</span><br><span class="line">    <span class="keyword">if</span> user:</span><br><span class="line">        login(request, user)</span><br></pre></td></tr></table></figure>
+<p>Django 自带的 Session 认证 + <code>@login_required</code> 已经覆盖大部分场景；要按角色控权就用 <code>@permission_required</code> 或自定义装饰器。密码在数据库里是 PBKDF2 哈希，别自己造轮子。</p>
+<h2 id="十一-静态文件与媒体文件"><a class="markdownIt-Anchor" href="#十一-静态文件与媒体文件"></a> 十一、静态文件与媒体文件</h2>
+<ul>
+<li><code>STATIC_URL</code>/<code>STATICFILES_DIRS</code>：CSS、JS、图片这类开发时就有的文件，部署前 <code>python manage.py collectstatic</code> 汇总。</li>
+<li><code>MEDIA_URL</code>/<code>MEDIA_ROOT</code>：用户上传的文件，需要单独配 Nginx 或对象存储。</li>
+<li>生产环境 <code>DEBUG = False</code> 时 Django 不再帮你发静态文件，一定要交给 Nginx。</li>
+</ul>
+<h2 id="十二-部署要点"><a class="markdownIt-Anchor" href="#十二-部署要点"></a> 十二、部署要点</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install gunicorn whitenoise</span><br><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># settings.py 上线前必查</span></span><br><span class="line">DEBUG = <span class="literal">False</span></span><br><span class="line">ALLOWED_HOSTS = [<span class="string">&quot;your-domain.com&quot;</span>, <span class="string">&quot;127.0.0.1&quot;</span>]</span><br><span class="line">SECRET_KEY = os.environ[<span class="string">&quot;DJANGO_SECRET_KEY&quot;</span>]     <span class="comment"># 从环境变量读，别写进仓库</span></span><br><span class="line">DATABASES = &#123;<span class="string">&quot;default&quot;</span>: &#123;<span class="string">&quot;ENGINE&quot;</span>: <span class="string">&quot;django.db.backends.mysql&quot;</span>, ...&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>链路是 <code>Nginx（静态文件 + 反向代理）→ Gunicorn（跑 WSGI 应用）→ Django</code>。别忘了 <code>python manage.py check --deploy</code>，它会告诉你哪些安全项没配。</p>
+<h2 id="十三-踩坑记录"><a class="markdownIt-Anchor" href="#十三-踩坑记录"></a> 十三、踩坑记录</h2>
+<table>
+<thead>
+<tr>
+<th>报错</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>no such table: notes_note</code></td>
+<td>改完模型没迁移</td>
+<td><code>makemigrations</code> + <code>migrate</code></td>
+</tr>
+<tr>
+<td><code>TemplateDoesNotExist</code></td>
+<td>模板目录没登记</td>
+<td><code>settings.TEMPLATES</code> 里加 <code>DIRS</code>，或放对应用目录下</td>
+</tr>
+<tr>
+<td><code>CSRF verification failed</code></td>
+<td>表单少了 CSRF token</td>
+<td>表单里加 <code>{% csrf_token %}</code></td>
+</tr>
+<tr>
+<td><code>Specifying a namespace without app_name</code></td>
+<td><code>include</code> 时带了 namespace</td>
+<td>在应用 <code>urls.py</code> 里写 <code>app_name = &quot;notes&quot;</code></td>
+</tr>
+<tr>
+<td><code>django.db.utils.OperationalError: (2002)</code></td>
+<td>数据库连不上</td>
+<td>检查服务是否启动、端口和账号密码</td>
+</tr>
+<tr>
+<td>静态文件 404（生产）</td>
+<td>DEBUG=False 且没配 Nginx</td>
+<td><code>collectstatic</code> + Nginx 指向 <code>STATIC_ROOT</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>Django 的学习曲线主要卡在两处：一是 MTV 的分工，二是 ORM 的惰性求值。把“路由 → 视图 → 模型 → 模板”这条线走通一遍，剩下的都是查文档。下一步我打算把这个笔记项目加上分类筛选和全文搜索，再试着用 Docker 部署一次。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文連結：</strong><a href="https://utdog.github.io/zh-TW/2025/05/05/python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6/">https://utdog.github.io/zh-TW/2025/05/05/python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版權：</strong>本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 授權協議。轉載請註明出處！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">贊助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">請作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6&amp;desc=python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="python全栈框架">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="python全栈框架">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/python/" rel="tag">python</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/42.jpg" data-sizes="auto" alt="python全栈爬虫" class="lazyload">
+        
+        <a href="/zh-TW/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            python全栈爬虫
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/49.jpg" data-sizes="auto" alt="MySQL" class="lazyload">
+      
+      <a href="/zh-TW/2025/05/05/MySQL/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          MySQL
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基於&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        16.3k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        65分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6"><span class="toc-number">1.</span> <span class="toc-text"> python全栈框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%80%E6%AC%A1%E8%AF%B7%E6%B1%82%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、一次请求发生了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-django-%E8%BF%98%E6%98%AF-flask"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、Django 还是 Flask</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%8E%AF%E5%A2%83%E4%B8%8E%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、环境与项目结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E8%B7%AF%E7%94%B1-urlconf"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、路由 URLconf</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%A8%A1%E5%9E%8B%E5%B1%82%E4%B8%8E-orm"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、模型层与 ORM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%A7%86%E5%9B%BE%E5%B1%82"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、视图层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%A8%A1%E6%9D%BF%E5%B1%82"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、模板层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-admin-%E5%90%8E%E5%8F%B0"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、Admin 后台</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E8%A1%A8%E5%8D%95%E4%B8%8E%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、表单与校验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、用户认证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E4%B8%8E%E5%AA%92%E4%BD%93%E6%96%87%E4%BB%B6"><span class="toc-number">1.11.</span> <span class="toc-text"> 十一、静态文件与媒体文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C-%E9%83%A8%E7%BD%B2%E8%A6%81%E7%82%B9"><span class="toc-number">1.12.</span> <span class="toc-text"> 十二、部署要点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%89-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.13.</span> <span class="toc-text"> 十三、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.14.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "python全栈框架",
+          url: "https://utdog.github.io/2025/05/05/python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6/",
+          excerpt: "",
+          description: "",
+          stripContent: " python全栈框架  前言 学完语法之后，我一直想知道“一个网站到底是怎么跑起来的”。这篇笔记记录我用 Django 搭第一个 Web 应用的完整过程：从项目结构、路由、模型、视图、模板这条主线走一遍，再补上后台管理、表单校验、用户认证和部署要点。文中拿一个“课程笔记管理”小项目当例子，表结构沿用前面 MySQL 那篇。  一、一次请求发生了什么 graph LR     A[浏览器] --&gt;|HTTP 请求| B[URLconf 路由]     B --&gt; C[View 视图]     C",
+          date: "Mon May 05 2025 00:37:38 GMT+0800",
+          updated: "Thu Oct 15 2026 15:23:30 GMT+0800",
+          cover: "/images/37.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

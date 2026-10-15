@@ -1,0 +1,1198 @@
+
+  <!DOCTYPE html>
+  <html lang="ja"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本ブログのすべての文書は、特に指定されていない限り、BY-NC-SA ライセンスに従っています。引用の際は出典を明記してください！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    什么是编程语言？ |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="什么是编程语言？ 编程来源于生活，生活例子可以很好的帮助我们理解编程思路。 编程源于生活：我们常用生活中的例子来帮助理解编程思路。简单来说，编程就是用代码指挥计算机做事，而编程语言的本质就是一种“语言”——沟通交流的工具。自然语言（如汉语、英语）用于人与人之间的交流；而编程语言（如 Python、Java、C）则是人和计算机之间沟通的桥梁。程序员通过编程语言，以计算机能够理解的方式下达命令；同样">
+<meta property="og:type" content="article">
+<meta property="og:title" content="什么是编程语言？">
+<meta property="og:url" content="https://utdog.github.io/ja/2025/05/03/%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="什么是编程语言？ 编程来源于生活，生活例子可以很好的帮助我们理解编程思路。 编程源于生活：我们常用生活中的例子来帮助理解编程思路。简单来说，编程就是用代码指挥计算机做事，而编程语言的本质就是一种“语言”——沟通交流的工具。自然语言（如汉语、英语）用于人与人之间的交流；而编程语言（如 Python、Java、C）则是人和计算机之间沟通的桥梁。程序员通过编程语言，以计算机能够理解的方式下达命令；同样">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2025-05-03T15:53:04.000Z">
+<meta property="article:modified_time" content="2026-10-15T07:24:29.187Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="note">
+<meta name="twitter:card" content="&lt;twitter:card&gt;">
+<meta name="twitter:image" content="https://utdog.github.io/ja/2025/05/03/%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F/%3Ctwitter:image%3E">
+<meta name="twitter:creator" content="@&lt;twitter:creator&gt;">
+<meta name="twitter:site" content="<twitter:site>">
+<meta property="fb:admins" content="&lt;fb:admin_id&gt;">
+<meta property="fb:app_id" content="&lt;fb:app_id&gt;">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/">ホーム</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/archives">アーカイブ</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/about">プロフィール</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/friend">フレンド</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="検索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" class="selected">日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/03/什么是编程语言？/';
+            
+              langMap['en'] = '/en/2025/05/03/什么是编程语言？/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/03/什么是编程语言？/';
+            
+              langMap['ja'] = '/ja/2025/05/03/什么是编程语言？/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/banner.png" alt="什么是编程语言？">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">什么是编程语言？</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 什么是编程语言？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%8F%91%E5%B1%95%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text"> 编程语言发展史</span></a></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-什么是编程语言？" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-03T15:53:04.000Z" itemprop="datePublished">2025-05-03</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/ja/categories/talk/" data-aos="zoom-in">talk</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="什么是编程语言"><a class="markdownIt-Anchor" href="#什么是编程语言"></a> 什么是编程语言？</h2>
+<p>编程来源于生活，生活例子可以很好的帮助我们理解编程思路。</p>
+<p>编程源于生活：我们常用生活中的例子来帮助理解编程思路。简单来说，编程就是用代码指挥计算机做事，而编程语言的本质就是一种“语言”——沟通交流的工具。自然语言（如汉语、英语）用于人与人之间的交流；而编程语言（如 Python、Java、C）则是人和计算机之间沟通的桥梁。程序员通过编程语言，以计算机能够理解的方式下达命令；同样，计算机也只能通过这种“专用语言”来回应。对于初学者来说，Python 以其简洁易懂的语法，极其容易上手，是入门编程的理想选择。</p>
+<h2 id="编程语言发展史"><a class="markdownIt-Anchor" href="#编程语言发展史"></a> 编程语言发展史</h2>
+<p>机器语言是最古老的编程语言，以二进制指令（0 和 1）形式存在，也称为机器码，它可以被计算机直接读取和执行，但对程序员而言既难编写又难阅读。汇编语言是在机器语言之上的“升级版”，使用助记符（例如 MOV、ADD 等易记的单词）来表示机器指令，既保留了对硬件的精细控制，又方便程序员编写和维护。高级语言（如 Python）则更贴近人类的思维和语言习惯，编程更像是在用自然语言表达逻辑：比如 大牛 要对 二牛 说“年轻人早点睡觉”，用 Python 就可以写成<code>print('年轻人早点睡')</code>其中 print 相当于“说”的意思。高级语言通过这种方式，将生活中的思路直接映射为代码，极大地降低了编程门槛。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>著者: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>パーマリンク: </strong><a href="https://utdog.github.io/ja/2025/05/03/%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F/">https://utdog.github.io/ja/2025/05/03/%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>ライセンス: </strong>本ブログのすべての文書は、特に指定されていない限り、<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> ライセンスに従っています。引用の際は出典を明記してください！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">スポンサー</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">コーヒーを買ってください</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F&amp;desc=%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="什么是编程语言？">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="什么是编程语言？">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/note/" rel="tag">note</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/40.jpg" data-sizes="auto" alt="python高级编程" class="lazyload">
+        
+        <a href="/ja/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/"></a>
+        <div class="article-nav-caption">次の記事</div>
+        <h3 class="article-nav-title">
+          
+            python高级编程
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/36.jpg" data-sizes="auto" alt="python基础语法" class="lazyload">
+      
+      <a href="/ja/2025/05/03/python%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/"></a>
+      <div class="article-nav-caption">前の記事</div>
+      <h3 class="article-nav-title">
+        
+          python基础语法
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        16.3k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        65分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text"> 什么是编程语言？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%8F%91%E5%B1%95%E5%8F%B2"><span class="toc-number">2.</span> <span class="toc-text"> 编程语言发展史</span></a></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "什么是编程语言？",
+          url: "https://utdog.github.io/2025/05/03/%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F/",
+          excerpt: "",
+          description: "",
+          stripContent: " 什么是编程语言？ 编程来源于生活，生活例子可以很好的帮助我们理解编程思路。 编程源于生活：我们常用生活中的例子来帮助理解编程思路。简单来说，编程就是用代码指挥计算机做事，而编程语言的本质就是一种“语言”——沟通交流的工具。自然语言（如汉语、英语）用于人与人之间的交流；而编程语言（如 Python、Java、C）则是人和计算机之间沟通的桥梁。程序员通过编程语言，以计算机能够理解的方式下达命令；同样，计算机也只能通过这种“专用语言”来回应。对于初学者来说，Python 以其简洁易懂的语法，极其容易",
+          date: "Sat May 03 2025 23:53:04 GMT+0800",
+          updated: "Thu Oct 15 2026 15:24:29 GMT+0800",
+          cover: "/images/banner.png",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

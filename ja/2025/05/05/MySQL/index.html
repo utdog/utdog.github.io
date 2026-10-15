@@ -1,0 +1,1362 @@
+
+  <!DOCTYPE html>
+  <html lang="ja"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本ブログのすべての文書は、特に指定されていない限り、BY-NC-SA ライセンスに従っています。引用の際は出典を明記してください！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    MySQL |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="MySQL  前言 这篇笔记整理我学习 MySQL 的完整路径：从服务端的安装与连接，到库表设计、数据类型的选择，再到增删改查、约束与索引，最后用 Python 把数据库接进项目里。全文围绕一个“学生成绩管理”的小场景展开，一共三张表：学生表 student、课程表 course、成绩表 score。写下来既是复习，也方便以后直接抄。  一、MySQL 在项目里的位置 graph LR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL">
+<meta property="og:url" content="https://utdog.github.io/ja/2025/05/05/MySQL/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="MySQL  前言 这篇笔记整理我学习 MySQL 的完整路径：从服务端的安装与连接，到库表设计、数据类型的选择，再到增删改查、约束与索引，最后用 Python 把数据库接进项目里。全文围绕一个“学生成绩管理”的小场景展开，一共三张表：学生表 student、课程表 course、成绩表 score。写下来既是复习，也方便以后直接抄。  一、MySQL 在项目里的位置 graph LR">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2025-05-04T16:37:03.000Z">
+<meta property="article:modified_time" content="2026-10-15T07:23:30.921Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="SQL">
+<meta name="twitter:card" content="&lt;twitter:card&gt;">
+<meta name="twitter:image" content="https://utdog.github.io/ja/2025/05/05/MySQL/%3Ctwitter:image%3E">
+<meta name="twitter:creator" content="@&lt;twitter:creator&gt;">
+<meta name="twitter:site" content="<twitter:site>">
+<meta property="fb:admins" content="&lt;fb:admin_id&gt;">
+<meta property="fb:app_id" content="&lt;fb:app_id&gt;">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/">ホーム</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/archives">アーカイブ</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/about">プロフィール</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/friend">フレンド</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="検索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" class="selected">日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/05/MySQL/';
+            
+              langMap['en'] = '/en/2025/05/05/MySQL/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/05/MySQL/';
+            
+              langMap['ja'] = '/ja/2025/05/05/MySQL/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/49.jpg" alt="MySQL">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">MySQL</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql"><span class="toc-number">1.</span> <span class="toc-text"> MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-mysql-%E5%9C%A8%E9%A1%B9%E7%9B%AE%E9%87%8C%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、MySQL 在项目里的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%AE%89%E8%A3%85%E4%B8%8E%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、安装与连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%BA%93%E4%B8%8E%E8%A1%A8%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9ddl"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、库与表的增删改（DDL）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、数据类型怎么选</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5dml"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、增删改查（DML）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E7%BA%A6%E6%9D%9F%E4%B8%8E%E7%B4%A2%E5%BC%95"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、约束与索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、多表查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-python-%E6%93%8D%E4%BD%9C-mysqlpymysql"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、Python 操作 MySQL（PyMySQL）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.11.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-MySQL" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-04T16:37:03.000Z" itemprop="datePublished">2025-05-05</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/ja/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="mysql"><a class="markdownIt-Anchor" href="#mysql"></a> MySQL</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>这篇笔记整理我学习 MySQL 的完整路径：从服务端的安装与连接，到库表设计、数据类型的选择，再到增删改查、约束与索引，最后用 Python 把数据库接进项目里。全文围绕一个“学生成绩管理”的小场景展开，一共三张表：学生表 <code>student</code>、课程表 <code>course</code>、成绩表 <code>score</code>。写下来既是复习，也方便以后直接抄。</p>
+<h2 id="一-mysql-在项目里的位置"><a class="markdownIt-Anchor" href="#一-mysql-在项目里的位置"></a> 一、MySQL 在项目里的位置</h2>
+<pre class="mermaid">graph LR
+    A[Navicat / 命令行 / PyMySQL] --> B[MySQL 服务端]
+    B --> C[(InnoDB 数据文件)]</pre>
+<ul>
+<li><strong>客户端</strong>：负责发命令。图形化用 Navicat Premium，命令行用 <code>mysql</code>，代码里用 PyMySQL 这类驱动。</li>
+<li><strong>服务端</strong>：真正干活的地方，监听 3306 端口，负责解析 SQL、加锁、事务和写磁盘。</li>
+<li><strong>存储引擎</strong>：MySQL 8 默认 InnoDB，支持事务、行级锁、外键；另一常见的 MyISAM 不支持事务，现在基本不用。</li>
+</ul>
+<p>记住一句话：<strong>表设计得好不好，决定了后面 80% 的痛苦。</strong></p>
+<h2 id="二-安装与连接"><a class="markdownIt-Anchor" href="#二-安装与连接"></a> 二、安装与连接</h2>
+<p>安装时选 <code>Developer Default</code> 或 <code>Server only</code> 都可以，关键是记住 root 密码，并勾选“把 MySQL 加入环境变量”（否则命令行里得写完整路径）。</p>
+<p>连接方式有三种：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 命令行</span></span><br><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 2. Navicat：新建连接 -&gt; MySQL -&gt; 主机 localhost、端口 3306、用户名 root、密码</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 3. 代码</span></span><br><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line">conn = pymysql.connect(host=<span class="string">&quot;localhost&quot;</span>, port=<span class="number">3306</span>,</span><br><span class="line">                       user=<span class="string">&quot;root&quot;</span>, password=<span class="string">&quot;你的密码&quot;</span>,</span><br><span class="line">                       charset=<span class="string">&quot;utf8mb4&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>编码一定要用 <code>utf8mb4</code>，<code>utf8</code> 在 MySQL 里是“阉割版”，存不了 emoji 和部分生僻字。</p>
+<h2 id="三-库与表的增删改ddl"><a class="markdownIt-Anchor" href="#三-库与表的增删改ddl"></a> 三、库与表的增删改（DDL）</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 建库：指定字符集和排序规则，避免以后乱码</span></span><br><span class="line"><span class="keyword">CREATE</span> DATABASE school <span class="keyword">DEFAULT</span> CHARSET utf8mb4 <span class="keyword">COLLATE</span> utf8mb4_general_ci;</span><br><span class="line"></span><br><span class="line">USE school;</span><br><span class="line"><span class="keyword">SHOW</span> DATABASES;</span><br><span class="line"><span class="keyword">SHOW</span> TABLES;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 建表</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> student (</span><br><span class="line">    id       <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span> AUTO_INCREMENT,</span><br><span class="line">    name     <span class="type">VARCHAR</span>(<span class="number">20</span>)  <span class="keyword">NOT NULL</span>,</span><br><span class="line">    gender   ENUM(<span class="string">&#x27;男&#x27;</span>,<span class="string">&#x27;女&#x27;</span>) <span class="keyword">DEFAULT</span> <span class="string">&#x27;男&#x27;</span>,</span><br><span class="line">    age      TINYINT UNSIGNED,</span><br><span class="line">    phone    <span class="type">CHAR</span>(<span class="number">11</span>)     <span class="keyword">UNIQUE</span>,</span><br><span class="line">    class_id <span class="type">INT</span>,</span><br><span class="line">    created  DATETIME     <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 改表结构：加列、改类型、改列名</span></span><br><span class="line"><span class="keyword">ALTER TABLE</span> student <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> email <span class="type">VARCHAR</span>(<span class="number">50</span>);</span><br><span class="line"><span class="keyword">ALTER TABLE</span> student MODIFY <span class="keyword">COLUMN</span> age <span class="type">SMALLINT</span>;</span><br><span class="line"><span class="keyword">ALTER TABLE</span> student CHANGE <span class="keyword">COLUMN</span> phone tel <span class="type">CHAR</span>(<span class="number">11</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删表 / 删库（生产环境请三思）</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> student;</span><br></pre></td></tr></table></figure>
+<p><code>DESC student;</code> 随时可以看表结构，<code>SHOW CREATE TABLE student;</code> 能看到完整的建表语句。</p>
+<h2 id="四-数据类型怎么选"><a class="markdownIt-Anchor" href="#四-数据类型怎么选"></a> 四、数据类型怎么选</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>占用</th>
+<th>适用场景</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TINYINT</code></td>
+<td>1 字节</td>
+<td>年龄、状态值</td>
+<td>无符号范围 0-255</td>
+</tr>
+<tr>
+<td><code>INT</code></td>
+<td>4 字节</td>
+<td>主键、外键、计数</td>
+<td>主键常用 <code>INT UNSIGNED AUTO_INCREMENT</code></td>
+</tr>
+<tr>
+<td><code>BIGINT</code></td>
+<td>8 字节</td>
+<td>大整数、雪花 ID</td>
+<td>订单号这类别用 INT</td>
+</tr>
+<tr>
+<td><code>DECIMAL(m,d)</code></td>
+<td>变长</td>
+<td>金额、成绩</td>
+<td>精确小数，别用 FLOAT 存钱</td>
+</tr>
+<tr>
+<td><code>VARCHAR(n)</code></td>
+<td>变长</td>
+<td>姓名、标题</td>
+<td>按实际最大长度给，不要一律 255</td>
+</tr>
+<tr>
+<td><code>CHAR(n)</code></td>
+<td>定长</td>
+<td>手机号、MD5</td>
+<td>定长查询更快</td>
+</tr>
+<tr>
+<td><code>TEXT</code></td>
+<td>变长</td>
+<td>文章正文</td>
+<td>不能设默认值</td>
+</tr>
+<tr>
+<td><code>DATETIME</code> / <code>TIMESTAMP</code></td>
+<td>8/4 字节</td>
+<td>时间</td>
+<td><code>TIMESTAMP</code> 会自动转时区，2038 年溢出</td>
+</tr>
+<tr>
+<td><code>ENUM</code></td>
+<td>1-2 字节</td>
+<td>性别、状态</td>
+<td>改动枚举值要改表结构</td>
+</tr>
+</tbody>
+</table>
+<p>原则：<strong>够用就好</strong>。字段给得越小，一个数据页能放的行越多，查询越快。</p>
+<h2 id="五-增删改查dml"><a class="markdownIt-Anchor" href="#五-增删改查dml"></a> 五、增删改查（DML）</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 插入</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> student (name, gender, age, phone, class_id)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;单婉贺&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="number">20</span>, <span class="string">&#x27;19817126750&#x27;</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 批量插入比一条条插快一个数量级</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> student (name, age) <span class="keyword">VALUES</span> (<span class="string">&#x27;张三&#x27;</span>, <span class="number">19</span>), (<span class="string">&#x27;李四&#x27;</span>, <span class="number">21</span>), (<span class="string">&#x27;王五&#x27;</span>, <span class="number">20</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 更新：一定要带 WHERE</span></span><br><span class="line"><span class="keyword">UPDATE</span> student <span class="keyword">SET</span> age <span class="operator">=</span> <span class="number">21</span> <span class="keyword">WHERE</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除：同样一定要带 WHERE</span></span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+<p>查询是重头戏：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 条件、排序、分页</span></span><br><span class="line"><span class="keyword">SELECT</span> name, age <span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> age <span class="keyword">BETWEEN</span> <span class="number">18</span> <span class="keyword">AND</span> <span class="number">22</span></span><br><span class="line">  <span class="keyword">AND</span> name <span class="keyword">LIKE</span> <span class="string">&#x27;张%&#x27;</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> age <span class="keyword">DESC</span>, id <span class="keyword">ASC</span></span><br><span class="line">LIMIT <span class="number">10</span> <span class="keyword">OFFSET</span> <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 聚合</span></span><br><span class="line"><span class="keyword">SELECT</span> class_id, <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> 人数, <span class="built_in">AVG</span>(age) <span class="keyword">AS</span> 平均年龄</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> class_id</span><br><span class="line"><span class="keyword">HAVING</span> 人数 <span class="operator">&gt;=</span> <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 去重</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> class_id <span class="keyword">FROM</span> student;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>执行顺序记住这个：<code>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT</code>。所以 <code>WHERE</code> 里不能写聚合函数，<code>HAVING</code> 才可以。</p>
+</blockquote>
+<h2 id="六-约束与索引"><a class="markdownIt-Anchor" href="#六-约束与索引"></a> 六、约束与索引</h2>
+<p>约束是数据库帮你守住的数据底线：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> score (</span><br><span class="line">    id         <span class="type">INT</span> <span class="keyword">PRIMARY KEY</span> AUTO_INCREMENT,</span><br><span class="line">    student_id <span class="type">INT</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    course_id  <span class="type">INT</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    score      <span class="type">DECIMAL</span>(<span class="number">4</span>,<span class="number">1</span>) <span class="keyword">CHECK</span> (score <span class="keyword">BETWEEN</span> <span class="number">0</span> <span class="keyword">AND</span> <span class="number">100</span>),</span><br><span class="line">    exam_time  DATETIME <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span>,</span><br><span class="line">    <span class="comment">-- 同一个学生同一门课只留一条记录</span></span><br><span class="line">    <span class="keyword">UNIQUE</span> KEY uk_stu_course (student_id, course_id),</span><br><span class="line">    <span class="comment">-- 外键：学生删了，成绩跟着删</span></span><br><span class="line">    <span class="keyword">CONSTRAINT</span> fk_score_student <span class="keyword">FOREIGN KEY</span> (student_id)</span><br><span class="line">        <span class="keyword">REFERENCES</span> student(id) <span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>索引是拿空间换时间：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 普通索引：经常出现在 WHERE / JOIN 的列</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX idx_student_class <span class="keyword">ON</span> student(class_id);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 联合索引：注意最左前缀原则，(a,b) 能加速 a 和 (a,b)，不能单独加速 b</span></span><br><span class="line"><span class="keyword">CREATE</span> INDEX idx_name_age <span class="keyword">ON</span> student(name, age);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看索引与执行计划</span></span><br><span class="line"><span class="keyword">SHOW</span> INDEX <span class="keyword">FROM</span> student;</span><br><span class="line">EXPLAIN <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> class_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>几个容易踩的坑：</p>
+<ul>
+<li>索引不是越多越好，每个索引都会拖慢写入；</li>
+<li>在索引列上做运算或函数（<code>WHERE YEAR(created) = 2025</code>）会让索引失效；</li>
+<li><code>LIKE '%关键字'</code> 前置通配符同样用不上索引；</li>
+<li>区分度低的列（比如性别）单独建索引意义不大。</li>
+</ul>
+<p><code>EXPLAIN</code> 的结果里重点看 <code>type</code>（至少要到 <code>range</code>，<code>ALL</code> 就是全表扫描）和 <code>rows</code>（预估扫描行数）。</p>
+<h2 id="七-多表查询"><a class="markdownIt-Anchor" href="#七-多表查询"></a> 七、多表查询</h2>
+<p>成绩单要同时显示学生名和课程名，就得连表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 内连接：只保留两表都匹配的行</span></span><br><span class="line"><span class="keyword">SELECT</span> s.name, c.course_name, sc.score</span><br><span class="line"><span class="keyword">FROM</span> score sc</span><br><span class="line"><span class="keyword">JOIN</span> student s <span class="keyword">ON</span> sc.student_id <span class="operator">=</span> s.id</span><br><span class="line"><span class="keyword">JOIN</span> course  c <span class="keyword">ON</span> sc.course_id  <span class="operator">=</span> c.id</span><br><span class="line"><span class="keyword">WHERE</span> sc.score <span class="operator">&lt;</span> <span class="number">60</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 左连接：保留左表全部行，右表没有的补 NULL（比如查“没选课的学生”）</span></span><br><span class="line"><span class="keyword">SELECT</span> s.name, sc.course_id</span><br><span class="line"><span class="keyword">FROM</span> student s</span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> score sc <span class="keyword">ON</span> s.id <span class="operator">=</span> sc.student_id</span><br><span class="line"><span class="keyword">WHERE</span> sc.course_id <span class="keyword">IS</span> <span class="keyword">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 子查询：查出高于全班平均分的人</span></span><br><span class="line"><span class="keyword">SELECT</span> name, score <span class="keyword">FROM</span> score</span><br><span class="line"><span class="keyword">WHERE</span> score <span class="operator">&gt;</span> (<span class="keyword">SELECT</span> <span class="built_in">AVG</span>(score) <span class="keyword">FROM</span> score);</span><br></pre></td></tr></table></figure>
+<h2 id="八-事务"><a class="markdownIt-Anchor" href="#八-事务"></a> 八、事务</h2>
+<p>转账、下单这类“要么全成功要么全回滚”的操作必须用事务：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> TRANSACTION;</span><br><span class="line"><span class="keyword">UPDATE</span> account <span class="keyword">SET</span> balance <span class="operator">=</span> balance <span class="operator">-</span> <span class="number">100</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="keyword">UPDATE</span> account <span class="keyword">SET</span> balance <span class="operator">=</span> balance <span class="operator">+</span> <span class="number">100</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"><span class="keyword">COMMIT</span>;        <span class="comment">-- 出错时用 ROLLBACK;</span></span><br></pre></td></tr></table></figure>
+<p>事务有 ACID 四个特性：原子性、一致性、隔离性、持久性。InnoDB 默认隔离级别是 <code>REPEATABLE READ</code>，能避免脏读和不可重复读，但要注意间隙锁带来的并发下降。</p>
+<h2 id="九-python-操作-mysqlpymysql"><a class="markdownIt-Anchor" href="#九-python-操作-mysqlpymysql"></a> 九、Python 操作 MySQL（PyMySQL）</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"></span><br><span class="line">conn = pymysql.connect(host=<span class="string">&quot;localhost&quot;</span>, user=<span class="string">&quot;root&quot;</span>, password=<span class="string">&quot;pwd&quot;</span>,</span><br><span class="line">                       database=<span class="string">&quot;school&quot;</span>, charset=<span class="string">&quot;utf8mb4&quot;</span>,</span><br><span class="line">                       cursorclass=pymysql.cursors.DictCursor)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cur:</span><br><span class="line">        <span class="comment"># 查询：参数化，绝不用字符串拼接</span></span><br><span class="line">        cur.execute(<span class="string">&quot;SELECT id, name, age FROM student WHERE class_id = %s&quot;</span>, (<span class="number">1</span>,))</span><br><span class="line">        <span class="keyword">for</span> row <span class="keyword">in</span> cur.fetchall():</span><br><span class="line">            <span class="built_in">print</span>(row[<span class="string">&quot;name&quot;</span>], row[<span class="string">&quot;age&quot;</span>])</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 写入：记得 commit</span></span><br><span class="line">        cur.executemany(</span><br><span class="line">            <span class="string">&quot;INSERT INTO student (name, age, class_id) VALUES (%s, %s, %s)&quot;</span>,</span><br><span class="line">            [(<span class="string">&quot;赵六&quot;</span>, <span class="number">20</span>, <span class="number">1</span>), (<span class="string">&quot;孙七&quot;</span>, <span class="number">22</span>, <span class="number">2</span>)],</span><br><span class="line">        )</span><br><span class="line">    conn.commit()</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    conn.rollback()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;出错回滚：&quot;</span>, e)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    conn.close()</span><br></pre></td></tr></table></figure>
+<p>两个必须记住的点：</p>
+<ol>
+<li><strong>永远用参数化查询</strong>（<code>%s</code> 占位），拼接 SQL 就等于把 SQL 注入的大门敞开；</li>
+<li>增删改之后要 <code>commit()</code>，否则连接一关数据就没了。</li>
+</ol>
+<h2 id="十-踩坑记录"><a class="markdownIt-Anchor" href="#十-踩坑记录"></a> 十、踩坑记录</h2>
+<table>
+<thead>
+<tr>
+<th>报错</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Access denied for user 'root'@'localhost'</code></td>
+<td>密码错或没授权</td>
+<td>检查密码；必要时 <code>ALTER USER</code> 重置</td>
+</tr>
+<tr>
+<td><code>Unknown database 'school'</code></td>
+<td>库没建或名字拼错</td>
+<td><code>CREATE DATABASE</code> 或 <code>USE</code> 正确的库</td>
+</tr>
+<tr>
+<td><code>Incorrect string value: '\xF0\x9F...'</code></td>
+<td>字符集不是 utf8mb4</td>
+<td>库、表、连接三处统一改成 utf8mb4</td>
+</tr>
+<tr>
+<td><code>Cannot add or update a child row</code></td>
+<td>外键约束不通过</td>
+<td>先插主表数据，或检查外键值</td>
+</tr>
+<tr>
+<td><code>Lock wait timeout exceeded</code></td>
+<td>有事务没提交，锁住了</td>
+<td>查 <code>SHOW PROCESSLIST</code>，结束挂起的事务</td>
+</tr>
+<tr>
+<td>中文显示成 <code>???</code></td>
+<td>客户端编码不对</td>
+<td>连接串加 <code>charset='utf8mb4'</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>MySQL 的学习路线我总结成四步：<strong>会连 → 会建 → 会查 → 会优化</strong>。前两步靠记忆，后两步靠 <code>EXPLAIN</code> 和自己踩的坑。下一步打算把这三张表接到 Django 里，用 ORM 重写一遍同样的查询，对比一下手写 SQL 和 ORM 各自的代价。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>著者: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>パーマリンク: </strong><a href="https://utdog.github.io/ja/2025/05/05/MySQL/">https://utdog.github.io/ja/2025/05/05/MySQL/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>ライセンス: </strong>本ブログのすべての文書は、特に指定されていない限り、<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> ライセンスに従っています。引用の際は出典を明記してください！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">スポンサー</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">コーヒーを買ってください</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=MySQL&amp;desc=MySQL&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="MySQL">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="MySQL">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/SQL/" rel="tag">SQL</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/37.jpg" data-sizes="auto" alt="python全栈框架" class="lazyload">
+        
+        <a href="/ja/2025/05/05/python%E5%85%A8%E6%A0%88%E6%A1%86%E6%9E%B6/"></a>
+        <div class="article-nav-caption">次の記事</div>
+        <h3 class="article-nav-title">
+          
+            python全栈框架
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/40.jpg" data-sizes="auto" alt="python高级编程" class="lazyload">
+      
+      <a href="/ja/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/"></a>
+      <div class="article-nav-caption">前の記事</div>
+      <h3 class="article-nav-title">
+        
+          python高级编程
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        16.3k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        65分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql"><span class="toc-number">1.</span> <span class="toc-text"> MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-mysql-%E5%9C%A8%E9%A1%B9%E7%9B%AE%E9%87%8C%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、MySQL 在项目里的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%AE%89%E8%A3%85%E4%B8%8E%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、安装与连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%BA%93%E4%B8%8E%E8%A1%A8%E7%9A%84%E5%A2%9E%E5%88%A0%E6%94%B9ddl"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、库与表的增删改（DDL）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、数据类型怎么选</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5dml"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、增删改查（DML）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E7%BA%A6%E6%9D%9F%E4%B8%8E%E7%B4%A2%E5%BC%95"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、约束与索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、多表查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-python-%E6%93%8D%E4%BD%9C-mysqlpymysql"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、Python 操作 MySQL（PyMySQL）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.11.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "MySQL",
+          url: "https://utdog.github.io/2025/05/05/MySQL/",
+          excerpt: "",
+          description: "",
+          stripContent: " MySQL  前言 这篇笔记整理我学习 MySQL 的完整路径：从服务端的安装与连接，到库表设计、数据类型的选择，再到增删改查、约束与索引，最后用 Python 把数据库接进项目里。全文围绕一个“学生成绩管理”的小场景展开，一共三张表：学生表 student、课程表 course、成绩表 score。写下来既是复习，也方便以后直接抄。  一、MySQL 在项目里的位置 graph LR     A[Navicat / 命令行 / PyMySQL] --&gt; B[MySQL 服务端]     B ",
+          date: "Mon May 05 2025 00:37:03 GMT+0800",
+          updated: "Thu Oct 15 2026 15:23:30 GMT+0800",
+          cover: "/images/49.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

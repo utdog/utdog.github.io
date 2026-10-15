@@ -1,0 +1,1289 @@
+
+  <!DOCTYPE html>
+  <html lang="ja"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本ブログのすべての文書は、特に指定されていない限り、BY-NC-SA ライセンスに従っています。引用の際は出典を明記してください！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    python高级编程 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="python高级编程  前言 基础语法解决的是“写得出来”，高级编程解决的是“写得像样”。这篇笔记记录我跨过入门阶段后重点啃的几块内容：闭包与装饰器、迭代器与生成器、上下文管理器、魔术方法、异常处理、并发模型和类型注解。每一节都尽量给出“为什么需要它”和“实际怎么用”，而不是只背语法。  一、从函数到一等公民 Python 里函数是对象，可以赋值、当参数、当返回值。这是后面所有高级特性的地基。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python高级编程">
+<meta property="og:url" content="https://utdog.github.io/ja/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="python高级编程  前言 基础语法解决的是“写得出来”，高级编程解决的是“写得像样”。这篇笔记记录我跨过入门阶段后重点啃的几块内容：闭包与装饰器、迭代器与生成器、上下文管理器、魔术方法、异常处理、并发模型和类型注解。每一节都尽量给出“为什么需要它”和“实际怎么用”，而不是只背语法。  一、从函数到一等公民 Python 里函数是对象，可以赋值、当参数、当返回值。这是后面所有高级特性的地基。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2025-05-04T16:36:22.000Z">
+<meta property="article:modified_time" content="2026-10-15T07:23:30.929Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="&lt;twitter:card&gt;">
+<meta name="twitter:image" content="https://utdog.github.io/ja/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/%3Ctwitter:image%3E">
+<meta name="twitter:creator" content="@&lt;twitter:creator&gt;">
+<meta name="twitter:site" content="<twitter:site>">
+<meta property="fb:admins" content="&lt;fb:admin_id&gt;">
+<meta property="fb:app_id" content="&lt;fb:app_id&gt;">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/">ホーム</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/archives">アーカイブ</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/about">プロフィール</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/friend">フレンド</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="検索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" class="selected">日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/05/python高级编程/';
+            
+              langMap['en'] = '/en/2025/05/05/python高级编程/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/05/python高级编程/';
+            
+              langMap['ja'] = '/ja/2025/05/05/python高级编程/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/40.jpg" alt="python高级编程">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">python高级编程</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text"> python高级编程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%BB%8E%E5%87%BD%E6%95%B0%E5%88%B0%E4%B8%80%E7%AD%89%E5%85%AC%E6%B0%91"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、从函数到一等公民</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AD%E5%8C%85"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 闭包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%8E%E7%94%9F%E6%88%90%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、迭代器与生成器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、上下文管理器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、魔术方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%BF%9B%E9%98%B6"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、异常处理进阶</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%8D%8F%E7%A8%8B"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、并发：线程、进程与协程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%B1%BB"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、类型注解与数据类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%80%BC%E5%BE%97%E8%83%8C%E4%B8%8B%E6%9D%A5%E7%9A%84%E6%A0%87%E5%87%86%E5%BA%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、值得背下来的标准库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-python高级编程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-04T16:36:22.000Z" itemprop="datePublished">2025-05-05</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/ja/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="python高级编程"><a class="markdownIt-Anchor" href="#python高级编程"></a> python高级编程</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>基础语法解决的是“写得出来”，高级编程解决的是“写得像样”。这篇笔记记录我跨过入门阶段后重点啃的几块内容：闭包与装饰器、迭代器与生成器、上下文管理器、魔术方法、异常处理、并发模型和类型注解。每一节都尽量给出“为什么需要它”和“实际怎么用”，而不是只背语法。</p>
+<h2 id="一-从函数到一等公民"><a class="markdownIt-Anchor" href="#一-从函数到一等公民"></a> 一、从函数到一等公民</h2>
+<p>Python 里函数是对象，可以赋值、当参数、当返回值。这是后面所有高级特性的地基。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">greet</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;你好，<span class="subst">&#123;name&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">hello = greet          <span class="comment"># 函数可以赋值给变量</span></span><br><span class="line"><span class="built_in">print</span>(hello(<span class="string">&quot;单婉贺&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">apply</span>(<span class="params">func, value</span>):   <span class="comment"># 函数可以做参数</span></span><br><span class="line">    <span class="keyword">return</span> func(value)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(apply(<span class="built_in">str</span>.upper, <span class="string">&quot;abc&quot;</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="闭包"><a class="markdownIt-Anchor" href="#闭包"></a> 闭包</h3>
+<p>内层函数记住了外层函数的变量，即使外层已经返回：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">counter</span>():</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">step</span>():</span><br><span class="line">        <span class="keyword">nonlocal</span> count     <span class="comment"># 声明我要改的是外层的 count</span></span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> count</span><br><span class="line">    <span class="keyword">return</span> step</span><br><span class="line"></span><br><span class="line">c = counter()</span><br><span class="line"><span class="built_in">print</span>(c(), c(), c())       <span class="comment"># 1 2 3</span></span><br></pre></td></tr></table></figure>
+<p>闭包的价值在于“把状态藏在函数里”，不用定义类就能封装数据。</p>
+<h2 id="二-装饰器"><a class="markdownIt-Anchor" href="#二-装饰器"></a> 二、装饰器</h2>
+<p>装饰器本质是“接收函数、返回函数”的函数，用来在不改原代码的前提下加功能——日志、计时、鉴权、缓存都是它。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> functools, time</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">timer</span>(<span class="params">func</span>):</span><br><span class="line"><span class="meta">    @functools.wraps(<span class="params">func</span>)          </span><span class="comment"># 保留原函数的名字和文档</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        start = time.perf_counter()</span><br><span class="line">        result = func(*args, **kwargs)</span><br><span class="line">        cost = time.perf_counter() - start</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;func.__name__&#125;</span> 耗时 <span class="subst">&#123;cost:<span class="number">.4</span>f&#125;</span>s&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@timer</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">slow_sum</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(<span class="built_in">range</span>(n))</span><br><span class="line"></span><br><span class="line">slow_sum(<span class="number">1_000_000</span>)</span><br></pre></td></tr></table></figure>
+<p>带参数的装饰器要再套一层：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">repeat</span>(<span class="params">times</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">func</span>):</span><br><span class="line"><span class="meta">        @functools.wraps(<span class="params">func</span>)</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">            <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(times):</span><br><span class="line">                result = func(*args, **kwargs)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> decorator</span><br><span class="line"></span><br><span class="line"><span class="meta">@repeat(<span class="params"><span class="number">3</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">say</span>(<span class="params">msg</span>):</span><br><span class="line">    <span class="built_in">print</span>(msg)</span><br></pre></td></tr></table></figure>
+<p>内置的常用装饰器：<code>@staticmethod</code>、<code>@classmethod</code>、<code>@property</code>、<code>@functools.lru_cache</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> lru_cache</span><br><span class="line"></span><br><span class="line"><span class="meta">@lru_cache(<span class="params">maxsize=<span class="literal">None</span></span>)      </span><span class="comment"># 记忆化：同样的入参只算一次</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fib</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">return</span> n <span class="keyword">if</span> n &lt; <span class="number">2</span> <span class="keyword">else</span> fib(n - <span class="number">1</span>) + fib(n - <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="三-迭代器与生成器"><a class="markdownIt-Anchor" href="#三-迭代器与生成器"></a> 三、迭代器与生成器</h2>
+<p>可迭代对象（list、str、dict）能被 <code>for</code> 遍历；<strong>迭代器</strong>是实现了 <code>__iter__</code> 和 <code>__next__</code> 的对象；<strong>生成器</strong>是用 <code>yield</code> 写的迭代器，写起来最省事。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">read_large_file</span>(<span class="params">path</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;逐行读大文件，内存里始终只有一行&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(path, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            <span class="keyword">yield</span> line.strip()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> read_large_file(<span class="string">&quot;data.txt&quot;</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;error&quot;</span> <span class="keyword">in</span> line:</span><br><span class="line">        <span class="built_in">print</span>(line)</span><br></pre></td></tr></table></figure>
+<p>生成器表达式和列表推导的区别，就在“什么时候算”：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nums = [x * x <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]        <span class="comment"># 立刻算完，占内存</span></span><br><span class="line">nums = (x * x <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>))        <span class="comment"># 用到才算，惰性</span></span><br></pre></td></tr></table></figure>
+<p><code>yield from</code> 可以把多个生成器串起来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">chain</span>(<span class="params">*iterables</span>):</span><br><span class="line">    <span class="keyword">for</span> it <span class="keyword">in</span> iterables:</span><br><span class="line">        <span class="keyword">yield</span> <span class="keyword">from</span> it</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">list</span>(chain([<span class="number">1</span>, <span class="number">2</span>], <span class="string">&quot;ab&quot;</span>, (<span class="number">3</span>, <span class="number">4</span>))))   <span class="comment"># [1, 2, &#x27;a&#x27;, &#x27;b&#x27;, 3, 4]</span></span><br></pre></td></tr></table></figure>
+<h2 id="四-上下文管理器"><a class="markdownIt-Anchor" href="#四-上下文管理器"></a> 四、上下文管理器</h2>
+<p><code>with</code> 保证资源一定被释放。自己写一个，要么用 <code>__enter__</code>/<code>__exit__</code>，要么用 <code>contextlib</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> contextlib <span class="keyword">import</span> contextmanager</span><br><span class="line"></span><br><span class="line"><span class="meta">@contextmanager</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">timer</span>(<span class="params">label</span>):</span><br><span class="line">    start = time.perf_counter()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">yield</span>                       <span class="comment"># yield 之前是进入，之后是退出</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;label&#125;</span>: <span class="subst">&#123;time.perf_counter() - start:<span class="number">.4</span>f&#125;</span>s&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> timer(<span class="string">&quot;查询&quot;</span>):</span><br><span class="line">    <span class="built_in">sum</span>(<span class="built_in">range</span>(<span class="number">1_000_000</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="五-魔术方法"><a class="markdownIt-Anchor" href="#五-魔术方法"></a> 五、魔术方法</h2>
+<p>以双下划线开头结尾的方法是给解释器看的，实现它们能让自定义对象“用起来像内置类型”。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Vector</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, x, y</span>):</span><br><span class="line">        <span class="variable language_">self</span>.x, <span class="variable language_">self</span>.y = x, y</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__add__</span>(<span class="params">self, other</span>):            <span class="comment"># v1 + v2</span></span><br><span class="line">        <span class="keyword">return</span> Vector(<span class="variable language_">self</span>.x + other.x, <span class="variable language_">self</span>.y + other.y)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):                  <span class="comment"># 调试时打印出来的样子</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;Vector(<span class="subst">&#123;self.x&#125;</span>, <span class="subst">&#123;self.y&#125;</span>)&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__eq__</span>(<span class="params">self, other</span>):             <span class="comment"># == 比较</span></span><br><span class="line">        <span class="keyword">return</span> (<span class="variable language_">self</span>.x, <span class="variable language_">self</span>.y) == (other.x, other.y)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):                   <span class="comment"># len(v)</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, i</span>):            <span class="comment"># v[0]，顺便让它可迭代</span></span><br><span class="line">        <span class="keyword">return</span> (<span class="variable language_">self</span>.x, <span class="variable language_">self</span>.y)[i]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(Vector(<span class="number">1</span>, <span class="number">2</span>) + Vector(<span class="number">3</span>, <span class="number">4</span>))       <span class="comment"># Vector(4, 6)</span></span><br></pre></td></tr></table></figure>
+<h2 id="六-异常处理进阶"><a class="markdownIt-Anchor" href="#六-异常处理进阶"></a> 六、异常处理进阶</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BalanceError</span>(<span class="title class_ inherited__">Exception</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;自定义异常：继承 Exception 即可&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, balance, amount</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__(<span class="string">f&quot;余额 <span class="subst">&#123;balance&#125;</span> 不足以支付 <span class="subst">&#123;amount&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.balance, <span class="variable language_">self</span>.amount = balance, amount</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pay</span>(<span class="params">balance, amount</span>):</span><br><span class="line">    <span class="keyword">if</span> amount &gt; balance:</span><br><span class="line">        <span class="keyword">raise</span> BalanceError(balance, amount)</span><br><span class="line">    <span class="keyword">return</span> balance - amount</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    pay(<span class="number">100</span>, <span class="number">500</span>)</span><br><span class="line"><span class="keyword">except</span> BalanceError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;业务异常：&quot;</span>, e)</span><br><span class="line"><span class="keyword">except</span> (TypeError, ValueError) <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;参数问题：&quot;</span>, e)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;没有异常才会执行&quot;</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;无论如何都会执行&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>原则：<strong>只捕获你能处理的异常</strong>，不要写一个裸的 <code>except:</code> 把问题全吞掉；自定义异常能让调用方区分“业务错误”和“程序 Bug”。</p>
+<h2 id="七-并发线程-进程与协程"><a class="markdownIt-Anchor" href="#七-并发线程-进程与协程"></a> 七、并发：线程、进程与协程</h2>
+<pre class="mermaid">graph TD
+    A[任务类型] --> B{CPU 密集还是 IO 密集}
+    B -->|CPU 密集| C[多进程 multiprocessing]
+    B -->|IO 密集| D[多线程 threading]
+    B -->|高并发 IO| E[协程 asyncio]</pre>
+<ul>
+<li><strong>多进程</strong>：绕开 GIL，真并行，适合计算密集型；进程间通信有开销。</li>
+<li><strong>多线程</strong>：受 GIL 限制，同一时刻只有一个线程跑 Python 字节码，但 IO 等待时会释放，适合爬虫、文件读写。</li>
+<li><strong>协程</strong>：单线程内的协作式并发，几万个任务也不怕，写起来要 <code>async</code>/<code>await</code>。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">fetch</span>(<span class="params">name, delay</span>):</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(delay)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;<span class="subst">&#123;name&#125;</span> 完成&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    results = <span class="keyword">await</span> asyncio.gather(</span><br><span class="line">        fetch(<span class="string">&quot;A&quot;</span>, <span class="number">1</span>), fetch(<span class="string">&quot;B&quot;</span>, <span class="number">0.5</span>), fetch(<span class="string">&quot;C&quot;</span>, <span class="number">0.8</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(results)</span><br><span class="line"></span><br><span class="line">asyncio.run(main())</span><br></pre></td></tr></table></figure>
+<p>线程池是最常用的折中方案：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> ThreadPoolExecutor(max_workers=<span class="number">8</span>) <span class="keyword">as</span> pool:</span><br><span class="line">    <span class="keyword">for</span> result <span class="keyword">in</span> pool.<span class="built_in">map</span>(<span class="keyword">lambda</span> n: n * n, <span class="built_in">range</span>(<span class="number">10</span>)):</span><br><span class="line">        <span class="built_in">print</span>(result, end=<span class="string">&quot; &quot;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="八-类型注解与数据类"><a class="markdownIt-Anchor" href="#八-类型注解与数据类"></a> 八、类型注解与数据类</h2>
+<p>注解不影响运行，但能让 IDE 和 <code>mypy</code> 提前发现问题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass, field</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Optional</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>:</span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line">    age: <span class="built_in">int</span></span><br><span class="line">    tags: <span class="built_in">list</span>[<span class="built_in">str</span>] = field(default_factory=<span class="built_in">list</span>)</span><br><span class="line">    email: <span class="type">Optional</span>[<span class="built_in">str</span>] = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">is_adult</span>(<span class="params">self</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.age &gt;= <span class="number">18</span></span><br><span class="line"></span><br><span class="line">s = Student(<span class="string">&quot;单婉贺&quot;</span>, <span class="number">20</span>)</span><br><span class="line"><span class="built_in">print</span>(s)</span><br></pre></td></tr></table></figure>
+<p><code>@dataclass</code> 自动生成 <code>__init__</code>、<code>__repr__</code>、<code>__eq__</code>，写数据容器时能省一大段样板代码。</p>
+<h2 id="九-值得背下来的标准库"><a class="markdownIt-Anchor" href="#九-值得背下来的标准库"></a> 九、值得背下来的标准库</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>常用成员</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>itertools</code></td>
+<td><code>chain</code> <code>groupby</code> <code>islice</code> <code>product</code></td>
+<td>高效迭代器工具</td>
+</tr>
+<tr>
+<td><code>functools</code></td>
+<td><code>lru_cache</code> <code>partial</code> <code>reduce</code></td>
+<td>函数工具</td>
+</tr>
+<tr>
+<td><code>collections</code></td>
+<td><code>Counter</code> <code>defaultdict</code> <code>deque</code> <code>namedtuple</code></td>
+<td>好用的容器</td>
+</tr>
+<tr>
+<td><code>pathlib</code></td>
+<td><code>Path</code></td>
+<td>面向对象的路径操作，替代 <code>os.path</code></td>
+</tr>
+<tr>
+<td><code>json</code> / <code>csv</code></td>
+<td><code>load</code> <code>dump</code> <code>DictReader</code></td>
+<td>数据读写</td>
+</tr>
+<tr>
+<td><code>logging</code></td>
+<td><code>getLogger</code></td>
+<td>比 print 更专业的日志</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"></span><br><span class="line">words = Path(<span class="string">&quot;README.md&quot;</span>).read_text(encoding=<span class="string">&quot;utf-8&quot;</span>).split()</span><br><span class="line"><span class="built_in">print</span>(Counter(words).most_common(<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>高级编程的收益不在“代码短”，而在<strong>可维护</strong>：装饰器把横切逻辑抽走，生成器把内存压下来，上下文管理器保证资源不泄漏，类型注解让协作少踩坑。下一步是把这些技巧用到 Django 项目里——尤其是用装饰器做登录校验、用生成器做大批量数据导出。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>著者: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>パーマリンク: </strong><a href="https://utdog.github.io/ja/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/">https://utdog.github.io/ja/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>ライセンス: </strong>本ブログのすべての文書は、特に指定されていない限り、<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> ライセンスに従っています。引用の際は出典を明記してください！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">スポンサー</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">コーヒーを買ってください</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B&amp;desc=python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="python高级编程">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="python高级编程">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner"> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/python/" rel="tag">python</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/49.jpg" data-sizes="auto" alt="MySQL" class="lazyload">
+        
+        <a href="/ja/2025/05/05/MySQL/"></a>
+        <div class="article-nav-caption">次の記事</div>
+        <h3 class="article-nav-title">
+          
+            MySQL
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/banner.png" data-sizes="auto" alt="什么是编程语言？" class="lazyload">
+      
+      <a href="/ja/2025/05/03/%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F/"></a>
+      <div class="article-nav-caption">前の記事</div>
+      <h3 class="article-nav-title">
+        
+          什么是编程语言？
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        16.3k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        65分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text"> python高级编程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%BB%8E%E5%87%BD%E6%95%B0%E5%88%B0%E4%B8%80%E7%AD%89%E5%85%AC%E6%B0%91"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、从函数到一等公民</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AD%E5%8C%85"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 闭包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%8E%E7%94%9F%E6%88%90%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、迭代器与生成器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、上下文管理器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、魔术方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%BF%9B%E9%98%B6"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、异常处理进阶</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%8D%8F%E7%A8%8B"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、并发：线程、进程与协程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%B1%BB"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、类型注解与数据类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%80%BC%E5%BE%97%E8%83%8C%E4%B8%8B%E6%9D%A5%E7%9A%84%E6%A0%87%E5%87%86%E5%BA%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、值得背下来的标准库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png"/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "python高级编程",
+          url: "https://utdog.github.io/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/",
+          excerpt: "",
+          description: "",
+          stripContent: " python高级编程  前言 基础语法解决的是“写得出来”，高级编程解决的是“写得像样”。这篇笔记记录我跨过入门阶段后重点啃的几块内容：闭包与装饰器、迭代器与生成器、上下文管理器、魔术方法、异常处理、并发模型和类型注解。每一节都尽量给出“为什么需要它”和“实际怎么用”，而不是只背语法。  一、从函数到一等公民 Python 里函数是对象，可以赋值、当参数、当返回值。这是后面所有高级特性的地基。 12345678910def greet(name):    return f&amp;quot;你好，&amp;#",
+          date: "Mon May 05 2025 00:36:22 GMT+0800",
+          updated: "Thu Oct 15 2026 15:23:30 GMT+0800",
+          cover: "/images/40.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+
