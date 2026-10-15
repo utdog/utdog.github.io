@@ -55,6 +55,24 @@
 <meta name="twitter:image" content="https://utdog.github.io/images/banner.webp">
   
   
+  <link rel="canonical" href="https://utdog.github.io/tags/Python/">
+  
+    
+      
+      <link rel="alternate" hreflang="zh-cn" href="https://utdog.github.io/tags/Python/">
+    
+      
+      <link rel="alternate" hreflang="en" href="https://utdog.github.io/en/tags/Python/">
+    
+      
+      <link rel="alternate" hreflang="zh-tw" href="https://utdog.github.io/zh-TW/tags/Python/">
+    
+      
+      <link rel="alternate" hreflang="ja" href="https://utdog.github.io/ja/tags/Python/">
+    
+    <link rel="alternate" hreflang="x-default" href="https://utdog.github.io/tags/Python/">
+  
+  
     <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
   
   
@@ -510,11 +528,11 @@
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/Linux/">Linux</a>
+      <a class="archives-tag-list-link" href="/tags/Hexo/">Hexo</a>
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/Hexo/">Hexo</a>
+      <a class="archives-tag-list-link" href="/tags/Linux/">Linux</a>
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
@@ -534,15 +552,15 @@
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/">并发</a>
-    </div>
-  
-    <div class="archives-tag-list-item" data-aos="zoom-in">
       <a class="archives-tag-list-link" href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/">异常处理</a>
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
       <a class="archives-tag-list-link" href="/tags/%E5%8F%8D%E5%B0%84/">反射</a>
+    </div>
+  
+    <div class="archives-tag-list-item" data-aos="zoom-in">
+      <a class="archives-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/">并发</a>
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
@@ -578,7 +596,7 @@
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/JavaScript/">JavaScript</a>
+      <a class="archives-tag-list-link" href="/tags/jQuery/">jQuery</a>
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
@@ -586,7 +604,7 @@
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/jQuery/">jQuery</a>
+      <a class="archives-tag-list-link" href="/tags/JavaScript/">JavaScript</a>
     </div>
   
     <div class="archives-tag-list-item" data-aos="zoom-in">
@@ -1045,6 +1063,112 @@
         ".sidebar-widget",
         ".sidebar-wrapper",
         '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+       
+    
+    
+      
+    
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+
+   '#mobile-nav',
         '#lazy-script',
         '#i18n-nav'
       ],
