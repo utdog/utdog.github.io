@@ -1,0 +1,1336 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-TW"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本部落格所有文章除特別聲明外，均採用 BY-NC-SA 授權協議。轉載請註明出處！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    项目实战：分层写一个 ATM 柜员机 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="Python 基础班收官项目复盘：用门面层、业务层、数据层分离的方式实现注册登录、存取款与流水账单，并总结五个待改进点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目实战：分层写一个 ATM 柜员机">
+<meta property="og:url" content="https://utdog.github.io/zh-TW/2025/05/04/ATM%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="Python 基础班收官项目复盘：用门面层、业务层、数据层分离的方式实现注册登录、存取款与流水账单，并总结五个待改进点。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-05-04T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:04:51.098Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="项目实战">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈禱中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/">首頁</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/archives">歸檔</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/about">關於</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/friend">友鏈</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 訂閱" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜尋"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">正體中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" class="selected">正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/04/ATM项目实战/';
+            
+              langMap['en'] = '/en/2025/05/04/ATM项目实战/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/04/ATM项目实战/';
+            
+              langMap['ja'] = '/ja/2025/05/04/ATM项目实战/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/31.jpg" alt="项目实战：分层写一个 ATM 柜员机">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">项目实战：分层写一个 ATM 柜员机</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E5%88%86%E5%B1%82%E5%86%99%E4%B8%80%E4%B8%AA-atm-%E6%9F%9C%E5%91%98%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text"> 项目实战：分层写一个 ATM 柜员机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%A6%81%E5%AE%9E%E7%8E%B0%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、要实现什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E5%85%88%E5%88%86%E5%B1%82%E5%86%8D%E5%86%99%E4%BB%A3%E7%A0%81"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、目录结构：先分层，再写代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E9%80%90%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、逐层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1. 启动入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%97%A8%E9%9D%A2%E5%B1%82%E7%94%A8%E5%AD%97%E5%85%B8%E4%BB%A3%E6%9B%BF%E4%B8%80%E5%A0%86-if"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2. 门面层：用字典代替一堆 if</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%9A%E5%8A%A1%E5%B1%82%E6%8A%8A%E5%88%A4%E6%96%AD%E5%92%8C%E8%AE%A1%E7%AE%97%E6%94%B6%E5%88%B0%E4%B8%80%E8%B5%B7"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 3. 业务层：把判断和计算收到一起</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E5%B1%82json-%E8%AF%BB%E5%86%99%E4%B8%8E%E8%B7%AF%E5%BE%84%E5%A4%84%E7%90%86"><span class="toc-number">1.3.4.</span> <span class="toc-text"> 4. 数据层：JSON 读写与路径处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%99%BB%E5%BD%95%E6%A0%A1%E9%AA%8C%E7%94%A8%E8%A3%85%E9%A5%B0%E5%99%A8%E7%BB%9F%E4%B8%80%E6%8B%A6%E6%88%AA"><span class="toc-number">1.3.5.</span> <span class="toc-text"> 5. 登录校验：用装饰器统一拦截</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E8%B7%91%E8%B5%B7%E6%9D%A5%E7%9A%84%E6%A0%B7%E5%AD%90"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、跑起来的样子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%A4%8D%E7%9B%98%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BA%94%E4%B8%AA%E7%A1%AC%E4%BC%A4"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、复盘：这个项目的五个硬伤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-ATM项目实战" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-04T04:00:00.000Z" itemprop="datePublished">2025-05-04</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/zh-TW/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="项目实战分层写一个-atm-柜员机"><a class="markdownIt-Anchor" href="#项目实战分层写一个-atm-柜员机"></a> 项目实战：分层写一个 ATM 柜员机</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>学完函数、装饰器、文件操作之后，基础班的收官项目是一个命令行 ATM：注册、登录、查余额、存款、取款、查流水。功能不复杂，但它第一次让我意识到「代码要分层写」——如果所有逻辑都堆在一个文件里，每加一个功能都要改动一堆地方。</p>
+<p>这篇笔记完整记录这个项目的设计取舍和实现细节，最后也会诚实地复盘它的几个硬伤，以及后来学了面向对象和数据库之后怎么解。</p>
+<h2 id="一-要实现什么"><a class="markdownIt-Anchor" href="#一-要实现什么"></a> 一、要实现什么</h2>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>功能</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>注册</td>
+<td>用户名 + 密码 + 确认密码，密码不一致要重来；已存在的用户名不能重复注册</td>
+</tr>
+<tr>
+<td>2</td>
+<td>登录</td>
+<td>用户名 + 密码，成功后记住登录状态</td>
+</tr>
+<tr>
+<td>3</td>
+<td>查询余额</td>
+<td>需要登录</td>
+</tr>
+<tr>
+<td>4</td>
+<td>存款</td>
+<td>需要登录，记一笔流水</td>
+</tr>
+<tr>
+<td>5</td>
+<td>取款</td>
+<td>需要登录，余额不足要拒绝</td>
+</tr>
+<tr>
+<td>6</td>
+<td>查询流水</td>
+<td>需要登录，按时间顺序打印</td>
+</tr>
+<tr>
+<td>0</td>
+<td>退出</td>
+<td>结束程序</td>
+</tr>
+</tbody>
+</table>
+<p>注册成功后初始余额是 10 元（方便测试存取款），数据用 JSON 文件保存——那时候还没学数据库。</p>
+<h2 id="二-目录结构先分层再写代码"><a class="markdownIt-Anchor" href="#二-目录结构先分层再写代码"></a> 二、目录结构：先分层，再写代码</h2>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ATM/</span><br><span class="line">├── run.py                  # 启动入口，只干一件事：调用 src.run()</span><br><span class="line">├── config/</span><br><span class="line">│   └── setting.py          # 配置：用户数据目录的绝对路径</span><br><span class="line">├── core/</span><br><span class="line">│   └── src.py              # 门面层：所有 input/print 都在这里</span><br><span class="line">├── api/</span><br><span class="line">│   ├── user_i.py           # 业务层：注册、登录逻辑</span><br><span class="line">│   └── bank_i.py           # 业务层：余额、存取款、流水逻辑</span><br><span class="line">├── DB/</span><br><span class="line">│   ├── db_handle.py        # 数据层：JSON 的读与写</span><br><span class="line">│   └── user_data/          # 一个用户一个 json 文件</span><br><span class="line">│       └── 纯爱.json</span><br><span class="line">└── lib/</span><br><span class="line">    └── common.py           # 通用插件：登录校验装饰器</span><br></pre></td></tr></table></figure>
+<p>调用链是单向的：</p>
+<pre class="mermaid">graph LR
+    A[run.py 启动] --> B[core/src.py 门面<br/>负责输入输出]
+    B --> C[api/user_i.py<br/>api/bank_i.py 业务逻辑]
+    C --> D[DB/db_handle.py<br/>读写 JSON]
+    D --> E[(DB/user_data/*.json)]
+    B -.装饰器拦截.-> F[lib/common.py<br/>is_login]</pre>
+<p><strong>各层只做一件事</strong>：门面层负责和用户对话，业务层负责判断和计算，数据层负责存取，配置层负责路径。这样换存储方式（JSON → MySQL）时，只需要重写数据层。</p>
+<h2 id="三-逐层实现"><a class="markdownIt-Anchor" href="#三-逐层实现"></a> 三、逐层实现</h2>
+<h3 id="1-启动入口"><a class="markdownIt-Anchor" href="#1-启动入口"></a> 1. 启动入口</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># run.py —— 整个项目的启动文件</span></span><br><span class="line"><span class="keyword">from</span> core <span class="keyword">import</span> src</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    src.run()</span><br></pre></td></tr></table></figure>
+<p>入口文件保持干净，方便别人一眼看出程序从哪开始。</p>
+<h3 id="2-门面层用字典代替一堆-if"><a class="markdownIt-Anchor" href="#2-门面层用字典代替一堆-if"></a> 2. 门面层：用字典代替一堆 if</h3>
+<p>最初功能菜单是这么写的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">choice = <span class="built_in">input</span>(<span class="string">&#x27;请选择操作&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> choice == <span class="string">&#x27;1&#x27;</span>:</span><br><span class="line">    register()</span><br><span class="line"><span class="keyword">elif</span> choice == <span class="string">&#x27;2&#x27;</span>:</span><br><span class="line">    login()</span><br><span class="line"><span class="keyword">elif</span> choice == <span class="string">&#x27;3&#x27;</span>:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>功能一多，这个 if 链就越长越难改。课程里教了一个更清爽的写法：<strong>把「序号 → 功能」做成字典，循环遍历打印菜单，再用序号直接取出函数调用</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># core/src.py</span></span><br><span class="line">fun_select = &#123;</span><br><span class="line">    <span class="number">0</span>: [<span class="string">&quot;退出&quot;</span>, exit],</span><br><span class="line">    <span class="number">1</span>: [<span class="string">&quot;注册&quot;</span>, register],</span><br><span class="line">    <span class="number">2</span>: [<span class="string">&quot;登录&quot;</span>, login],</span><br><span class="line">    <span class="number">3</span>: [<span class="string">&quot;查看余额&quot;</span>, check_money],</span><br><span class="line">    <span class="number">4</span>: [<span class="string">&quot;存款&quot;</span>, save_money],</span><br><span class="line">    <span class="number">5</span>: [<span class="string">&quot;取钱&quot;</span>, get_money],</span><br><span class="line">    <span class="number">6</span>: [<span class="string">&quot;账单&quot;</span>, account],</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;欢迎来到ATM柜员机&#x27;</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> fun_select:              <span class="comment"># 遍历字典，打印序号 + 功能名</span></span><br><span class="line">            <span class="built_in">print</span>(i, fun_select[i][<span class="number">0</span>])</span><br><span class="line">        select = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&#x27;请选择你要做的操作&gt;&gt;&gt;&#x27;</span>))</span><br><span class="line">        <span class="keyword">if</span> select <span class="keyword">in</span> fun_select:          <span class="comment"># 序号合法就调用对应函数</span></span><br><span class="line">            fun_select[select][<span class="number">1</span>]()       <span class="comment"># 加括号才是调用</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;输入错误,该功能不存在&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>两个容易写错的地方：</p>
+<ol>
+<li>字典里的函数<strong>不能加括号</strong>——<code>&quot;注册&quot;: register</code> 是「存这个函数」，写成 <code>register()</code> 就变成「立刻调用并把返回值存进去」；</li>
+<li>用户输入要转成 <code>int</code> 再判断，否则 <code>'1' in fun_select</code> 永远是 <code>False</code>（键是整数）。</li>
+</ol>
+<p>这样加功能只需要在字典里加一行，菜单会自动多出一项。</p>
+<h3 id="3-业务层把判断和计算收到一起"><a class="markdownIt-Anchor" href="#3-业务层把判断和计算收到一起"></a> 3. 业务层：把判断和计算收到一起</h3>
+<p>业务层不知道用户长什么样、数据存在哪，它只接受参数、返回结果。返回值统一约定为 <strong><code>(结果, 说明信息)</code></strong> 二元组：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># api/user_i.py</span></span><br><span class="line"><span class="keyword">from</span> DB <span class="keyword">import</span> db_handle</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">register_info</span>(<span class="params">user_name, password</span>):</span><br><span class="line">    user_info = &#123;</span><br><span class="line">        <span class="string">&#x27;user_name&#x27;</span>: user_name,</span><br><span class="line">        <span class="string">&#x27;password&#x27;</span>: password,</span><br><span class="line">        <span class="string">&#x27;money&#x27;</span>: <span class="number">10</span>,      <span class="comment"># 初始余额</span></span><br><span class="line">        <span class="string">&#x27;account&#x27;</span>: []     <span class="comment"># 流水账单，一开始为空</span></span><br><span class="line">    &#125;</span><br><span class="line">    user_data = db_handle.get_data(user_name)</span><br><span class="line">    <span class="keyword">if</span> user_data:                                   <span class="comment"># 已经存在同名用户</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span>, <span class="string">&#x27;注册失败,该用户已经存在&#x27;</span></span><br><span class="line">    db_handle.save_data(user_info)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span>, <span class="string">f&#x27;<span class="subst">&#123;user_name&#125;</span>注册成功&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">login_info</span>(<span class="params">user_name, password</span>):</span><br><span class="line">    user_data = db_handle.get_data(user_name)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> user_data:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span>, <span class="string">&#x27;该用户不存在,请重新输入&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> password == user_data[<span class="string">&#x27;password&#x27;</span>]:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span>, <span class="string">f&#x27;<span class="subst">&#123;user_name&#125;</span>登录成功,请开始使用&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span>, <span class="string">&#x27;密码错误,请重新输入&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>有了这个约定，门面层就不需要理解业务细节，只需要看第一个返回值决定要不要退出循环、把第二个返回值打印给用户：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">register</span>():</span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        user_name = <span class="built_in">input</span>(<span class="string">&#x27;请输入您的姓名&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line">        password = <span class="built_in">input</span>(<span class="string">&#x27;请输入您的密码&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line">        re_password = <span class="built_in">input</span>(<span class="string">&#x27;请确认您的密码&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> password == re_password:</span><br><span class="line">            flag, msg = user_i.register_info(user_name, password)</span><br><span class="line">            <span class="keyword">if</span> flag:</span><br><span class="line">                <span class="built_in">print</span>(msg)</span><br><span class="line">                <span class="keyword">break</span>                    <span class="comment"># 注册成功才跳出重试循环</span></span><br><span class="line">            <span class="built_in">print</span>(msg)                   <span class="comment"># 失败说明原因，继续重试</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;密码不一致,请重新注册&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>存取款的业务逻辑集中在 <code>api/bank_i.py</code>，以取款为例，余额不够就明确拒绝：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">take_money</span>(<span class="params">user_name, money</span>):</span><br><span class="line">    user_data = db_handle.get_data(user_name)</span><br><span class="line">    <span class="keyword">if</span> user_data[<span class="string">&#x27;money&#x27;</span>] &gt;= money:</span><br><span class="line">        user_data[<span class="string">&#x27;money&#x27;</span>] -= money</span><br><span class="line">        acc_info = <span class="string">f&#x27;用户<span class="subst">&#123;user_name&#125;</span>取款<span class="subst">&#123;money&#125;</span>元,当前余额为<span class="subst">&#123;user_data[<span class="string">&quot;money&quot;</span>]&#125;</span>元&#x27;</span></span><br><span class="line">        user_data[<span class="string">&#x27;account&#x27;</span>].append(acc_info)   <span class="comment"># 记一笔流水</span></span><br><span class="line">        db_handle.save_data(user_data)         <span class="comment"># 改完立刻存盘</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span>, acc_info</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span>, <span class="string">&#x27;取款失败,余额不够,请重新操作&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>**「改内存 → 存盘 → 返回结果」**这三步是所有资金类操作的固定套路，顺序不能乱。</p>
+<h3 id="4-数据层json-读写与路径处理"><a class="markdownIt-Anchor" href="#4-数据层json-读写与路径处理"></a> 4. 数据层：JSON 读写与路径处理</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DB/db_handle.py</span></span><br><span class="line"><span class="keyword">import</span> json, os</span><br><span class="line"><span class="keyword">from</span> config.setting <span class="keyword">import</span> USER_DATA_PATH <span class="keyword">as</span> file_path</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">save_data</span>(<span class="params">user_info</span>):</span><br><span class="line">    name = user_info[<span class="string">&#x27;user_name&#x27;</span>]</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">fr&#x27;<span class="subst">&#123;file_path&#125;</span>\&#123;name&#125;.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        json.dump(user_info, f)          <span class="comment"># 一个用户一个文件</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_data</span>(<span class="params">user_name</span>):</span><br><span class="line">    user = <span class="string">fr&#x27;<span class="subst">&#123;file_path&#125;</span>\&#123;user_name&#125;.json&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> os.path.exists(user):             <span class="comment"># 文件不存在就返回 None</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(user, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">return</span> json.load(f)</span><br></pre></td></tr></table></figure>
+<p>路径不能写死成 <code>C:\Users\mei\...</code>——那种绝对路径换台电脑就跑不起来。正确做法是从当前文件位置反推出项目根目录：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config/setting.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">BASE_PATH = os.path.dirname(os.path.dirname(__file__))   <span class="comment"># 去掉文件名 → 项目根目录</span></span><br><span class="line">USER_DATA_PATH = os.path.join(BASE_PATH, <span class="string">&#x27;DB&#x27;</span>, <span class="string">&#x27;user_data&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>os.path.dirname</code> 套两层：第一层从 <code>config/setting.py</code> 得到 <code>config/</code>，第二层得到项目根目录。<strong>这样整个项目复制到任何位置都能直接运行。</strong></p>
+<h3 id="5-登录校验用装饰器统一拦截"><a class="markdownIt-Anchor" href="#5-登录校验用装饰器统一拦截"></a> 5. 登录校验：用装饰器统一拦截</h3>
+<p>「查余额/存款/取款/账单」都要求先登录。如果在每个函数里都手写一遍判断，代码会重复四份。课程里的做法是写成装饰器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lib/common.py</span></span><br><span class="line"><span class="keyword">from</span> core <span class="keyword">import</span> src</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_login</span>(<span class="params">f</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">check</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> src.login_user:                       <span class="comment"># 登录态非空</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;您已登录,欢迎使用&#x27;</span>)</span><br><span class="line">            f(*args, **kwargs)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;您还未登录,请登录后再使用该功能&#x27;</span>)</span><br><span class="line">            src.login()                          <span class="comment"># 直接跳到登录流程</span></span><br><span class="line">    <span class="keyword">return</span> check</span><br></pre></td></tr></table></figure>
+<p>登录态本身用一个模块级变量表示，就像浏览器里的登录状态一样——没登录是 <code>None</code>，登录后是用户名：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># core/src.py</span></span><br><span class="line">login_user = <span class="literal">None</span>            <span class="comment"># 默认未登录</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">login</span>():</span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        user_name = <span class="built_in">input</span>(<span class="string">&#x27;请输入您的姓名&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line">        password = <span class="built_in">input</span>(<span class="string">&#x27;请输入您的密码&gt;&gt;&gt;&#x27;</span>)</span><br><span class="line">        flag, msg = user_i.login_info(user_name, password)</span><br><span class="line">        <span class="keyword">if</span> flag:</span><br><span class="line">            <span class="built_in">print</span>(msg)</span><br><span class="line">            <span class="keyword">global</span> login_user            <span class="comment"># 函数内要修改模块级变量必须声明 global</span></span><br><span class="line">            login_user = user_name</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="built_in">print</span>(msg)</span><br></pre></td></tr></table></figure>
+<p>给需要登录的功能加上语法糖即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@is_login</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_money</span>():</span><br><span class="line">    money = bank_i.select_money(login_user)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;用户<span class="subst">&#123;login_user&#125;</span>当前账号余额为<span class="subst">&#123;money&#125;</span>元&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>装饰器在这里的价值是<strong>把「是否登录」这个横切逻辑从业务函数里彻底剥离</strong>，以后想改成「登录且是管理员」只需要改一处。</p>
+<h2 id="四-跑起来的样子"><a class="markdownIt-Anchor" href="#四-跑起来的样子"></a> 四、跑起来的样子</h2>
+<p>数据文件长这样（一个用户一个 JSON）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;user_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;纯爱&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;666666&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;money&quot;</span><span class="punctuation">:</span> <span class="number">20010.0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;account&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;用户纯爱存款20000.0元,当前余额为20010.0元&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>运行效果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">欢迎来到ATM柜员机</span><br><span class="line">0 退出</span><br><span class="line">1 注册</span><br><span class="line">2 登录</span><br><span class="line">3 查看余额</span><br><span class="line">4 存款</span><br><span class="line">5 取钱</span><br><span class="line">6 账单</span><br><span class="line">请选择你要做的操作&gt;&gt;&gt;2</span><br><span class="line">请输入您的姓名&gt;&gt;&gt;纯爱</span><br><span class="line">请输入您的密码&gt;&gt;&gt;666666</span><br><span class="line">纯爱登录成功,请开始使用</span><br><span class="line">您已登录,欢迎使用</span><br><span class="line">用户纯爱当前账号余额为20010.0元</span><br></pre></td></tr></table></figure>
+<h2 id="五-复盘这个项目的五个硬伤"><a class="markdownIt-Anchor" href="#五-复盘这个项目的五个硬伤"></a> 五、复盘：这个项目的五个硬伤</h2>
+<p>项目能跑，但离「像样」还差得远。把它当作一次体检，问题正好对应后面要学的知识：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>现象</th>
+<th>后来的解法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>密码明文存储</td>
+<td>JSON 里能直接看到 <code>666666</code></td>
+<td>高级编程班的项目里用 <code>hashlib.sha1</code> 加盐/哈希存密码（Django 项目用的是自定义 <code>gen_sha1_pwd</code>）</td>
+</tr>
+<tr>
+<td>用全局变量记录登录态</td>
+<td><code>login_user</code> 谁都能改，多用户场景会串号</td>
+<td>面向对象：把状态收进对象的属性里；Web 里则用 session</td>
+</tr>
+<tr>
+<td>没有输入校验</td>
+<td>存款时输入「abc」，<code>float()</code> 直接抛异常退出</td>
+<td>异常处理 try/except + 循环重试</td>
+</tr>
+<tr>
+<td>JSON 文件不是数据库</td>
+<td>没有并发保护、没有事务、无法按条件查询</td>
+<td>MySQL：表结构、约束、事务</td>
+</tr>
+<tr>
+<td>逻辑全在函数里</td>
+<td>功能多了以后参数越传越长</td>
+<td>面向对象：类封装数据与行为</td>
+</tr>
+</tbody>
+</table>
+<p>最值得记住的一条是<strong>分层</strong>：正是因为它把「用户界面 / 业务判断 / 数据存取」拆开了，上面这些问题才能一个个单独替换——换存储只动 <code>DB/</code>，换交互只动 <code>core/</code>。</p>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>这个项目教会我的三件事：<strong>用字典做分发</strong>让菜单可扩展、<strong>用装饰器做拦截</strong>让校验不重复、<strong>用相对路径反推项目根目录</strong>让代码可以在任何电脑上跑。而它暴露的问题，恰好就是高级编程班要解决的——面向对象、异常处理、数据库，下一篇就接着写。</p>
+<blockquote>
+<p>说明：这是基础班（玫玫老师）的收官项目，代码来自课堂，我按自己的理解补了注释与复盘。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文連結：</strong><a href="https://utdog.github.io/zh-TW/2025/05/04/ATM%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/">https://utdog.github.io/zh-TW/2025/05/04/ATM%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版權：</strong>本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 授權協議。轉載請註明出處！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">贊助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">請作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%EF%BC%9A%E5%88%86%E5%B1%82%E5%86%99%E4%B8%80%E4%B8%AA%20ATM%20%E6%9F%9C%E5%91%98%E6%9C%BA&amp;desc=Python%20%E5%9F%BA%E7%A1%80%E7%8F%AD%E6%94%B6%E5%AE%98%E9%A1%B9%E7%9B%AE%E5%A4%8D%E7%9B%98%EF%BC%9A%E7%94%A8%E9%97%A8%E9%9D%A2%E5%B1%82%E3%80%81%E4%B8%9A%E5%8A%A1%E5%B1%82%E3%80%81%E6%95%B0%E6%8D%AE%E5%B1%82%E5%88%86%E7%A6%BB%E7%9A%84%E6%96%B9%E5%BC%8F%E5%AE%9E%E7%8E%B0%E6%B3%A8%E5%86%8C%E7%99%BB%E5%BD%95%E3%80%81%E5%AD%98%E5%8F%96%E6%AC%BE%E4%B8%8E%E6%B5%81%E6%B0%B4%E8%B4%A6%E5%8D%95%EF%BC%8C%E5%B9%B6%E6%80%BB%E7%BB%93%E4%BA%94%E4%B8%AA%E5%BE%85%E6%94%B9%E8%BF%9B%E7%82%B9%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="项目实战：分层写一个 ATM 柜员机">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="项目实战：分层写一个 ATM 柜员机">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/" rel="tag">项目实战</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/40.jpg" data-sizes="auto" alt="python高级编程" class="lazyload">
+        
+        <a href="/zh-TW/2025/05/05/python%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            python高级编程
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/banner.png" data-sizes="auto" alt="什么是编程语言？" class="lazyload">
+      
+      <a href="/zh-TW/2025/05/03/%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          什么是编程语言？
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基於&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E5%88%86%E5%B1%82%E5%86%99%E4%B8%80%E4%B8%AA-atm-%E6%9F%9C%E5%91%98%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text"> 项目实战：分层写一个 ATM 柜员机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%A6%81%E5%AE%9E%E7%8E%B0%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、要实现什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E5%85%88%E5%88%86%E5%B1%82%E5%86%8D%E5%86%99%E4%BB%A3%E7%A0%81"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、目录结构：先分层，再写代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E9%80%90%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、逐层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1. 启动入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%97%A8%E9%9D%A2%E5%B1%82%E7%94%A8%E5%AD%97%E5%85%B8%E4%BB%A3%E6%9B%BF%E4%B8%80%E5%A0%86-if"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2. 门面层：用字典代替一堆 if</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%9A%E5%8A%A1%E5%B1%82%E6%8A%8A%E5%88%A4%E6%96%AD%E5%92%8C%E8%AE%A1%E7%AE%97%E6%94%B6%E5%88%B0%E4%B8%80%E8%B5%B7"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 3. 业务层：把判断和计算收到一起</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E5%B1%82json-%E8%AF%BB%E5%86%99%E4%B8%8E%E8%B7%AF%E5%BE%84%E5%A4%84%E7%90%86"><span class="toc-number">1.3.4.</span> <span class="toc-text"> 4. 数据层：JSON 读写与路径处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%99%BB%E5%BD%95%E6%A0%A1%E9%AA%8C%E7%94%A8%E8%A3%85%E9%A5%B0%E5%99%A8%E7%BB%9F%E4%B8%80%E6%8B%A6%E6%88%AA"><span class="toc-number">1.3.5.</span> <span class="toc-text"> 5. 登录校验：用装饰器统一拦截</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E8%B7%91%E8%B5%B7%E6%9D%A5%E7%9A%84%E6%A0%B7%E5%AD%90"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、跑起来的样子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%A4%8D%E7%9B%98%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BA%94%E4%B8%AA%E7%A1%AC%E4%BC%A4"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、复盘：这个项目的五个硬伤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "项目实战：分层写一个 ATM 柜员机",
+          url: "https://utdog.github.io/2025/05/04/ATM%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/",
+          excerpt: "",
+          description: "Python 基础班收官项目复盘：用门面层、业务层、数据层分离的方式实现注册登录、存取款与流水账单，并总结五个待改进点。",
+          stripContent: " 项目实战：分层写一个 ATM 柜员机  前言 学完函数、装饰器、文件操作之后，基础班的收官项目是一个命令行 ATM：注册、登录、查余额、存款、取款、查流水。功能不复杂，但它第一次让我意识到「代码要分层写」——如果所有逻辑都堆在一个文件里，每加一个功能都要改动一堆地方。 这篇笔记完整记录这个项目的设计取舍和实现细节，最后也会诚实地复盘它的几个硬伤，以及后来学了面向对象和数据库之后怎么解。  一、要实现什么    序号 功能 说明     1 注册 用户名 + 密码 + 确认密码，密码不一致要重来",
+          date: "Sun May 04 2025 12:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:04:51 GMT+0800",
+          cover: "/images/31.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

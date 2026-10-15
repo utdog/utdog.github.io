@@ -1,0 +1,1552 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    爬虫进阶：Requests 库与正则表达式 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="爬虫系列第二篇：用 Requests 发送 GET&#x2F;POST 请求、headers 与 params 参数、response 的五个常用属性与乱码真相、代理与 auth、Cookie 与 Session 保持登录、CookieJar 转换，以及 re 模块六个方法、match 对象、贪婪与非贪婪的实战区别。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫进阶：Requests 库与正则表达式">
+<meta property="og:url" content="https://utdog.github.io/2025/05/20/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-Requests%E4%B8%8E%E6%AD%A3%E5%88%99/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="爬虫系列第二篇：用 Requests 发送 GET&#x2F;POST 请求、headers 与 params 参数、response 的五个常用属性与乱码真相、代理与 auth、Cookie 与 Session 保持登录、CookieJar 转换，以及 re 模块六个方法、match 对象、贪婪与非贪婪的实战区别。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-20T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T10:36:25.272Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="爬虫">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Requests">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">简体中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" class="selected">简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/20/爬虫进阶-Requests与正则/';
+            
+              langMap['en'] = '/en/2025/05/20/爬虫进阶-Requests与正则/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/20/爬虫进阶-Requests与正则/';
+            
+              langMap['ja'] = '/ja/2025/05/20/爬虫进阶-Requests与正则/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/12.jpg" alt="爬虫进阶：Requests 库与正则表达式">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">爬虫进阶：Requests 库与正则表达式</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6requests-%E5%BA%93%E4%B8%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫进阶：Requests 库与正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8-requests"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、为什么用 Requests</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E7%9A%84-get-%E8%AF%B7%E6%B1%82"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 一个最小的 GET 请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%A6%E5%8F%82%E6%95%B0%E7%9A%84-get%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2"><span class="toc-number">1.1.2.</span> <span class="toc-text"> 带参数的 GET：百度搜索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-response-%E7%9A%84%E4%BA%94%E4%B8%AA%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、response 的五个常用属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%B1%E7%A0%81%E6%98%AF%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84%E5%BE%88%E5%85%B3%E9%94%AE%E7%9A%84%E5%9D%91"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 乱码是怎么来的（很关键的坑）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%AB%E6%80%A5%E7%9D%80%E8%A7%A3%E6%9E%90-html"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 别急着解析 HTML</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-post-%E8%AF%B7%E6%B1%82"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、POST 请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#data-%E4%BC%A0-json-%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-number">1.3.1.</span> <span class="toc-text"> data 传 JSON 的情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%BB%A3%E7%90%86%E4%B8%8E%E8%AE%A4%E8%AF%81"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、代理与认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%90%86proxies"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 代理（proxies）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web-%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%AA%8C%E8%AF%81auth"><span class="toc-number">1.4.2.</span> <span class="toc-text"> Web 客户端验证（auth）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-cookie-%E4%B8%8E-session"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、Cookie 与 Session</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E6%8C%81%E4%BC%9A%E8%AF%9Drequestssession-%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 保持会话：requests.session() 的意义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%88%AC%E8%99%AB%E5%BF%85%E9%A1%BB%E4%BC%9A%E6%AD%A3%E5%88%99"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 为什么爬虫必须会正则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 正则是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E-compile"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 原始字符串与 compile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pattern-%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%85%AD%E4%B8%AA%E6%96%B9%E6%B3%95"><span class="toc-number">1.6.4.</span> <span class="toc-text"> Pattern 对象的六个方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#match-%E4%B8%8E-match-%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.6.4.1.</span> <span class="toc-text"> match 与 Match 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#search"><span class="toc-number">1.6.4.2.</span> <span class="toc-text"> search</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#findall"><span class="toc-number">1.6.4.3.</span> <span class="toc-text"> findall</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sub-%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.6.4.4.</span> <span class="toc-text"> sub 替换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B4%AA%E5%A9%AA%E4%B8%8E%E9%9D%9E%E8%B4%AA%E5%A9%AA%E6%9C%80%E5%AE%B9%E6%98%93%E5%86%99%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.6.4.5.</span> <span class="toc-text"> 贪婪与非贪婪（最容易写错的地方）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%AD%A3%E5%88%99%E7%AC%A6%E5%8F%B7%E9%80%9F%E6%9F%A5%E8%A1%A5%E5%85%85"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、正则符号速查（补充）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-爬虫进阶-Requests与正则" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-20T12:00:00.000Z" itemprop="datePublished">2025-05-20</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="爬虫进阶requests-库与正则表达式"><a class="markdownIt-Anchor" href="#爬虫进阶requests-库与正则表达式"></a> 爬虫进阶：Requests 库与正则表达式</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>上一篇把原理讲完了，聚焦爬虫就四步：<strong>发请求 → 拿响应 → 解析提取 → 保存数据</strong>。</p>
+<p>这一篇覆盖前两步和第三步的前半截：</p>
+<ul>
+<li><strong>Requests</strong> 负责&quot;发请求、拿响应&quot;——把上一篇讲的请求头、参数、Cookie 真正写进代码；</li>
+<li><strong>正则表达式</strong>负责&quot;解析提取&quot;里的第一步——从<strong>字符串</strong>里把需要的内容抠出来。</li>
+</ul>
+<blockquote>
+<p>说明：本文依据课件《2.爬虫核心技巧》的两份笔记（《1.HTTP请求库和Requests详解》《2.正则表达式详解》）整理，代码与案例都来自课件。正则语法速查表和踩坑表是我自己的补充。</p>
+</blockquote>
+<h2 id="一-为什么用-requests"><a class="markdownIt-Anchor" href="#一-为什么用-requests"></a> 一、为什么用 Requests</h2>
+<blockquote>
+<p><strong>Requests</strong> 是用 Python 语言编写，基于 <strong>urllib</strong>，采用 <strong>Apache2 Licensed 开源协议</strong>的 HTTP 库。</p>
+</blockquote>
+<p>课件给它的评价是&quot;<strong>Requests 唯一的一个非转基因的 Python HTTP 库，人类可以安全享用</strong>&quot;——这是官方文档里那句著名的玩笑（“HTTP for Humans”）。</p>
+<p>它比 urllib 好在哪：</p>
+<ul>
+<li><strong>底层就是 urllib</strong>，但 API 友好得多，不用手写 <code>Request</code> 对象和 <code>urlopen</code>；</li>
+<li>自动处理编码、自动解压 gzip；</li>
+<li>支持 HTTP 长连接和连接池；</li>
+<li>支持 Cookie 保持会话、文件分块上传、自动确定响应内容编码；</li>
+<li>国际化和域名支持良好；</li>
+<li><strong>Python 2 和 Python 3 都能用</strong>。</li>
+</ul>
+<p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install requests</span><br></pre></td></tr></table></figure>
+<h3 id="一个最小的-get-请求"><a class="markdownIt-Anchor" href="#一个最小的-get-请求"></a> 一个最小的 GET 请求</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;https://www.baidu.com/&#x27;</span></span><br><span class="line">res = requests.get(url)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"><span class="built_in">print</span>(res.text)</span><br></pre></td></tr></table></figure>
+<p>打印出来是 <code>&lt;Response [200]&gt;</code> 和一整页 HTML。</p>
+<p><strong>注意&quot;请求头默认值&quot;这件事</strong>——课件里强调过：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res.request.headers</span><br></pre></td></tr></table></figure>
+<p>你会看到 <code>User-Agent: python-requests/2.x.x</code>。<strong>这就是&quot;裸奔&quot;的爬虫</strong>：任何网站只要看一眼 UA，就知道来的不是浏览器。所以真实项目里第一步就是给请求加上 <code>headers</code>。</p>
+<h3 id="带参数的-get百度搜索"><a class="markdownIt-Anchor" href="#带参数的-get百度搜索"></a> 带参数的 GET：百度搜索</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;https://www.baidu.com/s&#x27;</span></span><br><span class="line"></span><br><span class="line">data = &#123;<span class="string">&#x27;wd&#x27;</span>: <span class="string">&#x27;Chinese&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">res = requests.get(url, params=data)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br><span class="line"><span class="built_in">print</span>(res.url)</span><br><span class="line"><span class="built_in">print</span>(res.text[:<span class="number">100</span>])</span><br></pre></td></tr></table></figure>
+<p>两个要点：</p>
+<ol>
+<li><strong><code>params</code> 会自动做 URL 编码</strong>，中文、空格、特殊字符都不用自己 <code>urlencode</code>；</li>
+<li><strong><code>res.url</code> 能看到最终请求的完整地址</strong>——课件特别提醒过它和直接请求 <code>www.baidu.com/s?wd=Chinese</code> 是有区别的，区别就在那串 <code>http%3A%2F%2F</code> 的编码上。</li>
+</ol>
+<h2 id="二-response-的五个常用属性"><a class="markdownIt-Anchor" href="#二-response-的五个常用属性"></a> 二、response 的五个常用属性</h2>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>response.text</code></td>
+<td>返回<strong>文本</strong>形式的响应内容</td>
+</tr>
+<tr>
+<td><code>response.content</code></td>
+<td>返回<strong>二进制</strong>形式的响应内容</td>
+</tr>
+<tr>
+<td><code>response.url</code></td>
+<td>请求的最终 URL（会跟着重定向走）</td>
+</tr>
+<tr>
+<td><code>response.encoding</code></td>
+<td>从 HTTP 报头中获取的<strong>响应内容编码方式</strong></td>
+</tr>
+<tr>
+<td><code>response.status_code</code></td>
+<td>响应状态码</td>
+</tr>
+<tr>
+<td><code>response.json()</code></td>
+<td>把返回的 JSON 字符串反序列化成 Python 对象（前提是返回的确实是 JSON）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="乱码是怎么来的很关键的坑"><a class="markdownIt-Anchor" href="#乱码是怎么来的很关键的坑"></a> 乱码是怎么来的（很关键的坑）</h3>
+<p>课件用新浪做过实验：有些网页用 <code>response.text</code> 取回来是<strong>乱码</strong>。原因有两条：</p>
+<ol>
+<li><strong>网络上的大部分服务器都启用了 gzip 压缩</strong>——<code>requests</code> 会在请求头里带上 <code>Accept-Encoding: gzip</code>，拿到的内容是压缩的，不是明文；<code>requests</code> 能<strong>自动解压</strong>，这一步通常不用我们操心；</li>
+<li>真正的坑在<strong>编码判断</strong>：<code>response.text</code> 会尝试用 HTTP 响应头里的编码去解码；如果对方没给或者给错了，<code>requests</code> 就会用 <code>chardet</code> 去猜，<strong>猜错就乱码</strong>。</li>
+</ol>
+<p><strong>对&quot;文字&quot;用 <code>response.text</code>，对&quot;图片/视频等二进制&quot;用 <code>response.content</code></strong>。遇到乱码时，课上给的解法是直接指定编码解码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res.content.decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>——<code>content</code> 原样返回字节，编码由我们自己定，不交给它猜。</p>
+<blockquote>
+<p>顺带一个实用推论：抓图片、验证码这类文件时用 <code>content</code> 拿二进制，再用 <code>open(..., 'wb')</code> 写进文件，<strong>不能用 <code>text</code></strong>。</p>
+</blockquote>
+<h3 id="别急着解析-html"><a class="markdownIt-Anchor" href="#别急着解析-html"></a> 别急着解析 HTML</h3>
+<p>课件里有句话值得记住：<strong>用 <code>response.text</code> 打印出来的一大坨 HTML，绝大部分是我们不需要的</strong>——真正要的三个数据可能藏在一万行里。这就是&quot;解析提取&quot;存在的理由，也是下一篇 BeautifulSoup 和 XPath 要解决的问题。</p>
+<h2 id="三-post-请求"><a class="markdownIt-Anchor" href="#三-post-请求"></a> 三、POST 请求</h2>
+<p><code>requests.post(url, data=data)</code>，参数放进 <code>data</code> 里（不是 <code>params</code>）。</p>
+<p>课件用<strong>有道翻译</strong>做例子：抓包可以看到它是个 POST 请求，表单数据大致是：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>i</code></td>
+<td>要翻译的内容</td>
+</tr>
+<tr>
+<td><code>from</code></td>
+<td><code>AUTO</code></td>
+</tr>
+<tr>
+<td><code>to</code></td>
+<td><code>AUTO</code></td>
+</tr>
+<tr>
+<td><code>smartresult</code></td>
+<td><code>dict</code></td>
+</tr>
+<tr>
+<td><code>client</code></td>
+<td><code>fanyideskweb</code></td>
+</tr>
+<tr>
+<td><code>salt</code></td>
+<td>时间戳</td>
+</tr>
+<tr>
+<td><code>sign</code></td>
+<td>加密签名</td>
+</tr>
+<tr>
+<td><code>doctype</code></td>
+<td><code>json</code></td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td><code>2.1</code></td>
+</tr>
+<tr>
+<td><code>keyfrom</code></td>
+<td><code>fanyi.web</code></td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td><code>FY_BY_CLICKBUTTON</code></td>
+</tr>
+<tr>
+<td><code>typoResult</code></td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://fanyi.youdao.com/translate_o?smartresult=dict&amp;smartresult=rule&#x27;</span></span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&#x27;i&#x27;</span>: <span class="string">&#x27;你好&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;from&#x27;</span>: <span class="string">&#x27;AUTO&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;to&#x27;</span>: <span class="string">&#x27;AUTO&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;smartresult&#x27;</span>: <span class="string">&#x27;dict&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;client&#x27;</span>: <span class="string">&#x27;fanyideskweb&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;salt&#x27;</span>: <span class="string">&#x27;1523285423916&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;sign&#x27;</span>: <span class="string">&#x27;a4a527bf49b1a8d2e0dd9fcb8d5a75cb&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;doctype&#x27;</span>: <span class="string">&#x27;json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;version&#x27;</span>: <span class="string">&#x27;2.1&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;keyfrom&#x27;</span>: <span class="string">&#x27;fanyi.web&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;action&#x27;</span>: <span class="string">&#x27;FY_BY_CLICKBUTTON&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;typoResult&#x27;</span>: <span class="string">&#x27;true&#x27;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">res = requests.post(url, data=data)</span><br><span class="line"><span class="built_in">print</span>(res.text)</span><br></pre></td></tr></table></figure>
+<p>返回的是 JSON：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;type&quot;:&quot;ZH_CN2EN&quot;,&quot;errorCode&quot;:0,&quot;elapsedTime&quot;:1,&quot;translateResult&quot;:[[&#123;&quot;src&quot;:&quot;你好&quot;,&quot;tgt&quot;:&quot;Hello&quot;&#125;]]&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意 <code>salt</code> 和 <code>sign</code> 这两个字段</strong>——它们不是我们随便编的，而是页面上 js 算出来的（<code>salt</code> 是时间戳，<code>sign</code> 是各种参数拼起来再加密）。课件里的值是从抓包结果直接抄过来的，所以过一段时间就会失效。<strong>这就是&quot;参数加密&quot;类的反爬</strong>，真正要稳定调用就得去逆那个 js。</p>
+<h3 id="data-传-json-的情况"><a class="markdownIt-Anchor" href="#data-传-json-的情况"></a> <code>data</code> 传 JSON 的情况</h3>
+<p>课件还给了<strong>快手</strong>的例子：抓包看它的请求体是一串 JSON 而不是表单。这时有两种写法：</p>
+<ul>
+<li>把 <code>data</code> 设置成<strong>符合 JSON 格式的字符串</strong>（<code>json.dumps(...)</code>）；</li>
+<li>直接用 <code>json=</code> 参数传字典，<code>requests</code> 会自己序列化并带上 <code>Content-Type: application/json</code>。</li>
+</ul>
+<p>同时要在 <code>headers</code> 里补上对应的 <code>Content-Type</code>。<strong>规律是：抓包的请求体长什么样，我们的 <code>data</code> 就长什么样。</strong></p>
+<h2 id="四-代理与认证"><a class="markdownIt-Anchor" href="#四-代理与认证"></a> 四、代理与认证</h2>
+<h3 id="代理proxies"><a class="markdownIt-Anchor" href="#代理proxies"></a> 代理（proxies）</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">proxies = &#123;</span><br><span class="line">    <span class="string">&#x27;http&#x27;</span>: <span class="string">&#x27;http://127.0.0.1:8888&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;https&#x27;</span>: <span class="string">&#x27;https://127.0.0.1:8888&#x27;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">res = requests.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>, proxies=proxies)</span><br><span class="line"><span class="built_in">print</span>(res.status_code)</span><br></pre></td></tr></table></figure>
+<p>要点：</p>
+<ul>
+<li><code>http</code> 和 <code>https</code> 可以<strong>分别</strong>指定，要按请求的协议去取对应的那一项；</li>
+<li>如果代理需要账号密码：<code>http://user:pass@host:port/**</code>（私密代理的写法）；</li>
+<li>代理也可以走<strong>环境变量</strong>（<code>HTTP_PROXY</code> / <code>HTTPS_PROXY</code>），用 <code>proxies</code> 参数会覆盖环境变量；</li>
+<li>用代理的目的主要是<strong>应对 IP 被封</strong>（反爬）与隐藏真实来源。</li>
+</ul>
+<h3 id="web-客户端验证auth"><a class="markdownIt-Anchor" href="#web-客户端验证auth"></a> Web 客户端验证（auth）</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">auth = (<span class="string">&#x27;user&#x27;</span>, <span class="string">&#x27;pass&#x27;</span>)</span><br><span class="line"></span><br><span class="line">res = requests.get(<span class="string">&#x27;https://api.github.com/user&#x27;</span>, auth=auth)</span><br><span class="line"><span class="built_in">print</span>(res.status_code)</span><br></pre></td></tr></table></figure>
+<p>这是 HTTP 基础认证（服务端返回 401 并要求认证时的用法），和表单登录不是一回事。</p>
+<h2 id="五-cookie-与-session"><a class="markdownIt-Anchor" href="#五-cookie-与-session"></a> 五、Cookie 与 Session</h2>
+<p>先把概念钉死：</p>
+<blockquote>
+<ul>
+<li><strong>Cookie</strong>：通过在<strong>客户端</strong>记录信息确定用户身份；</li>
+<li><strong>Session</strong>：通过在<strong>服务器端</strong>记录信息确定用户身份。</li>
+</ul>
+</blockquote>
+<p>Cookie 的限制（课件原话）：<strong>每个 Cookie 不超过 4K；一个服务器最多在客户端浏览器上保存 20 个 Cookie；一个浏览器最多保存 300 个 Cookie。</strong> 并且因为 Cookie 存在客户端，<strong>可以被分析和欺骗，安全性较差</strong>。</p>
+<p><strong>爬虫为什么关心它</strong>：一套 Cookie 在服务器那边就代表<strong>一个用户</strong>。所以：</p>
+<ul>
+<li>好处：把登录后的 Cookie 带上，就能抓&quot;登录后才能看&quot;的数据；</li>
+<li>坏处：一个用户短时间内请求太频繁，很容易被识别成爬虫——<strong>所以大规模采集要靠多账号轮换 Cookie</strong>。</li>
+</ul>
+<p><code>requests</code> 里 Cookie 有三种带法，第一种是把 Cookie 放进 <code>headers</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">&#x27;Cookie&#x27;</span>: <span class="string">&#x27;xxx=yyy; aaa=bbb&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第二种是把 <code>CookieJar</code> 转成字典再传：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> requests.cookies <span class="keyword">import</span> cookiejar_from_dict, dict_from_cookiejar</span><br><span class="line"></span><br><span class="line"><span class="comment"># 响应里的 CookieJar → 字典（方便打印、挑选、存文件）</span></span><br><span class="line">cookie_dict = dict_from_cookiejar(res.cookies)</span><br><span class="line"><span class="built_in">print</span>(cookie_dict)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 反向：字典 → CookieJar，再传给请求的 cookies 参数</span></span><br><span class="line">jar = cookiejar_from_dict(&#123;<span class="string">&#x27;sessionid&#x27;</span>: <span class="string">&#x27;abc123&#x27;</span>&#125;)</span><br><span class="line">res = requests.get(url, cookies=jar)</span><br></pre></td></tr></table></figure>
+<p><code>CookieJar</code> 是 <code>http.cookiejar</code> 里的标准容器，<code>requests</code> 用它来装 Cookie，配套的 <code>dict_from_cookiejar</code> / <code>cookiejar_from_dict</code> 就是它和字典之间的转换器。</p>
+<p>第三种、也是最省事的一种是 <strong><code>requests.Session()</code></strong>。</p>
+<h3 id="保持会话requestssession-的意义"><a class="markdownIt-Anchor" href="#保持会话requestssession-的意义"></a> 保持会话：<code>requests.session()</code> 的意义</h3>
+<p>课上有一句总结很到位：</p>
+<blockquote>
+<p>如果用 <code>requests.get()</code> 请求，每次请求都相当于<strong>新开了一个浏览器</strong>，上一次请求的 Cookie 不会被带上；<code>requests.session()</code> 则是<strong>同一个浏览器</strong>，能保持参数（Cookie）和长连接。</p>
+</blockquote>
+<p>典型场景就是<strong>登录后抓页面</strong>。课件用<strong>人人网</strong>演示，串起来是这几步（伪代码，参数已简化）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">s = requests.session()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 登录接口的地址（抓包得到）</span></span><br><span class="line">login_url = <span class="string">&#x27;http://www.renren.com/PLogin.do&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 登录需要的数据：邮箱与密码</span></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&#x27;email&#x27;</span>: <span class="string">&#x27;your_email@example.com&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;password&#x27;</span>: <span class="string">&#x27;your_password&#x27;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 发送登录请求（session 会自动记住响应里下发的 cookie）</span></span><br><span class="line">s.post(login_url, data=data, headers=headers)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 带着同一套 cookie 请求需要登录的页面</span></span><br><span class="line">res = s.get(<span class="string">&#x27;http://www.renren.com/123456789/profile&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 把内容存下来</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;renren.html&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(res.text)</span><br></pre></td></tr></table></figure>
+<p>步骤本身不难，难的是<strong>第 1 步的地址和第 2 步的字段从哪里来</strong>——这就是上一篇&quot;抓包找登录接口&quot;的用处：要么看表单的 <code>action</code> 和 <code>name</code>，要么去 Network 里看真正的登录请求。</p>
+<p><strong>排查思路</strong>：如果 <code>s.get()</code> 拿回来的是登录页而不是目标页，就说明<strong>第 3 步没登录成功</strong>——把第 3 步的响应打印出来看看，通常是参数名写错或者缺了隐藏字段（比如 <code>_token</code>）。</p>
+<h2 id="六-正则表达式"><a class="markdownIt-Anchor" href="#六-正则表达式"></a> 六、正则表达式</h2>
+<h3 id="为什么爬虫必须会正则"><a class="markdownIt-Anchor" href="#为什么爬虫必须会正则"></a> 为什么爬虫必须会正则</h3>
+<p>爬虫四步里的第三步叫&quot;解析提取&quot;，课件把它拆成：</p>
+<ol>
+<li><strong>明确目标</strong>：要抓什么字段；</li>
+<li><strong>抓取页面</strong>：Requests 负责；</li>
+<li><strong>提取数据</strong>：从 HTML/JSON 里把字段抠出来——<strong>这一步就是正则、BeautifulSoup、XPath 的舞台</strong>；</li>
+<li><strong>处理数据</strong>：清洗、入库。</li>
+</ol>
+<h3 id="正则是什么"><a class="markdownIt-Anchor" href="#正则是什么"></a> 正则是什么</h3>
+<blockquote>
+<p><strong>正则表达式是对字符串操作的一种逻辑公式</strong>，就是用事先定义好的一些特定字符、及这些特定字符的组合，组成一个&quot;规则字符串&quot;，这个&quot;规则字符串&quot;用来表达对字符串的一种<strong>过滤逻辑</strong>。</p>
+</blockquote>
+<p>它在爬虫里的用法非常具体：<strong>&quot;匹配&quot;和&quot;替换&quot;符合某种模式的文本</strong>。比如从一整页 HTML 里匹配出所有 <code>href=&quot;...&quot;</code> 里的链接。</p>
+<p>课件列了两条使用原则，非常实用：</p>
+<ul>
+<li><strong>能不能用字符串函数解决？能就别用正则</strong>——能用 <code>str.find</code>、<code>split</code> 完成的事，用正则是自找麻烦；</li>
+<li><strong>正则的匹配效率不高</strong>，正则越长越复杂，性能越差。</li>
+</ul>
+<h3 id="原始字符串与-compile"><a class="markdownIt-Anchor" href="#原始字符串与-compile"></a> 原始字符串与 compile</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;\d+&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>写正则一定要用原始字符串 <code>r''</code></strong>：不加 <code>r</code> 时，<code>'\d'</code> 虽然恰好没被 Python 转义，但 <code>\b</code>、<code>\n</code> 这些会；加了 <code>r</code> 就明确告诉 Python&quot;这一串里的反斜杠不是转义符，交给 re 模块解释&quot;。</p>
+<p><code>re.compile()</code> 是把&quot;规则字符串&quot;编译成一个 <code>Pattern</code> 对象，可以反复用（爬虫里循环几千次时能省下重复编译的开销）。</p>
+<h3 id="pattern-对象的六个方法"><a class="markdownIt-Anchor" href="#pattern-对象的六个方法"></a> Pattern 对象的六个方法</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>作用</th>
+<th>返回</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>match</code></td>
+<td>从<strong>字符串开头</strong>匹配，匹配一次</td>
+<td><code>Match</code> 对象，不成功是 <code>None</code></td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>从<strong>任意位置</strong>匹配，匹配一次</td>
+<td><code>Match</code> 对象，不成功是 <code>None</code></td>
+</tr>
+<tr>
+<td><code>findall</code></td>
+<td>匹配<strong>所有</strong>符合规则的</td>
+<td><strong>列表</strong></td>
+</tr>
+<tr>
+<td><code>finditer</code></td>
+<td>匹配所有，返回<strong>迭代器</strong></td>
+<td>迭代器</td>
+</tr>
+<tr>
+<td><code>split</code></td>
+<td>按正则切分成列表</td>
+<td>列表</td>
+</tr>
+<tr>
+<td><code>sub</code></td>
+<td>替换（substitute）</td>
+<td>替换后的字符串</td>
+</tr>
+</tbody>
+</table>
+<h4 id="match-与-match-对象"><a class="markdownIt-Anchor" href="#match-与-match-对象"></a> match 与 Match 对象</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;one&#x27;</span>)</span><br><span class="line">match_obj = pattern.<span class="keyword">match</span>(<span class="string">&#x27;two one1&#x27;</span>, <span class="number">0</span>, <span class="built_in">len</span>(<span class="string">&#x27;two one1&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(match_obj)          <span class="comment"># None</span></span><br></pre></td></tr></table></figure>
+<p>换成 <code>'one1'</code> 就能匹配上：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;one&#x27;</span>)</span><br><span class="line">m = pattern.<span class="keyword">match</span>(<span class="string">&#x27;one1&#x27;</span>, <span class="number">0</span>, <span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(m)                  <span class="comment"># &lt;re.Match object; span=(0, 3), match=&#x27;one&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(m.group())          <span class="comment"># one</span></span><br><span class="line"><span class="built_in">print</span>(m.start())          <span class="comment"># 0</span></span><br><span class="line"><span class="built_in">print</span>(m.end())            <span class="comment"># 3</span></span><br><span class="line"><span class="built_in">print</span>(m.span())           <span class="comment"># (0, 3)</span></span><br></pre></td></tr></table></figure>
+<p><strong><code>match</code> 的规则是从头开始</strong>——字符串开头不是目标就返回 <code>None</code>。<code>match(pattern, string, flags=0)</code> 的第三个参数 <code>flags</code>，<code>findall</code> 和 <code>search</code> 也有。</p>
+<blockquote>
+<p>用 <code>match</code> 时，<code>string[0:...]</code> 的位置很关键。课件把这一点单独列成&quot;注意&quot;。另外还有一个细节：<strong>空字符串都不匹配</strong>。</p>
+</blockquote>
+<h4 id="search"><a class="markdownIt-Anchor" href="#search"></a> search</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;one&#x27;</span>)</span><br><span class="line">m = pattern.search(<span class="string">&#x27;two one1&#x27;</span>, <span class="number">0</span>, <span class="number">10</span>)     <span class="comment"># 指定起止位置</span></span><br><span class="line"><span class="built_in">print</span>(m)                                   <span class="comment"># &lt;re.Match object; span=(4, 7), match=&#x27;one&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>search</code> 在<strong>整个字符串里找</strong>，只要出现就能找到，也能指定区间。</p>
+<h4 id="findall"><a class="markdownIt-Anchor" href="#findall"></a> findall</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;\d+&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(pattern.findall(<span class="string">&#x27;one1two2three3four4&#x27;</span>))    <span class="comment"># [&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>一次把所有匹配结果取成<strong>列表</strong>，爬虫里最常用。没有匹配到就是空列表 <code>[]</code>——<strong>这个判断很有用</strong>：<code>if not result: 说明没抓到，可能是结构变了或者被反爬了</code>。</p>
+<h4 id="sub-替换"><a class="markdownIt-Anchor" href="#sub-替换"></a> sub 替换</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;\d&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(pattern.sub(<span class="string">&#x27;*&#x27;</span>, <span class="string">&#x27;one1two2three3four4&#x27;</span>, <span class="number">2</span>))   <span class="comment"># one*two*three3four4</span></span><br></pre></td></tr></table></figure>
+<p><code>sub</code> 的完整签名是 <code>sub(repl, string, count=0)</code>：<code>repl</code> 可以是<strong>字符串</strong>，也可以是<strong>函数</strong>（函数的返回值就是替换后的内容）；<code>count</code> 不填默认全替换，填了就是最多替换几次。</p>
+<p><code>repl</code> 里还能<strong>引用分组</strong>：<code>\1</code> 代表第一组、<code>\2</code> 代表第二组…… 课件特意强调<strong>不能引用编号为 0 的组</strong>（<code>\0</code> 是整个匹配本身）。一个经典用法是调换位置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&#x27;hello world, hello python&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(re.sub(<span class="string">r&#x27;\s+&#x27;</span>, <span class="string">&#x27;-&#x27;</span>, s))       <span class="comment"># 按空白符切分并连接</span></span><br></pre></td></tr></table></figure>
+<h4 id="贪婪与非贪婪最容易写错的地方"><a class="markdownIt-Anchor" href="#贪婪与非贪婪最容易写错的地方"></a> 贪婪与非贪婪（最容易写错的地方）</h4>
+<p>课件的例子非常典型。有一串 <code>&lt;div&gt;python&lt;/div&gt;&lt;div&gt;hello&lt;/div&gt;</code>，如果我们想匹配出 <code>python</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">s = <span class="string">&#x27;&lt;div&gt;python&lt;/div&gt;&lt;div&gt;hello&lt;/div&gt;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(re.findall(<span class="string">r&#x27;&lt;div&gt;(.*)&lt;/div&gt;&#x27;</span>, s))    <span class="comment"># [&#x27;python&lt;/div&gt;&lt;div&gt;hello&#x27;]</span></span><br><span class="line"><span class="built_in">print</span>(re.findall(<span class="string">r&#x27;&lt;div&gt;(.*?)&lt;/div&gt;&#x27;</span>, s))   <span class="comment"># [&#x27;python&#x27;, &#x27;hello&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>原因：<strong>Python 里的数量词默认是贪婪的</strong>——<code>.*</code> 会尽可能多地往后吃，一直吃到<strong>最后一个</strong> <code>&lt;/div&gt;</code>；而 <code>.*?</code> 是<strong>非贪婪</strong>（也最小匹配），碰到第一个 <code>&lt;/div&gt;</code> 就停。</p>
+<p>再把它讲透一层：</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>匹配过程</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;div&gt;.*&lt;/div&gt;</code></td>
+<td><code>&lt;div&gt;</code> 之后一路狂吃到字符串末尾，再往前回退找 <code>&lt;/div&gt;</code></td>
+<td>一个超长的匹配</td>
+</tr>
+<tr>
+<td><code>&lt;div&gt;.*?&lt;/div&gt;</code></td>
+<td>先试展开 0 个字符，不满足就往后一个一个字符试，遇到 <code>&lt;/div&gt;</code> 立即收工</td>
+<td>每个 <code>&lt;div&gt;</code> 各匹配一次</td>
+</tr>
+</tbody>
+</table>
+<p>所以在 HTML 里匹配标签，<strong>几乎总是要加 <code>?</code></strong>。课件里这类&quot;贪婪导致匹配错位&quot;的坑，是被单独列出来强调的。</p>
+<h2 id="七-正则符号速查补充"><a class="markdownIt-Anchor" href="#七-正则符号速查补充"></a> 七、正则符号速查（补充）</h2>
+<p>课件里的语法表是图片，这里换成文字版备查（这部分是我整理的）：</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.</code></td>
+<td>除换行符外任意字符（<code>re.S</code> 时可匹配换行）</td>
+</tr>
+<tr>
+<td><code>\d</code> / <code>\D</code></td>
+<td>数字 / 非数字</td>
+</tr>
+<tr>
+<td><code>\w</code> / <code>\W</code></td>
+<td>字母数字下划线 / 其反面</td>
+</tr>
+<tr>
+<td><code>\s</code> / <code>\S</code></td>
+<td>空白符 / 非空白符</td>
+</tr>
+<tr>
+<td><code>*</code> <code>+</code> <code>?</code></td>
+<td>0 次或多次 / 1 次或多次 / 0 次或 1 次（<strong>都默认贪婪</strong>）</td>
+</tr>
+<tr>
+<td><code>&#123;n&#125;</code> <code>&#123;n,&#125;</code> <code>&#123;n,m&#125;</code></td>
+<td>恰好 n 次 / 至少 n 次 / n 到 m 次</td>
+</tr>
+<tr>
+<td><code>*?</code> <code>+?</code> <code>??</code></td>
+<td>在数量词后加 <code>?</code> → <strong>非贪婪</strong></td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td>字符集，如 <code>[abc]</code>、<code>[0-9]</code>、<code>[^0-9]</code></td>
+</tr>
+<tr>
+<td><code>^</code> / <code>$</code></td>
+<td>行首 / 行尾</td>
+</tr>
+<tr>
+<td><code>()</code></td>
+<td>分组，也是&quot;提取&quot;的关键——<code>group(1)</code> 取第一组</td>
+</tr>
+<tr>
+<td>`</td>
+<td>`</td>
+</tr>
+</tbody>
+</table>
+<p><strong>爬虫里最常用的三个套路</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">re.findall(<span class="string">r&#x27;&lt;a href=&quot;(.*?)&quot;&#x27;</span>, html)          <span class="comment"># 抓链接</span></span><br><span class="line">re.findall(<span class="string">r&#x27;&lt;img src=&quot;(.*?)&quot;&#x27;</span>, html)         <span class="comment"># 抓图片地址</span></span><br><span class="line">re.findall(<span class="string">r&#x27;&lt;h1.*?&gt;(.*?)&lt;/h1&gt;&#x27;</span>, html, re.S)  <span class="comment"># 抓标题（跨行加 re.S）</span></span><br></pre></td></tr></table></figure>
+<h2 id="八-踩坑表"><a class="markdownIt-Anchor" href="#八-踩坑表"></a> 八、踩坑表</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>res.text</code> 是乱码</td>
+<td>编码猜错（对方没给或给了错编码）</td>
+<td><code>res.content.decode('utf-8')</code></td>
+</tr>
+<tr>
+<td>抓图片写进文件打不开</td>
+<td>用 <code>text</code> 拿的</td>
+<td>二进制内容必须用 <code>res.content</code> + <code>wb</code></td>
+</tr>
+<tr>
+<td>请求直接被拒</td>
+<td>默认 <code>User-Agent: python-requests/x.x</code> 暴露</td>
+<td><code>headers</code> 里换成浏览器 UA</td>
+</tr>
+<tr>
+<td>POST 登录后拿到的还是登录页</td>
+<td>登录没成功</td>
+<td>打印登录响应排查参数名/隐藏字段</td>
+</tr>
+<tr>
+<td>有道/快手接口过一段时间失效</td>
+<td><code>salt</code>、<code>sign</code> 是 js 算出来的</td>
+<td>逆 js，或在 Python 里复现算法</td>
+</tr>
+<tr>
+<td>代理不生效</td>
+<td>http/https 配错项</td>
+<td>按请求协议分别配置</td>
+</tr>
+<tr>
+<td><code>match</code> 什么都匹配不到</td>
+<td><code>match</code> 只从开头匹配</td>
+<td>改 <code>search</code> 或 <code>findall</code></td>
+</tr>
+<tr>
+<td>正则匹配出一大坨</td>
+<td>数量词贪婪</td>
+<td>用 <code>.*?</code> 非贪婪</td>
+</tr>
+<tr>
+<td>正则匹配不到跨行内容</td>
+<td><code>.</code> 默认不匹配换行</td>
+<td>加 <code>re.S</code> 标志</td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<ol>
+<li><strong>Requests 就是&quot;用代码当浏览器&quot;</strong>：<code>get</code>/<code>post</code> 对应取/送，参数用 <code>params</code> 还是 <code>data</code> 由抓包决定；</li>
+<li><strong>默认 UA 会出卖你</strong>，正式爬虫第一件事就是补 <code>headers</code>；</li>
+<li><strong><code>text</code> 看文字、<code>content</code> 收二进制</strong>，乱码就用 <code>content.decode()</code> 自己定编码；</li>
+<li><strong>要登录态就用 <code>requests.session()</code></strong>，它替你保管 Cookie；</li>
+<li><strong>正则是字符串层面的过滤器</strong>：<code>match</code> 从头部、<code>search</code> 找任意位置、<code>findall</code> 取全部、<code>sub</code> 做替换，<strong>写 HTML 匹配记得加 <code>?</code></strong>。</li>
+</ol>
+<p>下一篇进入&quot;初级技能&quot;：<strong>BeautifulSoup4、JSON 与 JsonPath、持久化储存</strong>——从正则的字符串硬抠，升级成按结构解析。</p>
+<blockquote>
+<p>说明：本文依据课件《2.爬虫核心技巧》两份笔记整理（含 Requests 全部案例代码、新浪乱码实验、有道与快手参数、人人网登录五步、正则六方法与贪婪对比），第七节符号速查表与第八节踩坑表是我自己的补充。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文链接：</strong><a href="https://utdog.github.io/2025/05/20/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-Requests%E4%B8%8E%E6%AD%A3%E5%88%99/">https://utdog.github.io/2025/05/20/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-Requests%E4%B8%8E%E6%AD%A3%E5%88%99/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版权：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 许可协议。转载请注明出处！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">赞助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">请作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6%EF%BC%9ARequests%20%E5%BA%93%E4%B8%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F&amp;desc=%E7%88%AC%E8%99%AB%E7%B3%BB%E5%88%97%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%9A%E7%94%A8%20Requests%20%E5%8F%91%E9%80%81%20GET%2FPOST%20%E8%AF%B7%E6%B1%82%E3%80%81headers%20%E4%B8%8E%20params%20%E5%8F%82%E6%95%B0%E3%80%81response%20%E7%9A%84%E4%BA%94%E4%B8%AA%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7%E4%B8%8E%E4%B9%B1%E7%A0%81%E7%9C%9F%E7%9B%B8%E3%80%81%E4%BB%A3%E7%90%86%E4%B8%8E%20auth%E3%80%81Cookie%20%E4%B8%8E%20Session%20%E4%BF%9D%E6%8C%81%E7%99%BB%E5%BD%95%E3%80%81CookieJar%20%E8%BD%AC%E6%8D%A2%EF%BC%8C%E4%BB%A5%E5%8F%8A%20re%20%E6%A8%A1%E5%9D%97%E5%85%AD%E4%B8%AA%E6%96%B9%E6%B3%95%E3%80%81match%20%E5%AF%B9%E8%B1%A1%E3%80%81%E8%B4%AA%E5%A9%AA%E4%B8%8E%E9%9D%9E%E8%B4%AA%E5%A9%AA%E7%9A%84%E5%AE%9E%E6%88%98%E5%8C%BA%E5%88%AB%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="爬虫进阶：Requests 库与正则表达式">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="爬虫进阶：Requests 库与正则表达式">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Requests/" rel="tag">Requests</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/28.jpg" data-sizes="auto" alt="爬虫解析与存储：BeautifulSoup、JSON 与持久化" class="lazyload">
+        
+        <a href="/2025/05/21/%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            爬虫解析与存储：BeautifulSoup、JSON 与持久化
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/11.jpg" data-sizes="auto" alt="爬虫入门：原理、HTTP 与抓包" class="lazyload">
+      
+      <a href="/2025/05/19/%E7%88%AC%E8%99%AB%E5%85%A5%E9%97%A8-%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%93%E5%8C%85/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          爬虫入门：原理、HTTP 与抓包
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6requests-%E5%BA%93%E4%B8%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫进阶：Requests 库与正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8-requests"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、为什么用 Requests</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E7%9A%84-get-%E8%AF%B7%E6%B1%82"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 一个最小的 GET 请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%A6%E5%8F%82%E6%95%B0%E7%9A%84-get%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2"><span class="toc-number">1.1.2.</span> <span class="toc-text"> 带参数的 GET：百度搜索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-response-%E7%9A%84%E4%BA%94%E4%B8%AA%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、response 的五个常用属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B9%B1%E7%A0%81%E6%98%AF%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84%E5%BE%88%E5%85%B3%E9%94%AE%E7%9A%84%E5%9D%91"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 乱码是怎么来的（很关键的坑）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%AB%E6%80%A5%E7%9D%80%E8%A7%A3%E6%9E%90-html"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 别急着解析 HTML</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-post-%E8%AF%B7%E6%B1%82"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、POST 请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#data-%E4%BC%A0-json-%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-number">1.3.1.</span> <span class="toc-text"> data 传 JSON 的情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E4%BB%A3%E7%90%86%E4%B8%8E%E8%AE%A4%E8%AF%81"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、代理与认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%90%86proxies"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 代理（proxies）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web-%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%AA%8C%E8%AF%81auth"><span class="toc-number">1.4.2.</span> <span class="toc-text"> Web 客户端验证（auth）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-cookie-%E4%B8%8E-session"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、Cookie 与 Session</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%9D%E6%8C%81%E4%BC%9A%E8%AF%9Drequestssession-%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 保持会话：requests.session() 的意义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、正则表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%88%AC%E8%99%AB%E5%BF%85%E9%A1%BB%E4%BC%9A%E6%AD%A3%E5%88%99"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 为什么爬虫必须会正则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 正则是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%A7%8B%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E-compile"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 原始字符串与 compile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pattern-%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%85%AD%E4%B8%AA%E6%96%B9%E6%B3%95"><span class="toc-number">1.6.4.</span> <span class="toc-text"> Pattern 对象的六个方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#match-%E4%B8%8E-match-%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.6.4.1.</span> <span class="toc-text"> match 与 Match 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#search"><span class="toc-number">1.6.4.2.</span> <span class="toc-text"> search</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#findall"><span class="toc-number">1.6.4.3.</span> <span class="toc-text"> findall</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sub-%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.6.4.4.</span> <span class="toc-text"> sub 替换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B4%AA%E5%A9%AA%E4%B8%8E%E9%9D%9E%E8%B4%AA%E5%A9%AA%E6%9C%80%E5%AE%B9%E6%98%93%E5%86%99%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.6.4.5.</span> <span class="toc-text"> 贪婪与非贪婪（最容易写错的地方）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%AD%A3%E5%88%99%E7%AC%A6%E5%8F%B7%E9%80%9F%E6%9F%A5%E8%A1%A5%E5%85%85"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、正则符号速查（补充）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "爬虫进阶：Requests 库与正则表达式",
+          url: "https://utdog.github.io/2025/05/20/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-Requests%E4%B8%8E%E6%AD%A3%E5%88%99/",
+          excerpt: "",
+          description: "爬虫系列第二篇：用 Requests 发送 GET/POST 请求、headers 与 params 参数、response 的五个常用属性与乱码真相、代理与 auth、Cookie 与 Session 保持登录、CookieJar 转换，以及 re 模块六个方法、match 对象、贪婪与非贪婪的实战区别。",
+          stripContent: " 爬虫进阶：Requests 库与正则表达式  前言 上一篇把原理讲完了，聚焦爬虫就四步：发请求 → 拿响应 → 解析提取 → 保存数据。 这一篇覆盖前两步和第三步的前半截：  Requests 负责&amp;quot;发请求、拿响应&amp;quot;——把上一篇讲的请求头、参数、Cookie 真正写进代码； 正则表达式负责&amp;quot;解析提取&amp;quot;里的第一步——从字符串里把需要的内容抠出来。   说明：本文依据课件《2.爬虫核心技巧》的两份笔记（《1.HTTP请求库和Requests详解》《2.正则表",
+          date: "Tue May 20 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 18:36:25 GMT+0800",
+          cover: "/images/12.jpg",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

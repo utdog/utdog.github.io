@@ -1,0 +1,1650 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-TW"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本部落格所有文章除特別聲明外，均採用 BY-NC-SA 授權協議。轉載請註明出處！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    爬虫高级：反爬机制与验证码识别 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="爬虫系列终篇：IP 限制与三类代理、动态页面抓取六步套路、UA&#x2F;Referer&#x2F;Cookie 应对，以及图片验证码的 Tesseract OCR（二值化+降噪）、百度 OCR 与打码平台。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫高级：反爬机制与验证码识别">
+<meta property="og:url" content="https://utdog.github.io/zh-TW/2025/05/23/%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7-%E5%8F%8D%E7%88%AC%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="爬虫系列终篇：IP 限制与三类代理、动态页面抓取六步套路、UA&#x2F;Referer&#x2F;Cookie 应对，以及图片验证码的 Tesseract OCR（二值化+降噪）、百度 OCR 与打码平台。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-05-23T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T10:39:32.559Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="爬虫">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈禱中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/">首頁</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/archives">歸檔</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/about">關於</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/friend">友鏈</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 訂閱" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜尋"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">正體中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" class="selected">正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/23/爬虫高级-反爬与验证码/';
+            
+              langMap['en'] = '/en/2025/05/23/爬虫高级-反爬与验证码/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/23/爬虫高级-反爬与验证码/';
+            
+              langMap['ja'] = '/ja/2025/05/23/爬虫高级-反爬与验证码/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/46.jpg" alt="爬虫高级：反爬机制与验证码识别">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">爬虫高级：反爬机制与验证码识别</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫高级：反爬机制与验证码识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%8F%8D%E7%88%AC%E4%B8%8E%E5%8F%8D%E5%8F%8D%E7%88%AC%E5%85%A8%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、反爬与反反爬全景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8F%8D%E7%88%AC"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 网站为什么要反爬</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%B8%80ip-%E9%99%90%E5%88%B6%E4%B8%8E%E4%BB%A3%E7%90%86-ip"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、反爬机制一：IP 限制与代理 IP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BB%A3%E7%90%86-ip"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 什么是代理 IP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E7%9A%84%E4%B8%89%E7%B1%BB"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 代理的三类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%B3%95"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%BA%8C%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、反爬机制二：动态页面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E9%A1%B5%E9%9D%A2%E4%B8%8E%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 静态页面与动态页面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#response-%E9%87%8C%E6%B2%A1%E6%9C%89%E6%95%B0%E6%8D%AE%E6%80%8E%E4%B9%88%E5%8A%9E%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%8A%93%E5%8C%85%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.</span> <span class="toc-text"> response 里没有数据怎么办：控制台抓包分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ajax-%E4%B8%8E-json"><span class="toc-number">1.3.3.</span> <span class="toc-text"> AJAX 与 JSON</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2%E6%8A%93%E5%8F%96%E5%9B%BA%E5%AE%9A%E5%A5%97%E8%B7%AF%E5%85%AD%E6%AD%A5"><span class="toc-number">1.3.4.</span> <span class="toc-text"> 动态页面抓取固定套路（六步）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%B8%89headers-%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、反爬机制三：headers 校验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#user-agent"><span class="toc-number">1.4.1.</span> <span class="toc-text"> User-Agent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#referer"><span class="toc-number">1.4.2.</span> <span class="toc-text"> Referer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie"><span class="toc-number">1.4.3.</span> <span class="toc-text"> Cookie</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%85%B6%E4%BB%96%E5%8F%8D%E7%88%AC%E6%89%8B%E6%AE%B5"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、其他反爬手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81%E4%B8%8E-ocr"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、图片验证码与 OCR</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E9%AA%8C%E8%AF%81%E7%A0%81"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 为什么会有验证码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tesseract-ocr"><span class="toc-number">1.6.2.</span> <span class="toc-text"> Tesseract OCR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E9%AB%98%E8%AF%86%E5%88%AB%E7%8E%87%E4%BA%8C%E5%80%BC%E5%8C%96%E4%B8%8E%E9%99%8D%E5%99%AA"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 提高识别率：二值化与降噪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BE%E5%BA%A6-ocr"><span class="toc-number">1.6.4.</span> <span class="toc-text"> 百度 OCR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%93%E7%A0%81%E5%B9%B3%E5%8F%B0%E4%B8%8E%E4%BA%BA%E5%B7%A5%E8%AF%86%E5%88%AB"><span class="toc-number">1.6.5.</span> <span class="toc-text"> 打码平台与人工识别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、常见问题与踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E5%90%88%E8%A7%84%E6%8F%90%E9%86%92%E8%AF%BE%E4%BB%B6%E4%B9%8B%E5%A4%96%E4%BD%86%E5%BE%88%E9%87%8D%E8%A6%81"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、合规提醒（课件之外，但很重要）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E7%B3%BB%E5%88%97%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.9.1.</span> <span class="toc-text"> 爬虫系列回顾</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-爬虫高级-反爬与验证码" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-23T12:00:00.000Z" itemprop="datePublished">2025-05-23</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/zh-TW/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="爬虫高级反爬机制与验证码识别"><a class="markdownIt-Anchor" href="#爬虫高级反爬机制与验证码识别"></a> 爬虫高级：反爬机制与验证码识别</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>爬到第五篇，顺风顺水的日子结束了。</p>
+<p>前面四篇的代码在练习站点上都能跑通，但<strong>把同样的代码指向真实网站，很可能第一件事就是被挡回来</strong>——返回 403、返回一个空壳页面、或者干脆弹出一个验证码。</p>
+<p>这一篇讲的就是&quot;对方怎么防&quot;和&quot;我们怎么破&quot;：</p>
+<ul>
+<li><strong>反爬机制的常见类型</strong>：IP 限制、动态页面、headers 校验、参数加密、验证码；</li>
+<li><strong>对应的应对手段</strong>：代理 IP、抓包分析、UA 池、Cookie 模拟登录；</li>
+<li><strong>验证码识别</strong>：Tesseract OCR（含二值化与降噪）、百度 OCR、打码平台。</li>
+</ul>
+<blockquote>
+<p>说明：本文依据课件《5.爬虫中的高级技能》两份笔记（《1.反爬虫介绍》《2.图片验证码》）整理。<strong>最后加了一段课件没写、但我觉得必须说的合规提醒。</strong></p>
+</blockquote>
+<h2 id="一-反爬与反反爬全景"><a class="markdownIt-Anchor" href="#一-反爬与反反爬全景"></a> 一、反爬与反反爬全景</h2>
+<p>先把两边的牌摊开看。</p>
+<p><strong>常见的反爬机制</strong>：</p>
+<ol>
+<li><strong>通过 User-Agent 控制访问</strong>（判断请求是不是来自真实浏览器）；</li>
+<li><strong>通过 Referer 控制访问</strong>（判断请求是不是从站内跳过来的）；</li>
+<li><strong>通过 IP 限制访问</strong>——<strong>监控用户 IP，如果短时间请求次数过大，封 IP</strong>；</li>
+<li><strong>通过 Cookie 控制访问</strong>（要求登录态）；</li>
+<li><strong>登录及验证码</strong>（限制账号访问频率、登录 3 次错误就拦截）；</li>
+<li><strong>健全的账号体制</strong>——<strong>核心数据仅登录可见</strong>；</li>
+<li><strong>动态加载数据</strong>（数据由 JS 异步加载，response 里根本没有）。</li>
+</ol>
+<p><strong>反反爬策略</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>手段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>伪造请求头</strong></td>
+<td>加上 UA、Referer、Cookie，把自己伪装成浏览器</td>
+</tr>
+<tr>
+<td><strong>代理 IP</strong></td>
+<td>隐藏真实 IP，避免被针对性地封</td>
+</tr>
+<tr>
+<td><strong>限制请求频率，模拟用户</strong></td>
+<td>加 <code>time.sleep()</code>，别用高速循环砸服务器</td>
+</tr>
+<tr>
+<td><strong>验证码识别</strong></td>
+<td>OCR / 打码平台</td>
+</tr>
+<tr>
+<td><strong>selenium + webdriver</strong></td>
+<td>直接用真实浏览器渲染页面，动态内容也能拿到</td>
+</tr>
+</tbody>
+</table>
+<h3 id="网站为什么要反爬"><a class="markdownIt-Anchor" href="#网站为什么要反爬"></a> 网站为什么要反爬</h3>
+<ol>
+<li><strong>保护网站自身的正常运转</strong>——爬虫的高频请求会占满服务器资源；</li>
+<li><strong>保护数据安全</strong>——数据是网站的资产；</li>
+<li><strong>版权问题</strong>——数据有商业价值，不愿意被无偿批量拿走。</li>
+</ol>
+<blockquote>
+<p>站在对面想一想：如果我们的脚本每秒请求 10 次、两天不带停，对方的运维一定先受不了。<strong>&quot;反爬&quot;首先是一个资源保护问题，其次才是技术对抗问题。</strong> 这一点决定了后面所有策略的底线：<strong>控制频率永远是第一优先级</strong>。</p>
+</blockquote>
+<h2 id="二-反爬机制一ip-限制与代理-ip"><a class="markdownIt-Anchor" href="#二-反爬机制一ip-限制与代理-ip"></a> 二、反爬机制一：IP 限制与代理 IP</h2>
+<h3 id="什么是代理-ip"><a class="markdownIt-Anchor" href="#什么是代理-ip"></a> 什么是代理 IP</h3>
+<blockquote>
+<p><strong>代理 IP 就是代替我们真实 IP 去访问网络的 IP</strong>。通过它访问网站，服务器看到的就是代理 IP，而不是我们的真实 IP。</p>
+</blockquote>
+<p><strong>为什么要用</strong>：</p>
+<ol>
+<li><strong>让服务器以为不是同一个客户端在请求</strong>（用多个 IP 分摊请求）；</li>
+<li><strong>防止我们的真实 IP 被封锁</strong>——封了代理换个新代理就行，不影响自己上网。</li>
+</ol>
+<p><strong>免费代理 IP 的获取网站</strong>（课件列举）：西刺代理、快代理、全网代理、代理精灵等。</p>
+<blockquote>
+<p><strong>重要提醒</strong>：免费代理池的可用率通常极低（大量是失效的、或者被目标站早已拉黑的），而且<strong>有些免费代理本身就会记录你发出去的明文请求</strong>。所以免费代理只适合练习，<strong>登录类请求千万不要走来源不明的代理</strong>。</p>
+</blockquote>
+<h3 id="代理的三类"><a class="markdownIt-Anchor" href="#代理的三类"></a> 代理的三类</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>服务端能看到什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>透明代理</strong></td>
+<td>能看到<strong>用户的真实 IP</strong>，也知道用了代理</td>
+</tr>
+<tr>
+<td><strong>普通（匿名）代理</strong></td>
+<td>知道有人通过代理访问，但<strong>不知道真实 IP</strong></td>
+</tr>
+<tr>
+<td><strong>高匿代理</strong></td>
+<td>既<strong>不知道真实 IP</strong>，也<strong>不能识别出你用了代理</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>常用代理类型的特点</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>可用率</th>
+<th>速度</th>
+<th>稳定性</th>
+<th>价格</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>普通代理</strong></td>
+<td>低</td>
+<td>慢</td>
+<td>不稳定</td>
+<td>免费或便宜</td>
+<td>学习测试</td>
+</tr>
+<tr>
+<td><strong>私密代理</strong></td>
+<td>高</td>
+<td>较快</td>
+<td>稳定</td>
+<td>适中</td>
+<td><strong>爬虫最常用</strong></td>
+</tr>
+<tr>
+<td><strong>独享代理</strong></td>
+<td>极高</td>
+<td>快</td>
+<td>极稳定</td>
+<td>贵</td>
+<td>对稳定性要求高的项目</td>
+</tr>
+</tbody>
+</table>
+<h3 id="用法"><a class="markdownIt-Anchor" href="#用法"></a> 用法</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://httpbin.org/get&#x27;</span></span><br><span class="line">headers = &#123;<span class="string">&#x27;User-Agent&#x27;</span>: <span class="string">&#x27;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 &#x27;</span></span><br><span class="line">                         <span class="string">&#x27;(KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36&#x27;</span>&#125;</span><br><span class="line"><span class="comment"># 普通代理：注意 http 和 https 要分别配</span></span><br><span class="line">proxies = &#123;</span><br><span class="line">    <span class="string">&#x27;http&#x27;</span>: <span class="string">&#x27;http://120.27.36.42:8080&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;https&#x27;</span>: <span class="string">&#x27;https://120.27.36.42:8080&#x27;</span>,</span><br><span class="line">&#125;</span><br><span class="line">html = requests.get(url, headers=headers, proxies=proxies, timeout=<span class="number">5</span>).text</span><br><span class="line"><span class="built_in">print</span>(html)</span><br></pre></td></tr></table></figure>
+<p><strong>几个要点</strong>：</p>
+<ol>
+<li><strong><code>proxies</code> 字典里 http 和 https 要分别指定</strong>（协议名、IP、端口都要对）；</li>
+<li><strong>一定要带 <code>timeout</code></strong>——代理不可用时，不带超时的请求会一直挂着；</li>
+<li><strong>私密代理要带账号密码</strong>，格式是 <code>协议://用户名:密码@IP:端口</code>：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">proxies = &#123;</span><br><span class="line">    <span class="string">&#x27;http&#x27;</span>: <span class="string">&#x27;http://用户:密码@120.27.36.42:8080&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;https&#x27;</span>: <span class="string">&#x27;https://用户:密码@120.27.36.42:8080&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>思考题（课件留的）</strong>：如何自己建立一个代理 IP 池？<br />
+思路是三步——<strong>抓免费代理 IP 网站的列表 → 逐个测试可用性（拿 <a target="_blank" rel="noopener" href="http://httpbin.org">httpbin.org</a> 试一次，有响应才算活）→ 把可用的存进文件，用的时候随机取</strong>。这正是后面要写爬虫工程的思路：<strong>把&quot;获取资源&quot;和&quot;使用资源&quot;分开</strong>。</p>
+</blockquote>
+<h2 id="三-反爬机制二动态页面"><a class="markdownIt-Anchor" href="#三-反爬机制二动态页面"></a> 三、反爬机制二：动态页面</h2>
+<h3 id="静态页面与动态页面"><a class="markdownIt-Anchor" href="#静态页面与动态页面"></a> 静态页面与动态页面</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>静态页面</th>
+<th>动态页面</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>数据来源</strong></td>
+<td>数据都在 response 里</td>
+<td>数据<strong>不直接渲染于 response</strong></td>
+</tr>
+<tr>
+<td><strong>技术特征</strong></td>
+<td>服务端直接返回完整 HTML</td>
+<td>AJAX 局部刷新、JS 加载、<strong>常伴随加密</strong></td>
+</tr>
+<tr>
+<td><strong>典型场景</strong></td>
+<td>小网站、对安全性关注度不高的数据</td>
+<td>主流网站、核心数据</td>
+</tr>
+</tbody>
+</table>
+<p><strong>如何判断一个页面是不是动态加载</strong>：</p>
+<ol>
+<li>页面有&quot;<strong>加载更多</strong>&quot;、滚动到下面一点点就刷新出新内容；</li>
+<li><strong>elements 里能解析到数据，但 response 里查不到</strong>——这是最直观的判据；</li>
+<li>抓包能看到额外的 <strong>AJAX 异步请求</strong>。</li>
+</ol>
+<h3 id="response-里没有数据怎么办控制台抓包分析"><a class="markdownIt-Anchor" href="#response-里没有数据怎么办控制台抓包分析"></a> response 里没有数据怎么办：控制台抓包分析</h3>
+<p>浏览器 F12 的开发工具，三处会用就够了：</p>
+<table>
+<thead>
+<tr>
+<th>面板</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Network（网络）</strong></td>
+<td>记录所有请求。下面可选 <strong>ALL</strong>（全部）/ <strong>XHR</strong>（ajax 请求）/ <strong>JS</strong>（js 文件）；<strong>点开某一项后右侧能看到 Headers / Preview / Response</strong></td>
+</tr>
+<tr>
+<td><strong>Sources（源代码）</strong></td>
+<td>对 js 文件格式化后可以<strong>断点调试</strong>，用来搞清楚参数是怎么生成的</td>
+</tr>
+<tr>
+<td><strong>Console（控制台）</strong></td>
+<td>直接执行 js 语句，测试加密函数最方便</td>
+</tr>
+</tbody>
+</table>
+<p><strong>右侧详情面板三个页签</strong>：</p>
+<ul>
+<li><strong>Headers</strong>：General（请求地址、方法、状态码）、Response Headers（响应头）、Request Headers（请求头）、Query String Parameters（GET 参数）、Form Data（POST 参数）；</li>
+<li><strong>Preview</strong>：格式化后的响应（JSON 会折叠成树）；</li>
+<li><strong>Response</strong>：原始响应文本。</li>
+</ul>
+<blockquote>
+<p><strong>实操顺序</strong>：先 Network 里 <strong>Clear</strong> 清空 → 在页面上做一次目标操作（翻页、点&quot;加载更多&quot;）→ 看新冒出来的请求。<strong>那个新请求，就是要找的接口。</strong></p>
+</blockquote>
+<h3 id="ajax-与-json"><a class="markdownIt-Anchor" href="#ajax-与-json"></a> AJAX 与 JSON</h3>
+<ul>
+<li><strong>AJAX</strong>（Asynchronous JavaScript And XML）：<strong>一种用于创建快速动态网页的技术</strong>，通过在后台与服务器进行少量数据交换，实现网页的<strong>异步更新</strong>。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。<strong>传统上用的是 XML，现在基本都用 JSON</strong>。</li>
+<li><strong>JSON</strong>（JavaScript Object Notation）：一种轻量级的数据交换格式，<strong>是 JS 对象的字符串表示法</strong>，用文本表示一个 JS 对象的信息，本质是一个字符串。</li>
+</ul>
+<p><strong>动态页面数据加载的特征</strong>：</p>
+<ol>
+<li><strong>几乎统一是 JSON 字符串</strong>；</li>
+<li><strong>几乎都伴随鼠标、键盘事件</strong>（滚动、点击才触发）；</li>
+<li><strong>几乎无法直接在 html 的 response 中看到目标数据</strong>。</li>
+</ol>
+<h3 id="动态页面抓取固定套路六步"><a class="markdownIt-Anchor" href="#动态页面抓取固定套路六步"></a> 动态页面抓取固定套路（六步）</h3>
+<blockquote>
+<p><strong>这是本节最该背下来的部分</strong>：</p>
+</blockquote>
+<ol>
+<li><strong>请求目标 url</strong>；</li>
+<li><strong>F12 的 Network 面板里过滤 XHR / JS</strong>；</li>
+<li><strong>在网页上操作</strong>（翻页、下拉、点击）；</li>
+<li><strong>查看新增的请求项</strong>；</li>
+<li><strong>分析该请求的参数及规律</strong>；</li>
+<li><strong>确定目标数据的 url / 接口</strong> → 发请求拿到 response → <strong>解析（多数是 JSON）</strong> → 持久化存储。</li>
+</ol>
+<p><strong>一句话</strong>：静态页爬&quot;页面&quot;，动态页爬&quot;接口&quot;。<strong>只要能找到接口，动态页面反而比静态页面更好爬</strong>——因为它给的是干净的 JSON，不需要再解析 HTML。</p>
+<h2 id="四-反爬机制三headers-校验"><a class="markdownIt-Anchor" href="#四-反爬机制三headers-校验"></a> 四、反爬机制三：headers 校验</h2>
+<h3 id="user-agent"><a class="markdownIt-Anchor" href="#user-agent"></a> User-Agent</h3>
+<p><strong>反爬原理</strong>：浏览器发请求会带自己的 UA；而爬虫<strong>默认没有 UA</strong>，用的是模块的默认设置（比如 <code>python-requests/2.25.1</code>）——<strong>一眼就能看出来不是浏览器</strong>。</p>
+<p><strong>应对：UA 池</strong>（每次随机取一个真实的浏览器 UA）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_ua</span>():</span><br><span class="line">    first_num = random.randint(<span class="number">55</span>, <span class="number">62</span>)</span><br><span class="line">    third_num = random.randint(<span class="number">0</span>, <span class="number">3200</span>)</span><br><span class="line">    fourth_num = random.randint(<span class="number">0</span>, <span class="number">140</span>)</span><br><span class="line">    os_type = [</span><br><span class="line">        <span class="string">&#x27;(Windows NT 6.1; WOW64)&#x27;</span>, <span class="string">&#x27;(Windows NT 10.0; WOW64)&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;(X11; Linux x86_64)&#x27;</span>, <span class="string">&#x27;(Macintosh; Intel Mac OS X 10_12_6)&#x27;</span>,</span><br><span class="line">    ]</span><br><span class="line">    chrome_version = <span class="string">&#x27;Chrome/&#123;&#125;.0.&#123;&#125;.&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(first_num, third_num, fourth_num)</span><br><span class="line"></span><br><span class="line">    ua = <span class="string">&#x27; &#x27;</span>.join([<span class="string">&#x27;Mozilla/5.0&#x27;</span>, random.choice(os_type), <span class="string">&#x27;AppleWebKit/537.36&#x27;</span>,</span><br><span class="line">                   <span class="string">&#x27;(KHTML, like Gecko)&#x27;</span>, chrome_version, <span class="string">&#x27;Safari/537.36&#x27;</span>])</span><br><span class="line">    <span class="keyword">return</span> ua</span><br></pre></td></tr></table></figure>
+<p><strong>这段代码的思路值得单独记一下</strong>：它不是一个写死的 UA 列表，而是<strong>按真实 UA 的字段结构拼装</strong>——<code>Mozilla/5.0</code> + 操作系统 + 内核标识 + 浏览器版本号。<strong>随机出来的是版本号组合，所以永远不会用重复的 UA</strong>，比维护一个固定列表更耐用。</p>
+<h3 id="referer"><a class="markdownIt-Anchor" href="#referer"></a> Referer</h3>
+<p><strong>反爬原理</strong>：<strong>爬虫默认是不带 referer 的</strong>，服务器靠这个判断请求是不是从自家页面点过来的。</p>
+<p><strong>应对</strong>：在 headers 里加上目标站的地址，例如 <code>'Referer': 'https://www.example.com/'</code>。</p>
+<h3 id="cookie"><a class="markdownIt-Anchor" href="#cookie"></a> Cookie</h3>
+<p><strong>反爬原理</strong>：有些数据<strong>必须登录才能看</strong>（会话机制靠 Cookie 维持）。</p>
+<blockquote>
+<p><strong>Cookie 和 Session 的关系</strong>（上一篇讲过，这里再对齐一次）：Cookie <strong>存在客户端</strong>，Session <strong>存在服务器</strong>；服务器通过 Cookie 里的 sessionid 认出&quot;你是谁&quot;。</p>
+</blockquote>
+<p><strong>应对：模拟登录的三种方法</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>做法</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>方法一</strong></td>
+<td><strong>手动登录一次，把浏览器里的 Cookie 复制到 headers 里</strong></td>
+<td>最快，适合临时调试；Cookie 会过期</td>
+</tr>
+<tr>
+<td><strong>方法二</strong></td>
+<td><code>requests.get(url, cookies=cookies)</code>，<strong>把 Cookie 处理成字典传进去</strong></td>
+<td>需要程序里灵活切换 Cookie</td>
+</tr>
+<tr>
+<td><strong>方法三</strong></td>
+<td><strong><code>session = requests.session()</code></strong>：先用 session.post 登录，session 会自动保存 Cookie，之后再 get 就是登录态</td>
+<td><strong>工程里最推荐</strong>，还能复用连接</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">session = requests.session()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一步：用 session 发登录请求（post 参数照抓包抄）</span></span><br><span class="line">data = &#123;<span class="string">&#x27;username&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span>, <span class="string">&#x27;password&#x27;</span>: <span class="string">&#x27;xxx&#x27;</span>&#125;</span><br><span class="line">session.post(<span class="string">&#x27;https://www.example.com/login&#x27;</span>, data=data, headers=headers)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二步：session 里已经带着登录后的 Cookie，直接访问需要登录的页面</span></span><br><span class="line">resp = session.get(<span class="string">&#x27;https://www.example.com/user/center&#x27;</span>, headers=headers)</span><br><span class="line"><span class="built_in">print</span>(resp.text)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>注意</strong>：登录接口通常还有隐藏参数（csrf token、时间戳、签名），<strong>必须先在登录页的 html 里把这些值抓出来，再一起 post 过去</strong>——这就是下面&quot;请求参数反爬&quot;的内容。</p>
+</blockquote>
+<h2 id="五-其他反爬手段"><a class="markdownIt-Anchor" href="#五-其他反爬手段"></a> 五、其他反爬手段</h2>
+<table>
+<thead>
+<tr>
+<th>手段</th>
+<th>原理</th>
+<th>应对</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>请求参数被隐藏/加密</strong></td>
+<td>登录数据可能来自 html 里的静态隐藏域、或由 js 生成</td>
+<td>先从 html 提取；js 生成的用 <strong>js2py</strong> 执行，或直接用 selenium</td>
+</tr>
+<tr>
+<td><strong>验证码</strong></td>
+<td>强制人机识别</td>
+<td>打码平台 / 机器学习 / 手动输入一次</td>
+</tr>
+<tr>
+<td><strong>CSS 反爬</strong></td>
+<td>用 CSS 位移（<code>background-position</code>）把真实数字/文字挪出来，源码里是乱序的</td>
+<td>计算偏移量，把正确的内容&quot;拼&quot;回来</td>
+</tr>
+<tr>
+<td><strong>JS 动态生成数据</strong></td>
+<td>关键数据由前端 js 运行时生成</td>
+<td>解析关键 js 逻辑，用 Python 复现</td>
+</tr>
+<tr>
+<td><strong>编码格式反爬</strong></td>
+<td>响应内容是特殊格式编码</td>
+<td>按对应格式解码</td>
+</tr>
+</tbody>
+</table>
+<p><strong>总结一下&quot;常见反爬机制与处理方式&quot;</strong>：</p>
+<ol>
+<li><strong>headers 反爬</strong>（User-Agent / Referer / Cookie）→ 伪造请求头、维护 UA 池、session 模拟登录；</li>
+<li><strong>IP 限制</strong>→ 代理 IP / 控制请求频率；</li>
+<li><strong>动态页面</strong>→ 抓 XHR 接口；</li>
+<li><strong>参数加密</strong>→ 读 js、用 js2py / selenium；</li>
+<li><strong>验证码</strong>→ OCR 或打码平台。</li>
+</ol>
+<h2 id="六-图片验证码与-ocr"><a class="markdownIt-Anchor" href="#六-图片验证码与-ocr"></a> 六、图片验证码与 OCR</h2>
+<h3 id="为什么会有验证码"><a class="markdownIt-Anchor" href="#为什么会有验证码"></a> 为什么会有验证码</h3>
+<p><strong>加载验证码的方式</strong>：<code>&lt;img&gt;</code> 元素加载验证码时，<strong>需要携带 Cookie</strong>；输入框则作为表单数据的一部分提交。</p>
+<p><strong>CAPTCHA</strong>：全称 <strong>Completely Automated Public Turing test to tell Computers and Humans Apart</strong>（全自动区分计算机和人类的图灵测试）。</p>
+<p><strong>作用</strong>：防止<strong>恶意破解密码</strong>、<strong>刷票</strong>、<strong>论坛灌水</strong>、<strong>刷页</strong>。</p>
+<p><strong>使用场景</strong>：注册、登录，以及<strong>频繁请求时弹出验证</strong>。</p>
+<p><strong>处理方案三种</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>特点</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>手动输入</strong></td>
+<td>只能在一次登录中使用，<strong>一次登录后 Cookie 可以持续使用一段时间</strong></td>
+<td>要求不高的小项目，最省事</td>
+</tr>
+<tr>
+<td><strong>图像识别引擎</strong></td>
+<td>用 OCR 自动识别</td>
+<td>验证码样式简单、固定的站点</td>
+</tr>
+<tr>
+<td><strong>打码平台</strong></td>
+<td>把图片发给平台、由人/模型识别后返回结果，<strong>爬虫中常用</strong></td>
+<td>复杂验证码、批量场景</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>&quot;手动输入一次 + Cookie 持续使用&quot;是很实用的一招</strong>：很多网站登录后 Cookie 能管几小时到几天，<strong>那几小时的爬取完全不需要碰验证码</strong>。</p>
+</blockquote>
+<h3 id="tesseract-ocr"><a class="markdownIt-Anchor" href="#tesseract-ocr"></a> Tesseract OCR</h3>
+<blockquote>
+<p><strong>Tesseract 是一个 OCR 库</strong>，目前由 Google 赞助。Tesseract 是目前公认最优秀、最精确的开源 OCR 系统，除了极高的精确度外，<strong>Tesseract 也具有很高的灵活性，可以通过训练识别出任何字体</strong>（只要风格统一），也可以识别出任何 Unicode 字符。</p>
+</blockquote>
+<p><strong>安装</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>命令 / 操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mac</strong></td>
+<td><code>brew install --with-training-tools tesseract</code></td>
+</tr>
+<tr>
+<td><strong>Windows</strong></td>
+<td>下载 exe 安装（<a target="_blank" rel="noopener" href="https://github.com/UB-Mannheim/tesseract/wiki">https://github.com/UB-Mannheim/tesseract/wiki</a>），安装完成后<strong>把 <code>tessdata</code> 的路径加进环境变量</strong>：新建/追加 <code>TESSDATA_PREFIX</code>，值为 <code>C:\Program Files\Tesseract-OCR\tessdata</code>；再把 <code>C:\Program Files\Tesseract-OCR</code> 加进 <code>PATH</code></td>
+</tr>
+<tr>
+<td><strong>Linux</strong></td>
+<td><code>sudo apt-get install tesseract-ocr</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Windows 那两个环境变量是新手最容易漏的一步</strong>——只装 exe 不配 <code>TESSDATA_PREFIX</code>，Python 调用时会报找不到语言包。</p>
+<p><strong>Python 库</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install pillow</span><br><span class="line">pip install pytesseract</span><br></pre></td></tr></table></figure>
+<p><strong>基本用法</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pytesseract</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">pytesseract.pytesseract.tesseract_cmd = <span class="string">r&#x27;C:\Program Files\Tesseract-OCR\tesseract.exe&#x27;</span></span><br><span class="line">im = Image.<span class="built_in">open</span>(<span class="string">&#x27;checkcode.jpg&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(pytesseract.image_to_string(im))</span><br></pre></td></tr></table></figure>
+<h3 id="提高识别率二值化与降噪"><a class="markdownIt-Anchor" href="#提高识别率二值化与降噪"></a> 提高识别率：二值化与降噪</h3>
+<p>直接识别带噪点、带干扰线的验证码，准确率通常惨不忍睹。<strong>两个预处理函数可以把识别率拉上一大截</strong>。</p>
+<p><strong>1）二值化（binarizing）</strong>——把彩色/灰度图变成<strong>只有黑白两色</strong>，让字更&quot;实&quot;：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">binarizing</span>(<span class="params">img, threshold</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;传入 image 对象和阈值进行二值处理&quot;&quot;&quot;</span></span><br><span class="line">    img = img.convert(<span class="string">&quot;L&quot;</span>)            <span class="comment"># 先转成灰度图 L 模式</span></span><br><span class="line">    pixdata = img.load()              <span class="comment"># 拿到像素访问对象</span></span><br><span class="line">    w, h = img.size                   <span class="comment"># 宽、高</span></span><br><span class="line">    <span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(h):</span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(w):</span><br><span class="line">            <span class="keyword">if</span> pixdata[x, y] &lt; threshold:</span><br><span class="line">                pixdata[x, y] = <span class="number">0</span>     <span class="comment"># 比阈值暗 → 纯黑</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                pixdata[x, y] = <span class="number">255</span>   <span class="comment"># 比阈值亮 → 纯白</span></span><br><span class="line">    <span class="keyword">return</span> img</span><br></pre></td></tr></table></figure>
+<p><strong>2）降噪（depoint）</strong>——去掉孤立的小黑点：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">depoint</span>(<span class="params">img</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;传入二值化后的图片进行降噪&quot;&quot;&quot;</span></span><br><span class="line">    pixdata = img.load()</span><br><span class="line">    w, h = img.size</span><br><span class="line">    <span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, h - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, w - <span class="number">1</span>):</span><br><span class="line">            count = <span class="number">0</span></span><br><span class="line">            <span class="comment"># 检查上下左右 + 四个斜角共八个相邻像素</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x, y - <span class="number">1</span>] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x, y + <span class="number">1</span>] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x - <span class="number">1</span>, y] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x + <span class="number">1</span>, y] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x - <span class="number">1</span>, y - <span class="number">1</span>] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x - <span class="number">1</span>, y + <span class="number">1</span>] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x + <span class="number">1</span>, y - <span class="number">1</span>] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> pixdata[x + <span class="number">1</span>, y + <span class="number">1</span>] &gt; <span class="number">245</span>:</span><br><span class="line">                count = count + <span class="number">1</span></span><br><span class="line">            <span class="comment"># 周围八个点里有超过 4 个是白色 → 这个点多半是噪点，抹白</span></span><br><span class="line">            <span class="keyword">if</span> count &gt; <span class="number">4</span>:</span><br><span class="line">                pixdata[x, y] = <span class="number">255</span></span><br><span class="line">    <span class="keyword">return</span> img</span><br></pre></td></tr></table></figure>
+<p><strong>这两个函数的逻辑非常朴素，但非常通用</strong>：</p>
+<ul>
+<li><strong>二值化</strong>：一个字如果笔画够黑，那么&quot;<strong>比阈值暗的保留、比阈值亮的丢掉</strong>&quot;就能把字和底分干净；</li>
+<li><strong>降噪</strong>：一个孤立的黑点，<strong>它周围应该大多是白色</strong>；如果八邻域里白色超过一半（&gt;4），那它就不像笔画（笔画是连续的），抹掉。</li>
+</ul>
+<blockquote>
+<p>课件里给了两个测试站（<code>imcta.cn</code> 测二值化、<code>i.djye.com</code> 测二值化 + 降噪）。<strong>调参思路</strong>：二值化的阈值先试 140 左右，太黑丢笔画、太白留噪点，多试几次取识别最好的。</p>
+</blockquote>
+<h3 id="百度-ocr"><a class="markdownIt-Anchor" href="#百度-ocr"></a> 百度 OCR</h3>
+<p>Tesseract 不适合复杂验证码时，<strong>百度 OCR 每天有 500 次免费额度</strong>，而且中文识别质量很好。</p>
+<p><strong>申请流程</strong>：</p>
+<ol>
+<li><strong>注册百度账号</strong>；</li>
+<li><strong>登录百度云管理中心，创建一个应用</strong>；</li>
+<li><strong>拿到 AppKey 和 SecretKey</strong>；</li>
+<li><strong>获取 <code>access_token</code></strong>：向 <code>https://aip.baidubce.com/oauth/2.0/token</code> 发 POST：
+<ul>
+<li><code>grant_type</code>：<code>client_credentials</code>（固定）</li>
+<li><code>client_id</code>：API Key</li>
+<li><code>client_secret</code>：Secret Key</li>
+</ul>
+</li>
+</ol>
+<p><strong>代码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> aip <span class="keyword">import</span> AipOcr</span><br><span class="line"></span><br><span class="line">APP_ID = <span class="string">&#x27;你的 AppID&#x27;</span></span><br><span class="line">API_KEY = <span class="string">&#x27;你的 API Key&#x27;</span></span><br><span class="line">SECRET_KEY = <span class="string">&#x27;你的 Secret Key&#x27;</span></span><br><span class="line"></span><br><span class="line">client = AipOcr(APP_ID, API_KEY, SECRET_KEY)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_file_content</span>(<span class="params">filePath</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filePath, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">        <span class="keyword">return</span> fp.read()</span><br><span class="line"></span><br><span class="line">image = get_file_content(<span class="string">&#x27;example.jpg&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可选参数：detect_direction 检测朝向、language_type 语言类型</span></span><br><span class="line">options = &#123;<span class="string">&#x27;detect_direction&#x27;</span>: <span class="string">&#x27;true&#x27;</span>, <span class="string">&#x27;language_type&#x27;</span>: <span class="string">&#x27;CHN_ENG&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">results = client.basicGeneral(image, options)   <span class="comment"># 通用文字识别（高精度版是 basicAccurate）</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(results[<span class="string">&#x27;words_result&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;words&#x27;</span>])</span><br><span class="line"><span class="keyword">except</span> Exception:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;验证码匹配失败&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong><code>try/except</code> 这一段别省</strong>：识别失败时返回的结构里没有 <code>words_result</code>，不接异常程序会直接崩在中途。<strong>批量场景下，单条失败不该让整个任务停下。</strong></p>
+</blockquote>
+<h3 id="打码平台与人工识别"><a class="markdownIt-Anchor" href="#打码平台与人工识别"></a> 打码平台与人工识别</h3>
+<ul>
+<li><strong>打码平台</strong>：把验证码图片上传给平台，平台返回识别结果——<strong>爬虫中最常用</strong>。课件举的例子是斐斐打码（<a target="_blank" rel="noopener" href="http://www.fateadm.com/">http://www.fateadm.com/</a>）。按张收费，成本极低。</li>
+<li><strong>人工识别</strong>（也可以用）：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line">im = Image.<span class="built_in">open</span>(<span class="string">&#x27;captcha.png&#x27;</span>)</span><br><span class="line">im.show()                     <span class="comment"># 弹出图片</span></span><br><span class="line">code = <span class="built_in">input</span>(<span class="string">&#x27;请输入验证码：&#x27;</span>)  <span class="comment"># 人工看一眼输进去</span></span><br></pre></td></tr></table></figure>
+<h2 id="七-常见问题与踩坑表"><a class="markdownIt-Anchor" href="#七-常见问题与踩坑表"></a> 七、常见问题与踩坑表</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>TesseractNotFoundError</code></strong></td>
+<td>没装 Tesseract 或没配路径</td>
+<td>改 <code>pytesseract</code> 源码里的 <code>tesseract_cmd</code>，或在代码里显式指定 exe 路径</td>
+</tr>
+<tr>
+<td>Windows 报找不到语言包</td>
+<td>只装了 exe</td>
+<td>配 <code>TESSDATA_PREFIX</code> 与 <code>PATH</code></td>
+</tr>
+<tr>
+<td>OCR 识别出来一堆乱字符</td>
+<td>验证码有噪点/干扰线</td>
+<td>二值化 + 降噪；还不够就换百度 OCR</td>
+</tr>
+<tr>
+<td>百度 OCR 返回无 <code>words_result</code></td>
+<td>识别失败</td>
+<td><code>try/except</code> 兜住，重试或换图</td>
+</tr>
+<tr>
+<td>代理请求一直挂着</td>
+<td>没写 <code>timeout</code></td>
+<td>加 <code>timeout=5</code>，失败就换下一个代理</td>
+</tr>
+<tr>
+<td>加了 Cookie 还是未登录</td>
+<td>Cookie 过期 / 漏了隐藏参数</td>
+<td>用 session 重新登录；先从 html 抓 csrf token</td>
+</tr>
+<tr>
+<td>动态页面 response 里没数据</td>
+<td>数据是 AJAX 加载的</td>
+<td>按六步套路找 XHR 接口</td>
+</tr>
+<tr>
+<td>请求几百次后全站 403</td>
+<td>IP 被限流</td>
+<td>降频率 + 代理 IP + UA 池</td>
+</tr>
+</tbody>
+</table>
+<h2 id="八-合规提醒课件之外但很重要"><a class="markdownIt-Anchor" href="#八-合规提醒课件之外但很重要"></a> 八、合规提醒（课件之外，但很重要）</h2>
+<p>技术讲完了，这一段是我自己补的，<strong>建议在写第一个真实爬虫之前先读一遍</strong>：</p>
+<ol>
+<li><strong>先看 <code>robots.txt</code></strong>——它写明了站点不希望被爬取的部分，尊重它是基本礼貌；</li>
+<li><strong>控制频率</strong>——加 <code>time.sleep()</code>，别让并发打满对方服务器。<strong>把对方爬挂不是技术成就，是事故</strong>；</li>
+<li><strong>不要抓取和传播个人信息、隐私数据、付费内容</strong>——这可能触碰《个人信息保护法》与《数据安全法》；</li>
+<li><strong>不要用于商业竞争性用途</strong>——抓取对方数据做同类产品，法律风险很高；</li>
+<li><strong>不要绕过登录/付费去获取非公开数据</strong>——涉及&quot;非法获取计算机信息系统数据&quot;的风险。</li>
+</ol>
+<blockquote>
+<p>一句话：<strong>爬公开数据、控制频率、遵守 robots、不碰隐私和付费内容</strong>。技术上做得到，不等于法律上可以做。</p>
+</blockquote>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<ol>
+<li><strong>反爬和反反爬是一场&quot;成本博弈&quot;</strong>：对方抬高成本，我们降低自己被抓的概率——<strong>限制频率永远是第一优先级</strong>；</li>
+<li><strong>代理 IP 三类</strong>（透明/匿名/高匿），爬虫常用<strong>私密代理</strong>；<code>proxies</code> 字典 http 与 https 要分别配，<strong>必须带 timeout</strong>；</li>
+<li><strong>动态页面抓的是接口不是页面</strong>：F12 的 Network 里过滤 XHR，按&quot;清空 → 操作 → 看新请求&quot;的顺序找，<strong>六步套路</strong>是标准流程；</li>
+<li><strong>headers 三件套</strong>：UA（用 UA 池随机拼装）、Referer（带上来源）、Cookie（首选 <code>requests.session()</code> 模拟登录）；</li>
+<li><strong>验证码的性价比排序</strong>：<strong>手动登录一次 + Cookie 复用 &gt; 打码平台 &gt; 百度 OCR / Tesseract</strong>；Tesseract 前先做<strong>二值化 + 降噪</strong>，识别率会明显提升；</li>
+<li><strong>合规比技术更容易出事</strong>——robots、频率、隐私、付费内容，四条线都不要越。</li>
+</ol>
+<h3 id="爬虫系列回顾"><a class="markdownIt-Anchor" href="#爬虫系列回顾"></a> 爬虫系列回顾</h3>
+<p>五篇走下来，正好是一条完整的学习路径：</p>
+<table>
+<thead>
+<tr>
+<th>篇目</th>
+<th>解决的问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>爬虫入门：原理与抓包</td>
+<td>搞清楚<strong>数据在哪、怎么被浏览器拿到</strong></td>
+</tr>
+<tr>
+<td>爬虫进阶：Requests 与正则</td>
+<td><strong>发请求、按模式过滤</strong></td>
+</tr>
+<tr>
+<td>爬虫解析与存储</td>
+<td><strong>BeautifulSoup / JSONPath 解析，文件/CSV/MySQL 存下来</strong></td>
+</tr>
+<tr>
+<td>爬虫进阶：XPath 与 Fiddler</td>
+<td><strong>定位更刁钻的节点、抓非浏览器流量</strong></td>
+</tr>
+<tr>
+<td>爬虫高级：反爬与验证码</td>
+<td><strong>在对方设防的情况下稳定拿到数据</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>课件到这里就结束了。<strong>再往上走是 Scrapy 框架、分布式爬虫、异步爬虫（aiohttp）这些工程化的内容——课件没有讲，属于自学扩展</strong>，我目前也没有把它们写成&quot;课程内容&quot;。等真正上手做过一两个需要规模的爬虫，再来补这部分会更踏实。</p>
+</blockquote>
+<blockquote>
+<p>说明：本文依据课件《5.爬虫中的高级技能》两份笔记整理（反爬清单、代理三类与常用类型特点、动态页面特征与六步套路、UA 池代码、headers 三种模拟登录方法、Tesseract 安装与二值化/降噪代码、百度 OCR 流程与打码平台都按原文保留）。第八节&quot;合规提醒&quot;是我补的，课件未涉及；文中的参数化建议与 <code>try/except</code> 提示同样为我补充。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文連結：</strong><a href="https://utdog.github.io/zh-TW/2025/05/23/%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7-%E5%8F%8D%E7%88%AC%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81/">https://utdog.github.io/zh-TW/2025/05/23/%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7-%E5%8F%8D%E7%88%AC%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版權：</strong>本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 授權協議。轉載請註明出處！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">贊助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">請作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7%EF%BC%9A%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB&amp;desc=%E7%88%AC%E8%99%AB%E7%B3%BB%E5%88%97%E7%BB%88%E7%AF%87%EF%BC%9AIP%20%E9%99%90%E5%88%B6%E4%B8%8E%E4%B8%89%E7%B1%BB%E4%BB%A3%E7%90%86%E3%80%81%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2%E6%8A%93%E5%8F%96%E5%85%AD%E6%AD%A5%E5%A5%97%E8%B7%AF%E3%80%81UA%2FReferer%2FCookie%20%E5%BA%94%E5%AF%B9%EF%BC%8C%E4%BB%A5%E5%8F%8A%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81%E7%9A%84%20Tesseract%20OCR%EF%BC%88%E4%BA%8C%E5%80%BC%E5%8C%96%2B%E9%99%8D%E5%99%AA%EF%BC%89%E3%80%81%E7%99%BE%E5%BA%A6%20OCR%20%E4%B8%8E%E6%89%93%E7%A0%81%E5%B9%B3%E5%8F%B0%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="爬虫高级：反爬机制与验证码识别">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="爬虫高级：反爬机制与验证码识别">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/45.jpg" data-sizes="auto" alt="爬虫进阶：XPath 与 Fiddler 抓包" class="lazyload">
+      
+      <a href="/zh-TW/2025/05/22/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-XPath%E4%B8%8E%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          爬虫进阶：XPath 与 Fiddler 抓包
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基於&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫高级：反爬机制与验证码识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%8F%8D%E7%88%AC%E4%B8%8E%E5%8F%8D%E5%8F%8D%E7%88%AC%E5%85%A8%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、反爬与反反爬全景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8F%8D%E7%88%AC"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 网站为什么要反爬</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%B8%80ip-%E9%99%90%E5%88%B6%E4%B8%8E%E4%BB%A3%E7%90%86-ip"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、反爬机制一：IP 限制与代理 IP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BB%A3%E7%90%86-ip"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 什么是代理 IP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E7%9A%84%E4%B8%89%E7%B1%BB"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 代理的三类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%B3%95"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%BA%8C%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、反爬机制二：动态页面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E9%A1%B5%E9%9D%A2%E4%B8%8E%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 静态页面与动态页面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#response-%E9%87%8C%E6%B2%A1%E6%9C%89%E6%95%B0%E6%8D%AE%E6%80%8E%E4%B9%88%E5%8A%9E%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%8A%93%E5%8C%85%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.</span> <span class="toc-text"> response 里没有数据怎么办：控制台抓包分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ajax-%E4%B8%8E-json"><span class="toc-number">1.3.3.</span> <span class="toc-text"> AJAX 与 JSON</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E9%A1%B5%E9%9D%A2%E6%8A%93%E5%8F%96%E5%9B%BA%E5%AE%9A%E5%A5%97%E8%B7%AF%E5%85%AD%E6%AD%A5"><span class="toc-number">1.3.4.</span> <span class="toc-text"> 动态页面抓取固定套路（六步）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%8F%8D%E7%88%AC%E6%9C%BA%E5%88%B6%E4%B8%89headers-%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、反爬机制三：headers 校验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#user-agent"><span class="toc-number">1.4.1.</span> <span class="toc-text"> User-Agent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#referer"><span class="toc-number">1.4.2.</span> <span class="toc-text"> Referer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cookie"><span class="toc-number">1.4.3.</span> <span class="toc-text"> Cookie</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%85%B6%E4%BB%96%E5%8F%8D%E7%88%AC%E6%89%8B%E6%AE%B5"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、其他反爬手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81%E4%B8%8E-ocr"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、图片验证码与 OCR</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E9%AA%8C%E8%AF%81%E7%A0%81"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 为什么会有验证码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tesseract-ocr"><span class="toc-number">1.6.2.</span> <span class="toc-text"> Tesseract OCR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E9%AB%98%E8%AF%86%E5%88%AB%E7%8E%87%E4%BA%8C%E5%80%BC%E5%8C%96%E4%B8%8E%E9%99%8D%E5%99%AA"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 提高识别率：二值化与降噪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BE%E5%BA%A6-ocr"><span class="toc-number">1.6.4.</span> <span class="toc-text"> 百度 OCR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%93%E7%A0%81%E5%B9%B3%E5%8F%B0%E4%B8%8E%E4%BA%BA%E5%B7%A5%E8%AF%86%E5%88%AB"><span class="toc-number">1.6.5.</span> <span class="toc-text"> 打码平台与人工识别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、常见问题与踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E5%90%88%E8%A7%84%E6%8F%90%E9%86%92%E8%AF%BE%E4%BB%B6%E4%B9%8B%E5%A4%96%E4%BD%86%E5%BE%88%E9%87%8D%E8%A6%81"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、合规提醒（课件之外，但很重要）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E7%B3%BB%E5%88%97%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.9.1.</span> <span class="toc-text"> 爬虫系列回顾</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "爬虫高级：反爬机制与验证码识别",
+          url: "https://utdog.github.io/2025/05/23/%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7-%E5%8F%8D%E7%88%AC%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81/",
+          excerpt: "",
+          description: "爬虫系列终篇：IP 限制与三类代理、动态页面抓取六步套路、UA/Referer/Cookie 应对，以及图片验证码的 Tesseract OCR（二值化+降噪）、百度 OCR 与打码平台。",
+          stripContent: " 爬虫高级：反爬机制与验证码识别  前言 爬到第五篇，顺风顺水的日子结束了。 前面四篇的代码在练习站点上都能跑通，但把同样的代码指向真实网站，很可能第一件事就是被挡回来——返回 403、返回一个空壳页面、或者干脆弹出一个验证码。 这一篇讲的就是&amp;quot;对方怎么防&amp;quot;和&amp;quot;我们怎么破&amp;quot;：  反爬机制的常见类型：IP 限制、动态页面、headers 校验、参数加密、验证码； 对应的应对手段：代理 IP、抓包分析、UA 池、Cookie 模拟登录； 验证码识别：Tesse",
+          date: "Fri May 23 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 18:39:32 GMT+0800",
+          cover: "/images/46.jpg",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

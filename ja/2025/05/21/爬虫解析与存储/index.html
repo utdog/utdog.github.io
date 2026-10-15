@@ -1,0 +1,1575 @@
+
+  <!DOCTYPE html>
+  <html lang="ja"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本ブログのすべての文書は、特に指定されていない限り、BY-NC-SA ライセンスに従っています。引用の際は出典を明記してください！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    爬虫解析与存储：BeautifulSoup、JSON 与持久化 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="爬虫系列第三篇：三种抓取工具对比，BeautifulSoup4 的四大对象、遍历与 find_all&#x2F;select 搜索，json 模块四个函数的区别与 JsonPath，以及数据落地的四种方式——文件、CSV、JSON 与 pymysql 写入 MySQL。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫解析与存储：BeautifulSoup、JSON 与持久化">
+<meta property="og:url" content="https://utdog.github.io/ja/2025/05/21/%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="爬虫系列第三篇：三种抓取工具对比，BeautifulSoup4 的四大对象、遍历与 find_all&#x2F;select 搜索，json 模块四个函数的区别与 JsonPath，以及数据落地的四种方式——文件、CSV、JSON 与 pymysql 写入 MySQL。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2025-05-21T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T10:37:25.576Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="爬虫">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/">ホーム</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/archives">アーカイブ</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/about">プロフィール</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/friend">フレンド</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="検索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" class="selected">日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/21/爬虫解析与存储/';
+            
+              langMap['en'] = '/en/2025/05/21/爬虫解析与存储/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/21/爬虫解析与存储/';
+            
+              langMap['ja'] = '/ja/2025/05/21/爬虫解析与存储/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/28.jpg" alt="爬虫解析与存储：BeautifulSoup、JSON 与持久化">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">爬虫解析与存储：BeautifulSoup、JSON 与持久化</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8beautifulsoup-json-%E4%B8%8E%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫解析与存储：BeautifulSoup、JSON 与持久化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%89%E7%A7%8D%E6%8A%93%E5%8F%96%E5%B7%A5%E5%85%B7%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、三种抓取工具怎么选</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%88%9B%E5%BB%BA-beautifulsoup-%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、创建 BeautifulSoup 对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E5%AE%9A%E8%A6%81%E6%98%BE%E5%BC%8F%E6%8C%87%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8%E8%A1%A5%E5%85%85"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 一定要显式指定解析器（补充）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%9B%9B%E5%A4%A7%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、四大对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-tag%E6%A0%87%E7%AD%BE"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1. Tag（标签）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-navigablestring%E5%8F%AF%E9%81%8D%E5%8E%86%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2. NavigableString（可遍历字符串）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-beautifulsoup%E6%96%87%E6%A1%A3%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 3. BeautifulSoup（文档对象）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-comment%E6%B3%A8%E9%87%8A"><span class="toc-number">1.3.4.</span> <span class="toc-text"> 4. Comment（注释）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E9%81%8D%E5%8E%86%E6%96%87%E6%A1%A3%E6%A0%91"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、遍历文档树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%90%9C%E7%B4%A2%E6%96%87%E6%A1%A3%E6%A0%91find_all-%E4%B8%8E-select"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、搜索文档树：find_all 与 select</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#find_all-%E7%9A%84-name-%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.1.</span> <span class="toc-text"> find_all 的 name 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#keyword-%E5%8F%82%E6%95%B0%E6%8C%89%E5%B1%9E%E6%80%A7%E6%89%BE"><span class="toc-number">1.5.2.</span> <span class="toc-text"> keyword 参数：按属性找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#text-%E5%8F%82%E6%95%B0%E6%89%BE%E6%96%87%E6%9C%AC%E5%86%85%E5%AE%B9"><span class="toc-number">1.5.3.</span> <span class="toc-text"> text 参数：找文本内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#css-%E9%80%89%E6%8B%A9%E5%99%A8soupselect"><span class="toc-number">1.5.4.</span> <span class="toc-text"> CSS 选择器：soup.select()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-json-%E4%B8%8E-json-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、JSON 与 json 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#json-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.6.1.</span> <span class="toc-text"> JSON 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E4%B8%AA%E5%87%BD%E6%95%B0loads-dumps-dump-load"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 四个函数：loads &#x2F; dumps &#x2F; dump &#x2F; load</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jsonpath%E4%BA%86%E8%A7%A3"><span class="toc-number">1.6.3.</span> <span class="toc-text"> JsonPath（了解）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、持久化存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6open-%E6%96%B9%E6%B3%95"><span class="toc-number">1.7.1.</span> <span class="toc-text"> 1）写入文件：open 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E5%86%99%E5%85%A5-csv"><span class="toc-number">1.7.2.</span> <span class="toc-text"> 2）写入 CSV</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E5%86%99%E5%85%A5-json"><span class="toc-number">1.7.3.</span> <span class="toc-text"> 3）写入 JSON</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E5%86%99%E5%85%A5-mysqlpymysql"><span class="toc-number">1.7.4.</span> <span class="toc-text"> 4）写入 MySQL：pymysql</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-爬虫解析与存储" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-21T12:00:00.000Z" itemprop="datePublished">2025-05-21</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/ja/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="爬虫解析与存储beautifulsoup-json-与持久化"><a class="markdownIt-Anchor" href="#爬虫解析与存储beautifulsoup-json-与持久化"></a> 爬虫解析与存储：BeautifulSoup、JSON 与持久化</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>上一篇用正则把数据从字符串里&quot;抠&quot;出来——<strong>能用，但脆</strong>。网页结构稍微改一下，正则就全废了。</p>
+<p>这一篇解决爬虫四步的后两步：</p>
+<ul>
+<li><strong>解析提取</strong>：BeautifulSoup（按 DOM 结构找）、json 模块与 JsonPath（解析接口返回的 JSON）；</li>
+<li><strong>保存数据</strong>：文件、CSV、JSON、MySQL。</li>
+</ul>
+<blockquote>
+<p>说明：本文依据课件《3.爬虫中的初级技能》三份笔记（《1.爬虫框架Beautiful Soup详解》《2.json模块与Jsonpath》《3.爬虫的持久化储存》）整理。文中的&quot;补充&quot;标记部分（解析器选择、<code>newline=''</code> 的原因、编码处理等）是我自己加的。</p>
+</blockquote>
+<h2 id="一-三种抓取工具怎么选"><a class="markdownIt-Anchor" href="#一-三种抓取工具怎么选"></a> 一、三种抓取工具怎么选</h2>
+<table>
+<thead>
+<tr>
+<th>抓取工具</th>
+<th>速度</th>
+<th>使用难度</th>
+<th>安装难度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>正则</td>
+<td>最快</td>
+<td>困难</td>
+<td>无（内置）</td>
+</tr>
+<tr>
+<td>BeautifulSoup</td>
+<td>慢</td>
+<td>最简单</td>
+<td>简单</td>
+</tr>
+<tr>
+<td>lxml</td>
+<td>快</td>
+<td>简单</td>
+<td>一般</td>
+</tr>
+</tbody>
+</table>
+<p>选型逻辑很直接：<strong>结构稳定的简单页面用正则，正式项目用 lxml 或 BeautifulSoup</strong>。</p>
+<p>BeautifulSoup 慢在哪？课件说得很明白：</p>
+<blockquote>
+<p>lxml 只会<strong>局部遍历</strong>，而 BeautifulSoup 是<strong>基于 HTML DOM 的，会载入整个文档，解析整个 DOM 树</strong>，因此时间和内存开销都会大很多。</p>
+</blockquote>
+<p>但它的优点是&quot;API 非常人性化&quot;——支持 CSS 选择器、支持 Python 标准库的 HTML 解析器、也支持 lxml 的 XML 解析器。<strong>写起来最舒服，这也是教学都用它的原因。</strong></p>
+<blockquote>
+<p><strong>版本提醒</strong>：Beautiful Soup 3 已经停止开发，现在的项目一律用 <strong>Beautiful Soup 4</strong>，装的时候包名是 <strong><code>beautifulsoup4</code></strong>，导入的是 <strong><code>bs4</code></strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install beautifulsoup4</span><br></pre></td></tr></table></figure>
+<p>官方中文文档：<a target="_blank" rel="noopener" href="https://beautifulsoup.readthedocs.io/zh_CN/v4.4.0/">https://beautifulsoup.readthedocs.io/zh_CN/v4.4.0/</a></p>
+</blockquote>
+<h2 id="二-创建-beautifulsoup-对象"><a class="markdownIt-Anchor" href="#二-创建-beautifulsoup-对象"></a> 二、创建 BeautifulSoup 对象</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line">html = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">&lt;html&gt;&lt;head&gt;&lt;title&gt;The Dormouse&#x27;s story&lt;/title&gt;&lt;/head&gt;</span></span><br><span class="line"><span class="string">&lt;body&gt;</span></span><br><span class="line"><span class="string">&lt;p class=&quot;title&quot; name=&quot;dromouse&quot;&gt;&lt;b&gt;The Dormouse&#x27;s story&lt;/b&gt;&lt;/p&gt;</span></span><br><span class="line"><span class="string">&lt;p class=&quot;story&quot;&gt;Once upon a time there were three little sisters; and their names were</span></span><br><span class="line"><span class="string">&lt;a href=&quot;http://example.com/elsie&quot; class=&quot;sister&quot; id=&quot;link1&quot;&gt;&lt;!-- Elsie --&gt;&lt;/a&gt;,</span></span><br><span class="line"><span class="string">&lt;a href=&quot;http://example.com/lacie&quot; class=&quot;sister&quot; id=&quot;link2&quot;&gt;Lacie&lt;/a&gt; and</span></span><br><span class="line"><span class="string">&lt;a href=&quot;http://example.com/tillie&quot; class=&quot;sister&quot; id=&quot;link3&quot;&gt;Tillie&lt;/a&gt;;</span></span><br><span class="line"><span class="string">and they lived at the bottom of a well.&lt;/p&gt;</span></span><br><span class="line"><span class="string">&lt;p class=&quot;story&quot;&gt;...&lt;/p&gt;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">soup = BeautifulSoup(html)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以直接读本地文件</span></span><br><span class="line"><span class="comment"># soup = BeautifulSoup(open(&#x27;index.html&#x27;))</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 格式化输出</span></span><br><span class="line"><span class="built_in">print</span>(soup.prettify())</span><br></pre></td></tr></table></figure>
+<p><code>prettify()</code> 的价值在于<strong>把压缩成一行的 HTML 展开成缩进结构</strong>，肉眼找规律时特别有用。</p>
+<h3 id="一定要显式指定解析器补充"><a class="markdownIt-Anchor" href="#一定要显式指定解析器补充"></a> 一定要显式指定解析器（补充）</h3>
+<p>课件提到一个现象：不指定解析器时，bs4 会警告&quot;没有显式指定解析器，将使用系统的最佳可用 HTML 解析器（lxml）&quot;。<strong>这段警告不能忽略</strong>——它在说：</p>
+<blockquote>
+<p>如果你在另一个系统上运行这段代码，或者在不同的虚拟环境里，<strong>使用不同的解析器会造成行为不同</strong>。</p>
+</blockquote>
+<p>所以正式代码里统一写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">soup = BeautifulSoup(html, <span class="string">&#x27;lxml&#x27;</span>)     <span class="comment"># 快，需要 pip install lxml</span></span><br><span class="line">soup = BeautifulSoup(html, <span class="string">&#x27;html.parser&#x27;</span>)   <span class="comment"># Python 内置，无需额外安装</span></span><br></pre></td></tr></table></figure>
+<p><strong>这一步是我建议加上的</strong>：本地调好了、服务器上装的是另一个解析器，结果解析出来不一样，是排查起来非常痛苦的一类 bug。</p>
+<h2 id="三-四大对象"><a class="markdownIt-Anchor" href="#三-四大对象"></a> 三、四大对象</h2>
+<p>BeautifulSoup 把 HTML 文档转成一棵复杂的树，每个节点都是 Python 对象，归纳起来只有 <strong>4 种</strong>：</p>
+<h3 id="1-tag标签"><a class="markdownIt-Anchor" href="#1-tag标签"></a> 1. Tag（标签）</h3>
+<p>HTML 里的一个个标签加上里面的内容就是 Tag：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(soup.title)</span><br><span class="line"><span class="comment"># &lt;title&gt;The Dormouse&#x27;s story&lt;/title&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(soup.head)</span><br><span class="line"><span class="comment"># &lt;head&gt;&lt;title&gt;The Dormouse&#x27;s story&lt;/title&gt;&lt;/head&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(soup.a)</span><br><span class="line"><span class="comment"># &lt;a class=&quot;sister&quot; href=&quot;http://example.com/elsie&quot; id=&quot;link1&quot;&gt;&lt;!-- Elsie --&gt;&lt;/a&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(soup.p)</span><br><span class="line"><span class="comment"># &lt;p class=&quot;title&quot; name=&quot;dromouse&quot;&gt;&lt;b&gt;The Dormouse&#x27;s story&lt;/b&gt;&lt;/p&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(soup.p))</span><br><span class="line"><span class="comment"># &lt;class &#x27;bs4.element.Tag&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>注意</strong>：<code>soup.tag名</code> 拿到的是<strong>在整个文档中第一个符合要求的标签</strong>。要拿全部，得用后面的 <code>find_all</code>。</p>
+</blockquote>
+<p>Tag 有两个重要属性：<code>name</code> 和 <code>attrs</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(soup.name)        <span class="comment"># [document]   ← soup 对象本身比较特殊</span></span><br><span class="line"><span class="built_in">print</span>(soup.head.name)   <span class="comment"># head</span></span><br><span class="line"><span class="built_in">print</span>(soup.p.attrs)     <span class="comment"># &#123;&#x27;class&#x27;: [&#x27;title&#x27;], &#x27;name&#x27;: &#x27;dromouse&#x27;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(soup.p[<span class="string">&#x27;class&#x27;</span>])          <span class="comment"># [&#x27;title&#x27;]</span></span><br><span class="line"><span class="built_in">print</span>(soup.p.get(<span class="string">&#x27;class&#x27;</span>))      <span class="comment"># [&#x27;title&#x27;]   ← 与上面等价</span></span><br><span class="line"></span><br><span class="line">soup.p[<span class="string">&#x27;class&#x27;</span>] = <span class="string">&#x27;newClass&#x27;</span>    <span class="comment"># 可以改属性</span></span><br><span class="line"><span class="keyword">del</span> soup.p[<span class="string">&#x27;class&#x27;</span>]             <span class="comment"># 也可以删属性</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-navigablestring可遍历字符串"><a class="markdownIt-Anchor" href="#2-navigablestring可遍历字符串"></a> 2. NavigableString（可遍历字符串）</h3>
+<p>拿到标签之后要取里面的文字，用 <code>.string</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(soup.p.string)</span><br><span class="line"><span class="comment"># The Dormouse&#x27;s story</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(soup.p.string))</span><br><span class="line"><span class="comment"># &lt;class &#x27;bs4.element.NavigableString&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-beautifulsoup文档对象"><a class="markdownIt-Anchor" href="#3-beautifulsoup文档对象"></a> 3. BeautifulSoup（文档对象）</h3>
+<p>表示整个文档的内容，大部分时候可以当成一个特殊的 Tag 来用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(soup.name))   <span class="comment"># &lt;type &#x27;unicode&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(soup.name)         <span class="comment"># [document]</span></span><br><span class="line"><span class="built_in">print</span>(soup.attrs)        <span class="comment"># &#123;&#125;   ← 文档本身没有属性</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-comment注释"><a class="markdownIt-Anchor" href="#4-comment注释"></a> 4. Comment（注释）</h3>
+<p><code>Comment</code> 是一种特殊类型的 <code>NavigableString</code>，<strong>它输出的内容不包含注释符号</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(soup.a)</span><br><span class="line"><span class="comment"># &lt;a class=&quot;sister&quot; href=&quot;http://example.com/elsie&quot; id=&quot;link1&quot;&gt;&lt;!-- Elsie --&gt;&lt;/a&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(soup.a.string)     <span class="comment"># Elsie      ← 注释符没了</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(soup.a.string))   <span class="comment"># &lt;class &#x27;bs4.element.Comment&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>这是一个隐蔽的坑</strong>：如果某个节点恰好是注释，<code>.string</code> 会给你&quot;Elsie&quot;这种看起来正常、实际上不是正文的内容。判断时可以用 <code>isinstance(x, Comment)</code>，或者干脆<strong>在解析前用正则去掉 <code>&lt;!-- --&gt;</code></strong>。</p>
+</blockquote>
+<h2 id="四-遍历文档树"><a class="markdownIt-Anchor" href="#四-遍历文档树"></a> 四、遍历文档树</h2>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>含义</th>
+<th>返回</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.contents</code></td>
+<td>直接子节点</td>
+<td><strong>列表</strong></td>
+</tr>
+<tr>
+<td><code>.children</code></td>
+<td>直接子节点</td>
+<td><strong>生成器</strong>（需要遍历）</td>
+</tr>
+<tr>
+<td><code>.descendants</code></td>
+<td>所有子孙节点（递归）</td>
+<td>生成器</td>
+</tr>
+<tr>
+<td><code>.string</code></td>
+<td>节点里的文本</td>
+<td><code>NavigableString</code></td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(soup.head.contents)</span><br><span class="line"><span class="comment"># [&lt;title&gt;The Dormouse&#x27;s story&lt;/title&gt;]</span></span><br><span class="line"><span class="built_in">print</span>(soup.head.contents[<span class="number">0</span>])          <span class="comment"># 可以用索引取</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(soup.head.children)             <span class="comment"># &lt;listiterator object at 0x...&gt;</span></span><br><span class="line"><span class="keyword">for</span> child <span class="keyword">in</span> soup.body.children:</span><br><span class="line">    <span class="built_in">print</span>(child)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> child <span class="keyword">in</span> soup.descendants:        <span class="comment"># 递归到所有子孙</span></span><br><span class="line">    <span class="built_in">print</span>(child)</span><br></pre></td></tr></table></figure>
+<p><code>.string</code> 的规则讲清楚一句话就够：<strong>如果一个标签里没有标签了，<code>.string</code> 返回里面的内容；如果标签里只有唯一一个标签，<code>.string</code> 会一直钻到最里面那一层</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(soup.head.string)    <span class="comment"># The Dormouse&#x27;s story</span></span><br><span class="line"><span class="built_in">print</span>(soup.title.string)   <span class="comment"># The Dormouse&#x27;s story</span></span><br></pre></td></tr></table></figure>
+<h2 id="五-搜索文档树find_all-与-select"><a class="markdownIt-Anchor" href="#五-搜索文档树find_all-与-select"></a> 五、搜索文档树：find_all 与 select</h2>
+<h3 id="find_all-的-name-参数"><a class="markdownIt-Anchor" href="#find_all-的-name-参数"></a> find_all 的 name 参数</h3>
+<p><code>find_all(name, attrs, recursive, text, **kwargs)</code></p>
+<p><strong>A. 传字符串</strong>（完整匹配标签名）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">soup.find_all(<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line"><span class="comment"># [&lt;b&gt;The Dormouse&#x27;s story&lt;/b&gt;]</span></span><br><span class="line"></span><br><span class="line">soup.find_all(<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line"><span class="comment"># 三个 &lt;a&gt; 标签</span></span><br></pre></td></tr></table></figure>
+<p><strong>B. 传正则表达式</strong>——bs4 会用正则的 <code>match()</code> 去匹配（<strong>注意是 match，不是 search</strong>）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> tag <span class="keyword">in</span> soup.find_all(re.<span class="built_in">compile</span>(<span class="string">&quot;^b&quot;</span>)):</span><br><span class="line">    <span class="built_in">print</span>(tag.name)</span><br><span class="line"><span class="comment"># body</span></span><br><span class="line"><span class="comment"># b</span></span><br></pre></td></tr></table></figure>
+<p>（<code>^b</code> 匹配出了 <code>body</code> 和 <code>b</code> 两个标签——正好说明它是从头匹配标签名。）</p>
+<p><strong>C. 传列表</strong>（命中任一即可）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">soup.find_all([<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>])</span><br></pre></td></tr></table></figure>
+<h3 id="keyword-参数按属性找"><a class="markdownIt-Anchor" href="#keyword-参数按属性找"></a> keyword 参数：按属性找</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">soup.find_all(<span class="built_in">id</span>=<span class="string">&#x27;link2&#x27;</span>)</span><br><span class="line"><span class="comment"># [&lt;a class=&quot;sister&quot; href=&quot;http://example.com/lacie&quot; id=&quot;link2&quot;&gt;Lacie&lt;/a&gt;]</span></span><br></pre></td></tr></table></figure>
+<h3 id="text-参数找文本内容"><a class="markdownIt-Anchor" href="#text-参数找文本内容"></a> text 参数：找文本内容</h3>
+<p><code>text</code> 接受的值和 <code>name</code> 一样，支持字符串、正则、列表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">soup.find_all(text=<span class="string">&quot;Elsie&quot;</span>)                        <span class="comment"># [u&#x27;Elsie&#x27;]</span></span><br><span class="line">soup.find_all(text=[<span class="string">&quot;Tillie&quot;</span>, <span class="string">&quot;Elsie&quot;</span>, <span class="string">&quot;Lacie&quot;</span>])   <span class="comment"># 三个都找出来</span></span><br><span class="line">soup.find_all(text=re.<span class="built_in">compile</span>(<span class="string">&quot;Dormouse&quot;</span>))</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这条比&quot;先找标签再取文字&quot;省事：<strong>知道文本内容、但不知道它在哪个标签里时，直接 <code>find_all(text=...)</code></strong>。</p>
+</blockquote>
+<h3 id="css-选择器soupselect"><a class="markdownIt-Anchor" href="#css-选择器soupselect"></a> CSS 选择器：soup.select()</h3>
+<p>和写 CSS 一个套路：<strong>标签名不加修饰，类名前加 <code>.</code>，id 名前加 <code>#</code></strong>。返回值是<strong>列表</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">soup.select(<span class="string">&#x27;title&#x27;</span>)                <span class="comment"># 按标签名</span></span><br><span class="line">soup.select(<span class="string">&#x27;.sister&#x27;</span>)              <span class="comment"># 按类名</span></span><br><span class="line">soup.select(<span class="string">&#x27;#link1&#x27;</span>)               <span class="comment"># 按 id</span></span><br><span class="line">soup.select(<span class="string">&#x27;p #link1&#x27;</span>)             <span class="comment"># 组合：p 里面的 #link1（空格 = 后代）</span></span><br><span class="line">soup.select(<span class="string">&#x27;head &gt; title&#x27;</span>)         <span class="comment"># 直接子标签（&gt; = 子代）</span></span><br><span class="line">soup.select(<span class="string">&#x27;a[class=&quot;sister&quot;]&#x27;</span>)    <span class="comment"># 按属性</span></span><br><span class="line">soup.select(<span class="string">&#x27;a[href=&quot;http://example.com/elsie&quot;]&#x27;</span>)</span><br><span class="line">soup.select(<span class="string">&#x27;p a[href=&quot;http://example.com/elsie&quot;]&#x27;</span>)   <span class="comment"># 属性与层级组合</span></span><br></pre></td></tr></table></figure>
+<p><strong>取内容用 <code>get_text()</code></strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">soup = BeautifulSoup(html, <span class="string">&#x27;lxml&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(soup.select(<span class="string">&#x27;title&#x27;</span>)))       <span class="comment"># &lt;class &#x27;list&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(soup.select(<span class="string">&#x27;title&#x27;</span>)[<span class="number">0</span>].get_text())</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> title <span class="keyword">in</span> soup.select(<span class="string">&#x27;title&#x27;</span>):</span><br><span class="line">    <span class="built_in">print</span>(title.get_text())</span><br></pre></td></tr></table></figure>
+<p>课件的两点提醒很关键：</p>
+<ol>
+<li><strong>属性必须用中括号括起来，而且属性和标签属于同一个节点，中间不能有空格</strong>，否则匹配不到；</li>
+<li><strong>不在同一节点的用空格隔开，在同一节点的不加空格</strong>——<code>p a[...]</code> 是&quot;p 里面的 a&quot;，<code>a[...]</code> 是&quot;a 自己带这个属性&quot;。</li>
+</ol>
+<blockquote>
+<p><strong>为什么推荐 select</strong>：如果你本来就懂 CSS，那 <code>soup.select('.list .item a')</code> 比一层层 <code>find_all</code> 直观得多，而且<strong>从浏览器的&quot;复制 selector&quot;直接粘过来就能用</strong>。</p>
+</blockquote>
+<h2 id="六-json-与-json-模块"><a class="markdownIt-Anchor" href="#六-json-与-json-模块"></a> 六、JSON 与 json 模块</h2>
+<h3 id="json-是什么"><a class="markdownIt-Anchor" href="#json-是什么"></a> JSON 是什么</h3>
+<blockquote>
+<p>JSON（JavaScript Object Notation）是一种<strong>轻量级的数据交换格式</strong>，方便人阅读和编写，也方便机器解析和生成，适用于数据交互场景（比如网站前台与后台之间的数据交互）。</p>
+</blockquote>
+<p>它的结构只有两种，正好对应 Python 的两种类型：</p>
+<ul>
+<li><strong>对象</strong>：<code>&#123; &#125;</code> 括起来的键值对，取值方式是 <code>对象.key</code>，值可以是数字、字符串、数组、对象；</li>
+<li><strong>数组</strong>：<code>[ ]</code> 括起来，用索引取值。</li>
+</ul>
+<blockquote>
+<p>调试接口时，把返回内容粘到 <a target="_blank" rel="noopener" href="http://www.json.cn/">http://www.json.cn/</a> 这类在线格式化网站看一眼，比在终端里数括号快得多。<strong>爬虫抓到的 Ajax 数据，绝大多数就是 JSON。</strong></p>
+</blockquote>
+<h3 id="四个函数loads-dumps-dump-load"><a class="markdownIt-Anchor" href="#四个函数loads-dumps-dump-load"></a> 四个函数：loads / dumps / dump / load</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br></pre></td></tr></table></figure>
+<p><strong>1）<code>json.loads()</code></strong>：把 <strong>json 格式的字符串</strong>转成 Python 数据类型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">strList = <span class="string">&#x27;[1, 2, 3, 4]&#x27;</span></span><br><span class="line">strDict = <span class="string">&#x27;&#123;&quot;city&quot;: &quot;北京&quot;, &quot;name&quot;: &quot;大猫&quot;&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line">json.loads(strList)     <span class="comment"># [1, 2, 3, 4]</span></span><br><span class="line">json.loads(strDict)     <span class="comment"># &#123;u&#x27;city&#x27;: u&#x27;\u5317\u4eac&#x27;, u&#x27;name&#x27;: u&#x27;\u5927\u732b&#x27;&#125;</span></span><br></pre></td></tr></table></figure>
+<p>（课件注释说&quot;json 数据自动按 Unicode 存储&quot;——中文变成了 <code>\u5317</code> 这种形式，<strong>这是 Python 2 的显示方式，而且不影响取值</strong>，<code>data['city']</code> 照样是&quot;北京&quot;。）</p>
+<p><strong>2）<code>json.dumps()</code></strong>：把 Python 类型转成 <strong>json 字符串</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">item = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;QQ&#x27;</span>, <span class="string">&#x27;app_id&#x27;</span>: <span class="number">1</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;before dumps&#x27;</span>, <span class="built_in">type</span>(item))    <span class="comment"># dict</span></span><br><span class="line">item = json.dumps(item)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;after dumps&#x27;</span>, <span class="built_in">type</span>(item))     <span class="comment"># str</span></span><br></pre></td></tr></table></figure>
+<p><strong>3）<code>json.dump()</code></strong>：把 Python 数据类型<strong>写进文件</strong>——“让你把抓取的数据保存为 json 文件时使用”。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">item = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;QQ&#x27;</span>, <span class="string">&#x27;app_id&#x27;</span>: <span class="number">1</span>&#125;</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;小米.json&#x27;</span>, <span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    json.dump(item, f, ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>4）<code>json.load()</code></strong>：把 json 文件读出来转成 Python 类型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;D:\\spider_test\\xiaomi.json&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = json.load(f)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>记忆法</strong>：<strong>带 <code>s</code> 的是 string（字符串），不带 <code>s</code> 的对应文件对象</strong>。<code>loads</code>/<code>dumps</code> 处理字符串，<code>load</code>/<code>dump</code> 处理文件。这个记忆法是我总结的，但特别好用。</p>
+</blockquote>
+<p><strong>课件总结的两条爬虫最常用用法</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1、数据抓取：json.loads(html)      → 把响应内容从 json 转成 python</span></span><br><span class="line"><span class="comment"># 2、数据保存：json.dump(item_list, f, ensure_ascii=False)  → 存到本地 json 文件</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意 <code>ensure_ascii=False</code></strong>：不写它，中文会被写成 <code>\u5317\u4eac</code> 这样的转义序列——程序读没问题，<strong>人看不懂</strong>。存文件时基本都要带上。（顺带一提，写文件时最好再补上 <code>encoding='utf-8'</code>，否则在 Windows 上默认用 GBK 写，跨机器读会乱码——<strong>这部分是我的补充</strong>。）</p>
+<h3 id="jsonpath了解"><a class="markdownIt-Anchor" href="#jsonpath了解"></a> JsonPath（了解）</h3>
+<blockquote>
+<p><strong>JsonPath 是一种信息抽取类库，从 JSON 文档中抽取指定信息的工具</strong>，提供多种语言实现（Javascript、Python、PHP、Java）。<strong>JsonPath 对于 JSON 来说，相当于 XPath 对于 XML。</strong></p>
+</blockquote>
+<p>安装：从 <a target="_blank" rel="noopener" href="https://pypi.python.org/pypi/jsonpath">https://pypi.python.org/pypi/jsonpath</a> 下载后 <code>python setup.py install</code>（现在也可以直接 <code>pip install jsonpath</code>）。</p>
+<p><strong>JsonPath 与 XPath 语法对照</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>XPath</th>
+<th>JSONPath</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td><code>$</code></td>
+<td>根节点</td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td><code>@</code></td>
+<td>现行节点</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td><code>.</code> 或 <code>[]</code></td>
+<td>取子节点</td>
+</tr>
+<tr>
+<td><code>..</code></td>
+<td>n/a</td>
+<td>取父节点（JsonPath 未支持）</td>
+</tr>
+<tr>
+<td><code>//</code></td>
+<td><code>..</code></td>
+<td>不管位置，选择所有符合条件的</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td><code>*</code></td>
+<td>匹配所有元素节点</td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>n/a</td>
+<td>按属性访问（JSON 是 key-value 递归结构，不需要）</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td><code>[]</code></td>
+<td>迭代器（可做数组下标、按内容选值）</td>
+</tr>
+<tr>
+<td><code>|</code></td>
+<td><code>[,]</code></td>
+<td>支持迭代器中做多选</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td><code>?()</code></td>
+<td>支持过滤操作</td>
+</tr>
+<tr>
+<td>n/a</td>
+<td><code>()</code></td>
+<td>支持表达式计算</td>
+</tr>
+<tr>
+<td><code>()</code></td>
+<td>n/a</td>
+<td>分组（JsonPath 不支持）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>例子：拉勾网城市接口</strong>——拿回 JSON 之后，一句话把所有城市名捞出来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> jsonpath</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://www.lagou.com/lbs/getAllCitySearchLabels.json&#x27;</span></span><br><span class="line">response = requests.get(url)</span><br><span class="line">html = response.text</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把 json 格式字符串转换成 python 对象</span></span><br><span class="line">jsonobj = json.loads(html)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从根节点开始，匹配所有 name 节点</span></span><br><span class="line">citylist = jsonpath.jsonpath(jsonobj, <span class="string">&#x27;$..name&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(citylist)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(citylist))     <span class="comment"># list</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;city.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">    fp.write(json.dumps(citylist, ensure_ascii=<span class="literal">False</span>))</span><br></pre></td></tr></table></figure>
+<p><code>$..name</code> 里的 <code>..</code> 就是&quot;不管在哪一层，所有 name 都捞出来&quot;——这正是 JSON 嵌套很深时最省事的地方。<strong>注意课件原代码里 <code>requests</code> 拼成了 <code>requests</code>（手误）并且用的是 Python 2 的 <code>fp.write(str)</code>，Python 3 里必须写成字符串</strong>，这里我已经改成 Python 3 的写法。</p>
+<h2 id="七-持久化存储"><a class="markdownIt-Anchor" href="#七-持久化存储"></a> 七、持久化存储</h2>
+<p>爬虫抓完数据总得放起来，课件列了六种去处：<strong>txt 文件、csv 文件、json 文件、MySQL、MongoDB、Redis</strong>。这一节讲前四种。</p>
+<h3 id="1写入文件open-方法"><a class="markdownIt-Anchor" href="#1写入文件open-方法"></a> 1）写入文件：open 方法</h3>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open(file, mode=&#x27;r&#x27;, buffering=None, encoding=None, errors=None, newline=None, closefd=True)</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>file</code></td>
+<td>文件路径，要带文件名和后缀（<code>c:\1.txt</code>）</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>打开方式</td>
+</tr>
+<tr>
+<td><code>buffering</code></td>
+<td>缓冲大小：0 不缓冲，1 寄存行，大于 1 是缓冲区大小，负值用系统默认</td>
+</tr>
+<tr>
+<td><code>encoding</code></td>
+<td>编码格式（utf-8、GBK 等）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常用打开方式</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>r</code></td>
+<td>只读，指针在文件开头</td>
+</tr>
+<tr>
+<td><code>w</code></td>
+<td>写入，<strong>文件存在则覆盖</strong>，不存在则新建</td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td>追加，指针在文件末尾，不存在则新建</td>
+</tr>
+<tr>
+<td><code>r+</code></td>
+<td>读写，指针在开头</td>
+</tr>
+<tr>
+<td><code>w+</code></td>
+<td>读写，存在则覆盖</td>
+</tr>
+<tr>
+<td><code>a+</code></td>
+<td>读写，指针在末尾</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>记忆方法（课件原话）</strong>：记住 <code>r</code> 读、<code>w</code> 写、<code>a</code> 追加，<strong>每个模式后面加 <code>+</code> 就变成可读写</strong>。</p>
+</blockquote>
+<p><strong>读与写</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">file.read([size])       <span class="comment"># 读 size 个字节，默认读全部</span></span><br><span class="line">file.readline()         <span class="comment"># 读一行</span></span><br><span class="line">file.readlines()        <span class="comment"># 读完整文件，返回每行组成的列表</span></span><br><span class="line"></span><br><span class="line">file.write(<span class="built_in">str</span>)         <span class="comment"># 把字符串写入文件</span></span><br><span class="line">file.writelines(lines)  <span class="comment"># 把多行文本写入，lines 是字符串组成的列表或元组</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>w</code> 的&quot;覆盖&quot;是最容易造成事故的一点：<strong>调试时写错文件名，可能把已有数据清空</strong>。要往同一个文件里追加，用 <code>a</code>。</p>
+</blockquote>
+<h3 id="2写入-csv"><a class="markdownIt-Anchor" href="#2写入-csv"></a> 2）写入 CSV</h3>
+<p><strong>流程四步</strong>：导入模块 → 打开 csv 文件 → 初始化写入对象 → 写入数据（参数为列表）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;film.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    writer = csv.writer(f)</span><br><span class="line">    writer.writerow([])</span><br></pre></td></tr></table></figure>
+<p><strong>单行写入</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;test.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    writer = csv.writer(f)</span><br><span class="line">    writer.writerow([<span class="string">&#x27;步惊云&#x27;</span>, <span class="string">&#x27;36&#x27;</span>])</span><br><span class="line">    writer.writerow([<span class="string">&#x27;超哥哥&#x27;</span>, <span class="string">&#x27;25&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>多行写入</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;test.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    writer = csv.writer(f)</span><br><span class="line">    writer.writerows([(<span class="string">&#x27;聂风&#x27;</span>, <span class="string">&#x27;36&#x27;</span>), (<span class="string">&#x27;秦霜&#x27;</span>, <span class="string">&#x27;25&#x27;</span>), (<span class="string">&#x27;孔慈&#x27;</span>, <span class="string">&#x27;30&#x27;</span>)])</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong><code>newline=''</code> 不能省（补充说明）</strong>：在 Windows 上，文本模式会把 <code>\n</code> 自动翻译成 <code>\r\n</code>，而 csv 模块自己也会写行结束符，<strong>两个叠加的结果就是每行之间多一个空行</strong>。<code>newline=''</code> 就是关掉这层翻译。</p>
+<p>另外，如果 CSV 要直接用 Excel 打开并且里面有中文，建议用 <code>encoding='utf-8-sig'</code>——它会写入 BOM，Excel 才不会把中文显示成乱码。</p>
+</blockquote>
+<h3 id="3写入-json"><a class="markdownIt-Anchor" href="#3写入-json"></a> 3）写入 JSON</h3>
+<p>就是前面 <code>json.dump(item_list, f, ensure_ascii=False)</code> 那一条，多个字典先攒进列表再一次性 dump：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">item_list = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    item = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;QQ&#x27;</span>, <span class="string">&#x27;id&#x27;</span>: i&#125;</span><br><span class="line">    item_list.append(item)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;xiaomi.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    json.dump(item_list, f, ensure_ascii=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>课件示例用的是 <code>'a'</code>（追加）模式，那样重复运行会在同一个文件里写出<strong>多段拼接在一起的 JSON</strong>，读的时候 <code>json.load</code> 会直接报错。<strong>正式代码建议用 <code>'w'</code> 一次写完整份</strong>，或者改用 JSON Lines（每行一个 JSON 对象）。这一点是我的补充。</p>
+</blockquote>
+<h3 id="4写入-mysqlpymysql"><a class="markdownIt-Anchor" href="#4写入-mysqlpymysql"></a> 4）写入 MySQL：pymysql</h3>
+<blockquote>
+<p><strong>PyMySQL</strong> 是 Python 3 中用于连接 MySQL 服务器的库；<strong>Python 2 中使用的是 MySQLdb</strong>。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pymysql -i https://pypi.douban.com/simple</span><br></pre></td></tr></table></figure>
+<p><strong>基本使用</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接 database</span></span><br><span class="line">conn = pymysql.connect(</span><br><span class="line">    host=<span class="string">&#x27;你的数据库地址&#x27;</span>,</span><br><span class="line">    user=<span class="string">&#x27;用户名&#x27;</span>,</span><br><span class="line">    password=<span class="string">&#x27;密码&#x27;</span>,</span><br><span class="line">    database=<span class="string">&#x27;数据库名&#x27;</span>,</span><br><span class="line">    charset=<span class="string">&#x27;utf8&#x27;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 得到一个可以执行 SQL 语句的光标对象（结果集默认以元组显示）</span></span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以让结果以字典返回</span></span><br><span class="line"><span class="comment"># cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)</span></span><br><span class="line"></span><br><span class="line">sql = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">CREATE TABLE USER1 (</span></span><br><span class="line"><span class="string">  id INT auto_increment PRIMARY KEY,</span></span><br><span class="line"><span class="string">  name CHAR(10) NOT NULL UNIQUE,</span></span><br><span class="line"><span class="string">  age TINYINT NOT NULL</span></span><br><span class="line"><span class="string">) ENGINE=innodb DEFAULT CHARSET=utf8;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">cursor.execute(sql)</span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>课件特意提醒：<strong><code>charset='utf8'</code> 不能写成 <code>utf-8</code></strong>（写错建表会报错）。</p>
+</blockquote>
+<p><strong>增删改都要 commit</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"></span><br><span class="line">conn = pymysql.connect(</span><br><span class="line">    host=<span class="string">&#x27;192.168.0.103&#x27;</span>, port=<span class="number">3306</span>, user=<span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">    password=<span class="string">&#x27;123&#x27;</span>, database=<span class="string">&#x27;xing&#x27;</span>, charset=<span class="string">&#x27;utf8&#x27;</span></span><br><span class="line">)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 批量插入：executemany</span></span><br><span class="line">sql = <span class="string">&#x27;insert into userinfo(user, pwd) values(%s, %s);&#x27;</span></span><br><span class="line">data = [</span><br><span class="line">    (<span class="string">&#x27;july&#x27;</span>, <span class="string">&#x27;147&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;june&#x27;</span>, <span class="string">&#x27;258&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;marin&#x27;</span>, <span class="string">&#x27;369&#x27;</span>),</span><br><span class="line">]</span><br><span class="line">cursor.executemany(sql, data)   <span class="comment"># 高效，一条语句插多行</span></span><br><span class="line">conn.commit()                   <span class="comment"># 写操作必须提交</span></span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<p><strong>单条插入 + 拿到自增 ID</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cursor.execute(<span class="string">&#x27;insert into userinfo (user, pwd) values (%s, %s);&#x27;</span>, [<span class="string">&#x27;wuli&#x27;</span>, <span class="string">&#x27;123456789&#x27;</span>])</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">last_id = cursor.lastrowid      <span class="comment"># 最新一条数据的 ID</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;最后一条数据的 ID 是:&#x27;</span>, last_id)</span><br></pre></td></tr></table></figure>
+<p><strong>删除与更新</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cursor.execute(<span class="string">&#x27;delete from userinfo where user=%s;&#x27;</span>, [<span class="string">&#x27;june&#x27;</span>])</span><br><span class="line">conn.commit()</span><br><span class="line"></span><br><span class="line">cursor.execute(<span class="string">&#x27;update userinfo set pwd=%s where user=%s;&#x27;</span>, [<span class="string">&#x27;newpwd&#x27;</span>, <span class="string">&#x27;wuli&#x27;</span>])</span><br><span class="line">conn.commit()</span><br></pre></td></tr></table></figure>
+<p><strong>查询</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cursor.fetchmany(<span class="number">3</span>)                          <span class="comment"># 获取指定数量的数据</span></span><br><span class="line">cursor.scroll(<span class="number">1</span>, mode=<span class="string">&#x27;absolute&#x27;</span>)            <span class="comment"># 光标按绝对位置移动 1</span></span><br><span class="line">cursor.scroll(<span class="number">1</span>, mode=<span class="string">&#x27;relative&#x27;</span>)            <span class="comment"># 光标按相对位置（当前位置）移动 1</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>课件给的&quot;更新数据&quot;示例代码里，SQL 写的是 <code>delete from ...</code>——<strong>这是讲义里的笔误</strong>，照抄会把数据删掉。我在这里改成了正确的 <code>update</code>。这是个很典型的&quot;照抄讲义会出事&quot;的坑。</p>
+</blockquote>
+<p><strong>把抓取的数据写进 MySQL：建库建表 + 批量写入</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql -h127.0.0.1 -uroot -p123456</span><br><span class="line"></span><br><span class="line">create database maoyandb charset utf8;</span><br><span class="line">use maoyandb;</span><br><span class="line">create table filmtab(</span><br><span class="line">  name varchar(100),</span><br><span class="line">  star varchar(300),</span><br><span class="line">  <span class="keyword">time</span> varchar(50)</span><br><span class="line">) charset=utf8;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"></span><br><span class="line">db = pymysql.connect(<span class="string">&#x27;localhost&#x27;</span>, <span class="string">&#x27;root&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>, <span class="string">&#x27;maoyandb&#x27;</span>, charset=<span class="string">&#x27;utf8&#x27;</span>)</span><br><span class="line">cursor = db.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单条：execute 的第二个参数是列表，按位置补进 %s</span></span><br><span class="line">ins = <span class="string">&#x27;insert into filmtab values(%s, %s, %s)&#x27;</span></span><br><span class="line">cursor.execute(ins, [<span class="string">&#x27;霸王别姬&#x27;</span>, <span class="string">&#x27;张国荣&#x27;</span>, <span class="string">&#x27;1993&#x27;</span>])</span><br><span class="line">db.commit()</span><br><span class="line"></span><br><span class="line">cursor.close()</span><br><span class="line">db.close()</span><br></pre></td></tr></table></figure>
+<p><strong>高效的 executemany</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">film_list = [(<span class="string">&#x27;月光宝盒&#x27;</span>, <span class="string">&#x27;周星驰&#x27;</span>, <span class="string">&#x27;1994&#x27;</span>), (<span class="string">&#x27;大圣娶亲&#x27;</span>, <span class="string">&#x27;周星驰&#x27;</span>, <span class="string">&#x27;1994&#x27;</span>)]</span><br><span class="line"></span><br><span class="line">cursor.executemany(<span class="string">&#x27;insert into filmtab values(%s, %s, %s)&#x27;</span>, film_list)</span><br><span class="line">db.commit()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>这里要说一句课件的做法是对的</strong>：它用的是 <code>%s</code> 占位符 + 列表补位，而不是用 <code>.format()</code> 拼 SQL。<strong>拼接 SQL 会有注入风险</strong>（抓来的数据里如果带引号，轻则报错、重则被注入）。爬虫的数据全部来自不可信的外部网页，<strong>参数化不是可选项</strong>。</p>
+<p>另外，正式代码的连接要用 <code>try/finally</code> 包起来，<strong>保证异常时也能关掉 cursor 和 conn</strong>——爬虫跑批量任务时，连接泄漏很快就会把数据库连接数占满。</p>
+</blockquote>
+<h2 id="八-踩坑表"><a class="markdownIt-Anchor" href="#八-踩坑表"></a> 八、踩坑表</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bs4 提示&quot;没有指定解析器&quot;</td>
+<td>未显式传 parser</td>
+<td><code>BeautifulSoup(html, 'lxml')</code></td>
+</tr>
+<tr>
+<td>同一份 HTML 换台机器解析结果不同</td>
+<td>用的解析器不一样</td>
+<td>显式指定并写进 requirements</td>
+</tr>
+<tr>
+<td><code>.string</code> 拿到奇怪的内容</td>
+<td>该节点是注释（Comment）</td>
+<td>解析前去掉注释，或判断类型</td>
+</tr>
+<tr>
+<td><code>find_all</code> 找不到元素</td>
+<td>用了 <code>tag</code> 语法但它是第一个匹配；或属性加了空格</td>
+<td>属性和标签之间不能有空格</td>
+</tr>
+<tr>
+<td>中文存进 json 变成 <code>\u5317\u4eac</code></td>
+<td>没写 <code>ensure_ascii=False</code></td>
+<td><code>json.dump(..., ensure_ascii=False)</code></td>
+</tr>
+<tr>
+<td><code>json.load</code> 报 <code>Extra data</code></td>
+<td>用 <code>'a'</code> 追加模式写成了多段 JSON</td>
+<td>用 <code>'w'</code> 一次写完整份</td>
+</tr>
+<tr>
+<td>CSV 每行之间多一个空行</td>
+<td>Windows 文本模式的换行翻译</td>
+<td><code>open(..., newline='')</code></td>
+</tr>
+<tr>
+<td>CSV 用 Excel 打开中文乱码</td>
+<td>缺 BOM</td>
+<td><code>encoding='utf-8-sig'</code></td>
+</tr>
+<tr>
+<td>插入数据库不生效</td>
+<td>忘了 <code>conn.commit()</code></td>
+<td>写操作后必须提交</td>
+</tr>
+<tr>
+<td>建表报错</td>
+<td><code>charset='utf-8'</code></td>
+<td>写 <code>charset='utf8'</code></td>
+</tr>
+<tr>
+<td>数据里有引号导致报错/注入</td>
+<td>用 <code>.format()</code> 拼 SQL</td>
+<td>用 <code>%s</code> 参数化</td>
+</tr>
+<tr>
+<td>批量插入很慢</td>
+<td>循环 execute</td>
+<td>用 <code>executemany</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<ol>
+<li><strong>解析三件套按场景选</strong>：结构简单用正则、要按结构与 CSS 选择器找用 BeautifulSoup、追求性能用 lxml；</li>
+<li><strong>BeautifulSoup 的四个对象</strong>（Tag / NavigableString / BeautifulSoup / Comment）和 <strong>两套 API</strong>（<code>find_all</code> / <code>select</code>）是全部核心；</li>
+<li><strong>接口返回的是 JSON 就用 <code>json.loads</code> 直接转字典</strong>，再用 JsonPath 的 <code>$..key</code> 把深层字段捞出来，<strong>不要用正则去啃 JSON</strong>；</li>
+<li><strong>落地四选一</strong>：txt 看数据、CSV 给 Excel、JSON 给程序、MySQL 给长期存储——写 MySQL 记住 <code>%s</code> 参数化 + <code>commit()</code> + <code>finally close()</code>。</li>
+</ol>
+<p>下一篇进入&quot;进阶技能&quot;：<strong>XPath 语法与 lxml</strong>，以及 <strong>Fiddler 抓包</strong>——用更精确的路径表达式对付那些没有漂亮 class 和 id 的页面。</p>
+<blockquote>
+<p>说明：本文依据课件《3.爬虫中的初级技能》三份笔记整理（含 BeautifulSoup 全部示例、json 四个函数、JsonPath 对照表、pymysql 全套增删改查代码）。文中标注&quot;补充&quot;的部分（解析器显式指定、<code>newline=''</code> 与 <code>utf-8-sig</code>、追加模式写 JSON 的问题、update 笔误修正、参数化与连接释放）是我自己的整理。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>著者: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>パーマリンク: </strong><a href="https://utdog.github.io/ja/2025/05/21/%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8/">https://utdog.github.io/ja/2025/05/21/%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>ライセンス: </strong>本ブログのすべての文書は、特に指定されていない限り、<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> ライセンスに従っています。引用の際は出典を明記してください！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">スポンサー</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">コーヒーを買ってください</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8%EF%BC%9ABeautifulSoup%E3%80%81JSON%20%E4%B8%8E%E6%8C%81%E4%B9%85%E5%8C%96&amp;desc=%E7%88%AC%E8%99%AB%E7%B3%BB%E5%88%97%E7%AC%AC%E4%B8%89%E7%AF%87%EF%BC%9A%E4%B8%89%E7%A7%8D%E6%8A%93%E5%8F%96%E5%B7%A5%E5%85%B7%E5%AF%B9%E6%AF%94%EF%BC%8CBeautifulSoup4%20%E7%9A%84%E5%9B%9B%E5%A4%A7%E5%AF%B9%E8%B1%A1%E3%80%81%E9%81%8D%E5%8E%86%E4%B8%8E%20find_all%2Fselect%20%E6%90%9C%E7%B4%A2%EF%BC%8Cjson%20%E6%A8%A1%E5%9D%97%E5%9B%9B%E4%B8%AA%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%20JsonPath%EF%BC%8C%E4%BB%A5%E5%8F%8A%E6%95%B0%E6%8D%AE%E8%90%BD%E5%9C%B0%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E3%80%81CSV%E3%80%81JSON%20%E4%B8%8E%20pymysql%20%E5%86%99%E5%85%A5%20MySQL%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="爬虫解析与存储：BeautifulSoup、JSON 与持久化">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="爬虫解析与存储：BeautifulSoup、JSON 与持久化">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/45.jpg" data-sizes="auto" alt="爬虫进阶：XPath 与 Fiddler 抓包" class="lazyload">
+        
+        <a href="/ja/2025/05/22/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-XPath%E4%B8%8E%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/"></a>
+        <div class="article-nav-caption">次の記事</div>
+        <h3 class="article-nav-title">
+          
+            爬虫进阶：XPath 与 Fiddler 抓包
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/12.jpg" data-sizes="auto" alt="爬虫进阶：Requests 库与正则表达式" class="lazyload">
+      
+      <a href="/ja/2025/05/20/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-Requests%E4%B8%8E%E6%AD%A3%E5%88%99/"></a>
+      <div class="article-nav-caption">前の記事</div>
+      <h3 class="article-nav-title">
+        
+          爬虫进阶：Requests 库与正则表达式
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8beautifulsoup-json-%E4%B8%8E%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫解析与存储：BeautifulSoup、JSON 与持久化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%B8%89%E7%A7%8D%E6%8A%93%E5%8F%96%E5%B7%A5%E5%85%B7%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、三种抓取工具怎么选</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%88%9B%E5%BB%BA-beautifulsoup-%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、创建 BeautifulSoup 对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E5%AE%9A%E8%A6%81%E6%98%BE%E5%BC%8F%E6%8C%87%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8%E8%A1%A5%E5%85%85"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 一定要显式指定解析器（补充）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%9B%9B%E5%A4%A7%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、四大对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-tag%E6%A0%87%E7%AD%BE"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1. Tag（标签）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-navigablestring%E5%8F%AF%E9%81%8D%E5%8E%86%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2. NavigableString（可遍历字符串）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-beautifulsoup%E6%96%87%E6%A1%A3%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 3. BeautifulSoup（文档对象）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-comment%E6%B3%A8%E9%87%8A"><span class="toc-number">1.3.4.</span> <span class="toc-text"> 4. Comment（注释）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E9%81%8D%E5%8E%86%E6%96%87%E6%A1%A3%E6%A0%91"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、遍历文档树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%90%9C%E7%B4%A2%E6%96%87%E6%A1%A3%E6%A0%91find_all-%E4%B8%8E-select"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、搜索文档树：find_all 与 select</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#find_all-%E7%9A%84-name-%E5%8F%82%E6%95%B0"><span class="toc-number">1.5.1.</span> <span class="toc-text"> find_all 的 name 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#keyword-%E5%8F%82%E6%95%B0%E6%8C%89%E5%B1%9E%E6%80%A7%E6%89%BE"><span class="toc-number">1.5.2.</span> <span class="toc-text"> keyword 参数：按属性找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#text-%E5%8F%82%E6%95%B0%E6%89%BE%E6%96%87%E6%9C%AC%E5%86%85%E5%AE%B9"><span class="toc-number">1.5.3.</span> <span class="toc-text"> text 参数：找文本内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#css-%E9%80%89%E6%8B%A9%E5%99%A8soupselect"><span class="toc-number">1.5.4.</span> <span class="toc-text"> CSS 选择器：soup.select()</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-json-%E4%B8%8E-json-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、JSON 与 json 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#json-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.6.1.</span> <span class="toc-text"> JSON 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E4%B8%AA%E5%87%BD%E6%95%B0loads-dumps-dump-load"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 四个函数：loads &#x2F; dumps &#x2F; dump &#x2F; load</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jsonpath%E4%BA%86%E8%A7%A3"><span class="toc-number">1.6.3.</span> <span class="toc-text"> JsonPath（了解）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、持久化存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6open-%E6%96%B9%E6%B3%95"><span class="toc-number">1.7.1.</span> <span class="toc-text"> 1）写入文件：open 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E5%86%99%E5%85%A5-csv"><span class="toc-number">1.7.2.</span> <span class="toc-text"> 2）写入 CSV</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E5%86%99%E5%85%A5-json"><span class="toc-number">1.7.3.</span> <span class="toc-text"> 3）写入 JSON</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E5%86%99%E5%85%A5-mysqlpymysql"><span class="toc-number">1.7.4.</span> <span class="toc-text"> 4）写入 MySQL：pymysql</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "爬虫解析与存储：BeautifulSoup、JSON 与持久化",
+          url: "https://utdog.github.io/2025/05/21/%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8/",
+          excerpt: "",
+          description: "爬虫系列第三篇：三种抓取工具对比，BeautifulSoup4 的四大对象、遍历与 find_all/select 搜索，json 模块四个函数的区别与 JsonPath，以及数据落地的四种方式——文件、CSV、JSON 与 pymysql 写入 MySQL。",
+          stripContent: " 爬虫解析与存储：BeautifulSoup、JSON 与持久化  前言 上一篇用正则把数据从字符串里&amp;quot;抠&amp;quot;出来——能用，但脆。网页结构稍微改一下，正则就全废了。 这一篇解决爬虫四步的后两步：  解析提取：BeautifulSoup（按 DOM 结构找）、json 模块与 JsonPath（解析接口返回的 JSON）； 保存数据：文件、CSV、JSON、MySQL。   说明：本文依据课件《3.爬虫中的初级技能》三份笔记（《1.爬虫框架Beautiful Soup详解》《2.",
+          date: "Wed May 21 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 18:37:25 GMT+0800",
+          cover: "/images/28.jpg",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

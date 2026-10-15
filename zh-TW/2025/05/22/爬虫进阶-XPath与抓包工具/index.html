@@ -1,0 +1,1653 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-TW"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本部落格所有文章除特別聲明外，均採用 BY-NC-SA 授權協議。轉載請註明出處！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    爬虫进阶：XPath 与 Fiddler 抓包 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="爬虫系列第四篇：XML 与 XPath 基础、路径表达式&#x2F;谓语&#x2F;通配符语法、lxml 三步用法与八个实战例子（含 &#x2F;&#x2F; 与 &#x2F; 的区别、节点内相对路径），以及 Fiddler 的代理原理、配置与请求&#x2F;响应面板速查。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫进阶：XPath 与 Fiddler 抓包">
+<meta property="og:url" content="https://utdog.github.io/zh-TW/2025/05/22/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-XPath%E4%B8%8E%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="爬虫系列第四篇：XML 与 XPath 基础、路径表达式&#x2F;谓语&#x2F;通配符语法、lxml 三步用法与八个实战例子（含 &#x2F;&#x2F; 与 &#x2F; 的区别、节点内相对路径），以及 Fiddler 的代理原理、配置与请求&#x2F;响应面板速查。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-05-22T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T10:38:21.799Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="爬虫">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈禱中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/">首頁</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/archives">歸檔</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/about">關於</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/friend">友鏈</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 訂閱" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜尋"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">正體中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" class="selected">正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/22/爬虫进阶-XPath与抓包工具/';
+            
+              langMap['en'] = '/en/2025/05/22/爬虫进阶-XPath与抓包工具/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/22/爬虫进阶-XPath与抓包工具/';
+            
+              langMap['ja'] = '/ja/2025/05/22/爬虫进阶-XPath与抓包工具/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/45.jpg" alt="爬虫进阶：XPath 与 Fiddler 抓包">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">爬虫进阶：XPath 与 Fiddler 抓包</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6xpath-%E4%B8%8E-fiddler-%E6%8A%93%E5%8C%85"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫进阶：XPath 与 Fiddler 抓包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-xml-%E4%B8%8E-xpath"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、XML 与 XPath</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%85%88%E8%AE%B2-xml"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 为什么先讲 XML</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#xml-%E7%9A%84%E8%8A%82%E7%82%B9%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.2.</span> <span class="toc-text"> XML 的节点关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-xpath"><span class="toc-number">1.1.3.</span> <span class="toc-text"> 什么是 XPath</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-xpath-%E8%AF%AD%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、XPath 语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E5%85%AD%E4%B8%AA%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 最常用的六个表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%93%E8%AF%ADpredicates"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 谓语（Predicates）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%E4%B8%8E%E5%A4%9A%E8%B7%AF%E5%BE%84"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 通配符与多路径</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-lxml-%E5%BA%93"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、lxml 库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%B5%81%E7%A8%8B%E4%B8%89%E6%AD%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 使用流程（三步）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AB%E4%B8%AA%E5%AE%9E%E6%88%98%E4%BE%8B%E5%AD%90"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 八个实战例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E5%86%99%E6%B3%95%E5%85%88%E5%8F%96%E8%8A%82%E7%82%B9%E5%88%97%E8%A1%A8%E5%86%8D%E9%80%90%E4%B8%AA%E8%8A%82%E7%82%B9%E7%BB%A7%E7%BB%AD%E5%8F%96"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 最常用的写法：先取节点列表，再逐个节点继续取</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%8A%93%E5%8C%85%E7%A5%9E%E5%99%A8-fiddler"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、抓包神器 Fiddler</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fiddler-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.4.1.</span> <span class="toc-text"> Fiddler 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 安装与配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2%E9%9D%A2%E6%9D%BF%E9%80%9F%E6%9F%A5"><span class="toc-number">1.4.3.</span> <span class="toc-text"> 界面面板速查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-爬虫进阶-XPath与抓包工具" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-22T12:00:00.000Z" itemprop="datePublished">2025-05-22</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/zh-TW/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="爬虫进阶xpath-与-fiddler-抓包"><a class="markdownIt-Anchor" href="#爬虫进阶xpath-与-fiddler-抓包"></a> 爬虫进阶：XPath 与 Fiddler 抓包</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>上一篇的 BeautifulSoup 好用，但它有一个前提：<strong>页面得有像样的 class 和 id</strong>。</p>
+<p>真实项目里经常遇到这种情况——一堆嵌套的 <code>&lt;div&gt;</code>，class 全是 <code>a1b2c3</code> 这种随机串，<code>select</code> 根本下不去手。这时候就该 XPath 出场了：<strong>它按&quot;路径&quot;定位节点，能精确到&quot;第几个、哪个父节点下面的哪一层&quot;</strong>。</p>
+<p>这一篇讲两件事：</p>
+<ul>
+<li><strong>XPath + lxml</strong>：写更精确的定位表达式；</li>
+<li><strong>Fiddler</strong>：比浏览器控制台更强的抓包工具。</li>
+</ul>
+<blockquote>
+<p>说明：本文依据课件《4.爬虫中的进阶技能》两份笔记（《1.解析神器Xpath详解》《2.爬虫中的常用工具》）整理。Fiddler 那部分课件主要是截图，我按流程转成了文字步骤。</p>
+</blockquote>
+<h2 id="一-xml-与-xpath"><a class="markdownIt-Anchor" href="#一-xml-与-xpath"></a> 一、XML 与 XPath</h2>
+<h3 id="为什么先讲-xml"><a class="markdownIt-Anchor" href="#为什么先讲-xml"></a> 为什么先讲 XML</h3>
+<p>XPath 的全称是 <strong>XML Path Language</strong>——<strong>它本来就是为 XML 设计的</strong>。而 HTML 和 XML 长得很像，所以我们可以<strong>先把 HTML 文件转换成 XML 文档，再用 XPath 去查找节点</strong>。这就是 lxml 做的事。</p>
+<p><strong>什么是 XML</strong>：</p>
+<ul>
+<li>XML 指<strong>可扩展标记语言</strong>（Extensible Markup Language）；</li>
+<li>它很类似 HTML；</li>
+<li><strong>设计宗旨是传输数据，而不是显示数据</strong>；</li>
+<li><strong>标签需要我们自行定义</strong>。</li>
+</ul>
+<p><strong>XML 与 HTML 的区别</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>数据格式</th>
+<th>描述</th>
+<th>设计目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XML</td>
+<td>Extensible Markup Language（可扩展标记语言）</td>
+<td>被设计为<strong>传输和存储数据</strong>，焦点是数据的内容</td>
+</tr>
+<tr>
+<td>HTML</td>
+<td>HyperText Markup Language（超文本标记语言）</td>
+<td><strong>显示数据</strong>以及如何更好显示数据</td>
+</tr>
+<tr>
+<td>HTML DOM</td>
+<td>Document Object Model for HTML（文档对象模型）</td>
+<td>通过 DOM 可以访问所有 HTML 元素及其文本和属性，也可以修改、删除、创建元素</td>
+</tr>
+</tbody>
+</table>
+<p>一段 XML 长这样：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bookstore</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">book</span> <span class="attr">category</span>=<span class="string">&quot;cooking&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span>Everyday Italian<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">author</span>&gt;</span>Giada De Laurentiis<span class="tag">&lt;/<span class="name">author</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">year</span>&gt;</span>2005<span class="tag">&lt;/<span class="name">year</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">price</span>&gt;</span>30.00<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">book</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">book</span> <span class="attr">category</span>=<span class="string">&quot;web&quot;</span> <span class="attr">cover</span>=<span class="string">&quot;paperback&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span>Learning XML<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">author</span>&gt;</span>Erik T. Ray<span class="tag">&lt;/<span class="name">author</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">year</span>&gt;</span>2003<span class="tag">&lt;/<span class="name">year</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">price</span>&gt;</span>39.95<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">book</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bookstore</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>一眼就能看出来：<strong>它是一棵树</strong>，而这棵树正是 XPath 能够&quot;按路径找&quot;的基础。</p>
+<h3 id="xml-的节点关系"><a class="markdownIt-Anchor" href="#xml-的节点关系"></a> XML 的节点关系</h3>
+<p>理解这五个词，XPath 的写法就都说得通了：</p>
+<table>
+<thead>
+<tr>
+<th>关系</th>
+<th>含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>父（Parent）</strong></td>
+<td>每个元素以及属性都有一个父</td>
+<td><code>book</code> 是 <code>title</code>、<code>author</code>、<code>year</code>、<code>price</code> 的父</td>
+</tr>
+<tr>
+<td><strong>子（Children）</strong></td>
+<td>元素节点可有零个、一个或多个子</td>
+<td><code>title</code>、<code>author</code>、<code>year</code>、<code>price</code> 都是 <code>book</code> 的子</td>
+</tr>
+<tr>
+<td><strong>同胞（Sibling）</strong></td>
+<td>拥有相同父的节点</td>
+<td><code>title</code>、<code>author</code>、<code>year</code>、<code>price</code> 互为同胞</td>
+</tr>
+<tr>
+<td><strong>先辈（Ancestor）</strong></td>
+<td>某节点的父、父的父，等等</td>
+<td><code>title</code> 的先辈是 <code>book</code> 和 <code>bookstore</code></td>
+</tr>
+<tr>
+<td><strong>后代（Descendant）</strong></td>
+<td>某个节点的子、子的子，等等</td>
+<td><code>bookstore</code> 的后代是 <code>book</code>、<code>title</code>、<code>author</code>…</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>记住&quot;<strong>先辈往上、后代往下</strong>&quot;这一对，<code>/</code> 和 <code>//</code> 的区别就不会记反。</p>
+</blockquote>
+<h3 id="什么是-xpath"><a class="markdownIt-Anchor" href="#什么是-xpath"></a> 什么是 XPath</h3>
+<blockquote>
+<p><strong>XPath (XML Path Language) 是一门在 XML 文档中查找信息的语言</strong>，可用来在 XML 文档中对元素和属性进行遍历。</p>
+</blockquote>
+<p>官方文档：<a target="_blank" rel="noopener" href="http://www.w3school.com.cn/xpath/index.asp">http://www.w3school.com.cn/xpath/index.asp</a></p>
+<p><strong>开发/调试工具</strong>：</p>
+<ol>
+<li><strong>XMLQuire</strong>：开源的 XPath 表达式编辑工具（XML 格式文件可用）；</li>
+<li><strong>XPath Helper</strong>：Chrome 插件（<strong>最常用的一个</strong>，能在页面上实时验证表达式）；</li>
+<li><strong>XPath Checker</strong>：Firefox 插件。</li>
+</ol>
+<h2 id="二-xpath-语法"><a class="markdownIt-Anchor" href="#二-xpath-语法"></a> 二、XPath 语法</h2>
+<p>XPath 用<strong>路径表达式</strong>来选取节点，写法&quot;和我们在常规的电脑文件系统中看到的表达式非常相似&quot;。</p>
+<h3 id="最常用的六个表达式"><a class="markdownIt-Anchor" href="#最常用的六个表达式"></a> 最常用的六个表达式</h3>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nodename</code></td>
+<td>选取此节点的所有子节点</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>从<strong>根节点</strong>选取</td>
+</tr>
+<tr>
+<td><code>//</code></td>
+<td>从匹配选择的当前节点选择文档中的节点，<strong>而不考虑它们的位置</strong></td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td>选取<strong>当前节点</strong></td>
+</tr>
+<tr>
+<td><code>..</code></td>
+<td>选取当前节点的<strong>父节点</strong></td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>选取<strong>属性</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>路径表达式示例</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>路径表达式</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bookstore</code></td>
+<td>选取 bookstore 元素的所有子节点</td>
+</tr>
+<tr>
+<td><code>/bookstore</code></td>
+<td>选取根元素 bookstore（<strong>路径起始于 <code>/</code> 则始终代表绝对路径</strong>）</td>
+</tr>
+<tr>
+<td><code>bookstore/book</code></td>
+<td>选取属于 bookstore 的<strong>子元素</strong>的所有 book 元素</td>
+</tr>
+<tr>
+<td><code>//book</code></td>
+<td>选取所有 book 子元素，<strong>不管它们在文档中的位置</strong></td>
+</tr>
+<tr>
+<td><code>bookstore//book</code></td>
+<td>选择属于 bookstore <strong>后代</strong>的所有 book 元素，不管位于什么位置</td>
+</tr>
+<tr>
+<td><code>//@lang</code></td>
+<td>选取名为 lang 的所有属性</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong><code>/</code> 与 <code>//</code> 的区别是整个 XPath 里最容易写错的地方</strong>：<code>/</code> 只找<strong>直接子节点</strong>，<code>//</code> 找<strong>所有后代</strong>。定位不到元素时，第一个要检查的就是这里。</p>
+</blockquote>
+<h3 id="谓语predicates"><a class="markdownIt-Anchor" href="#谓语predicates"></a> 谓语（Predicates）</h3>
+<p>谓语用来查找某个特定的节点，或者包含某个指定值的节点，<strong>被嵌在方括号中</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>路径表达式</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/bookstore/book[1]</code></td>
+<td>选取属于 bookstore 子元素的<strong>第一个</strong> book 元素</td>
+</tr>
+<tr>
+<td><code>/bookstore/book[last()]</code></td>
+<td>选取<strong>最后一个</strong> book 元素</td>
+</tr>
+<tr>
+<td><code>/bookstore/book[last()-1]</code></td>
+<td>选取<strong>倒数第二个</strong> book 元素</td>
+</tr>
+<tr>
+<td><code>/bookstore/book[position()&lt;3]</code></td>
+<td>选取最前面的两个 book 元素</td>
+</tr>
+<tr>
+<td><code>//title[@lang]</code></td>
+<td>选取所有<strong>拥有名为 lang 的属性</strong>的 title 元素</td>
+</tr>
+<tr>
+<td><code>//title[@lang='eng']</code></td>
+<td>选取所有 title 元素，且 lang 属性值为 eng</td>
+</tr>
+<tr>
+<td><code>/bookstore/book[price&gt;35.00]</code></td>
+<td>选取所有 price 元素值<strong>大于 35.00</strong> 的 book 元素</td>
+</tr>
+<tr>
+<td><code>/bookstore/book[price&gt;35.00]/title</code></td>
+<td>在上面的基础上再取它们的 title</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意 XPath 的索引从 1 开始</strong>（不是 0），这一点和 Python 正好相反。</p>
+<h3 id="通配符与多路径"><a class="markdownIt-Anchor" href="#通配符与多路径"></a> 通配符与多路径</h3>
+<table>
+<thead>
+<tr>
+<th>通配符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>*</code></td>
+<td>匹配任何元素节点</td>
+</tr>
+<tr>
+<td><code>@*</code></td>
+<td>匹配任何属性节点</td>
+</tr>
+<tr>
+<td><code>node()</code></td>
+<td>匹配任何类型的节点</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>路径表达式</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/bookstore/*</code></td>
+<td>选取 bookstore 元素的<strong>所有子元素</strong></td>
+</tr>
+<tr>
+<td><code>//*</code></td>
+<td>选取文档中的<strong>所有元素</strong></td>
+</tr>
+<tr>
+<td><code>html/node()/meta/@*</code></td>
+<td>选择 html 下面任意节点下的 meta 节点的所有属性</td>
+</tr>
+<tr>
+<td><code>//title[@*]</code></td>
+<td>选取所有<strong>带有属性</strong>的 title 元素</td>
+</tr>
+</tbody>
+</table>
+<p><strong>用 <code>|</code> 选取若干路径</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>路径表达式</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>//book/title | //book/price</code></td>
+<td>选取 book 元素的所有 title 和 price</td>
+</tr>
+<tr>
+<td><code>//title | //price</code></td>
+<td>选取文档中所有 title 和 price</td>
+</tr>
+<tr>
+<td><code>/bookstore/book/title | //price</code></td>
+<td>前者取 bookstore 下 book 的 title，后者取文档中所有 price</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>一句话总结这一节：<strong>XPath 语法内容就是这些，在 Python 抓取时要先转换为 XML。</strong></p>
+</blockquote>
+<h2 id="三-lxml-库"><a class="markdownIt-Anchor" href="#三-lxml-库"></a> 三、lxml 库</h2>
+<blockquote>
+<p><strong>lxml 是一个 HTML/XML 的解析器</strong>，主要功能是解析和提取 HTML/XML 数据。</p>
+</blockquote>
+<p>它的关键优势：<strong>和正则一样是用 C 实现的</strong>，所以性能很高，同时又能用 XPath 精确、快速地定位元素。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install lxml</span><br></pre></td></tr></table></figure>
+<p>官方文档：<a target="_blank" rel="noopener" href="http://lxml.de/index.html">http://lxml.de/index.html</a></p>
+<h3 id="使用流程三步"><a class="markdownIt-Anchor" href="#使用流程三步"></a> 使用流程（三步）</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1、导模块</span></span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2、创建解析对象</span></span><br><span class="line">parse_html = etree.HTML(html)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3、解析对象调用 xpath</span></span><br><span class="line">r_list = parse_html.xpath(<span class="string">&#x27;xpath表达式&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>也可以直接从文件解析：<code>html = etree.parse('hello.html')</code>，得到的是 <code>_ElementTree</code> 对象。</p>
+<h3 id="八个实战例子"><a class="markdownIt-Anchor" href="#八个实战例子"></a> 八个实战例子</h3>
+<p>下面用一个 <code>hello.html</code> 演示（内容是一串带 class 和链接的 <code>&lt;li&gt;</code>）。<strong>每个例子的结果都来自课件实测输出</strong>。</p>
+<p><strong>1）获取所有 <code>&lt;li&gt;</code> 标签</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line">html = etree.parse(<span class="string">&#x27;hello.html&#x27;</span>)</span><br><span class="line">result = html.xpath(<span class="string">&#x27;//li&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(result)        <span class="comment"># [&lt;Element li at ...&gt;, &lt;Element li at ...&gt;, ...]</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(result))   <span class="comment"># 5</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(result))      <span class="comment"># &lt;type &#x27;list&#x27;&gt;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(result[<span class="number">0</span>]))   <span class="comment"># &lt;type &#x27;lxml.etree._Element&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>xpath 返回的永远是列表</strong>，哪怕只有一个匹配；列表里装的是 <code>_Element</code> 对象。</p>
+<p><strong>2）获取所有 <code>&lt;li&gt;</code> 的 class 属性</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = html.xpath(<span class="string">&#x27;//li/@class&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># [&#x27;item-0&#x27;, &#x27;item-1&#x27;, &#x27;item-inactive&#x27;, &#x27;item-1&#x27;, &#x27;item-0&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p><strong>用 <code>@属性名</code> 时返回的是属性值的列表</strong>，不再是节点对象。</p>
+<p><strong>3）获取 href 为 link1.html 的 <code>&lt;a&gt;</code> 标签</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = html.xpath(<span class="string">&#x27;//li/a[@href=&quot;link1.html&quot;]&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># [&lt;Element a at 0x10ffaae18&gt;]</span></span><br></pre></td></tr></table></figure>
+<p><strong>4）获取 <code>&lt;li&gt;</code> 下所有 <code>&lt;span&gt;</code> 标签（<code>/</code> 与 <code>//</code> 的经典区别）</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># result = html.xpath(&#x27;//li/span&#x27;)</span></span><br><span class="line"><span class="comment"># 注意这么写是不对的：</span></span><br><span class="line"><span class="comment"># 因为 / 是用来获取子元素的，而 &lt;span&gt; 并不是 &lt;li&gt; 的子元素，所以要用双斜杠</span></span><br><span class="line"></span><br><span class="line">result = html.xpath(<span class="string">&#x27;//li//span&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># [&lt;Element span at 0x10d698e18&gt;]</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>课件把这一条单独拎出来讲，因为它是**新手最常见的&quot;xpath 写得对、就是取不到&quot;**的原因。</p>
+</blockquote>
+<p><strong>5）获取 <code>&lt;li&gt;</code> 下 <code>&lt;a&gt;</code> 里的所有 class</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = html.xpath(<span class="string">&#x27;//li/a//@class&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># [&#x27;blod&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p><strong>6）获取最后一个 <code>&lt;li&gt;</code> 的 <code>&lt;a&gt;</code> 的 href</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = html.xpath(<span class="string">&#x27;//li[last()]/a/@href&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># [&#x27;link5.html&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p><strong>7）获取倒数第二个元素的内容</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result = html.xpath(<span class="string">&#x27;//li[last()-1]/a&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result[<span class="number">0</span>].text)     <span class="comment"># fourth item</span></span><br></pre></td></tr></table></figure>
+<p><strong>用 <code>.text</code> 取元素内容</strong>——注意这里是先拿到节点对象，再取它的 <code>text</code> 属性。</p>
+<p><strong>8）获取 class 值为 bold 的标签名</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result = html.xpath(<span class="string">&#x27;//*[@class=&quot;bold&quot;]&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result[<span class="number">0</span>].tag)      <span class="comment"># span</span></span><br></pre></td></tr></table></figure>
+<p><code>//*</code> 是&quot;任意元素&quot;，<code>[@class=&quot;bold&quot;]</code> 是谓语限定属性，最后用 <code>.tag</code> 拿标签名。</p>
+<h3 id="最常用的写法先取节点列表再逐个节点继续取"><a class="markdownIt-Anchor" href="#最常用的写法先取节点列表再逐个节点继续取"></a> 最常用的写法：先取节点列表，再逐个节点继续取</h3>
+<p>课件总结的这个套路，<strong>是所有列表页爬虫的标准骨架</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1、先匹配节点对象列表</span></span><br><span class="line">r_list = parse_html.xpath(<span class="string">&#x27;基准xpath表达式&#x27;</span>)   <span class="comment"># [&#x27;节点对象1&#x27;, &#x27;节点对象2&#x27;, ...]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2、遍历每个节点对象，利用节点对象继续调用 xpath</span></span><br><span class="line"><span class="keyword">for</span> r <span class="keyword">in</span> r_list:</span><br><span class="line">    name = r.xpath(<span class="string">&#x27;./xxxxxx&#x27;</span>)</span><br><span class="line">    star = r.xpath(<span class="string">&#x27;.//xxxxx&#x27;</span>)</span><br><span class="line">    time = r.xpath(<span class="string">&#x27;.//xxxxx&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>关键在那个点号</strong>：</p>
+<ul>
+<li><code>r.xpath('./xxx')</code> 里的 <code>.</code> 表示<strong>当前节点</strong>，所以是找&quot;这个节点下面的 xxx&quot;；</li>
+<li>如果写成 <code>r.xpath('//xxx')</code>，那就<strong>又跑回整个文档去找了</strong>，前面的基准表达式就白写了。</li>
+</ul>
+<blockquote>
+<p>这是 XPath 写法里第二容易踩的坑（第一是 <code>/</code> 与 <code>//</code>）。<strong>在循环里用相对路径，一定要带上开头的 <code>.</code>。</strong></p>
+</blockquote>
+<h2 id="四-抓包神器-fiddler"><a class="markdownIt-Anchor" href="#四-抓包神器-fiddler"></a> 四、抓包神器 Fiddler</h2>
+<h3 id="fiddler-是什么"><a class="markdownIt-Anchor" href="#fiddler-是什么"></a> Fiddler 是什么</h3>
+<blockquote>
+<p><strong>Fiddler 是位于客户端和服务器端之间的代理</strong>，也是目前最常用的抓包工具之一。它能够记录客户端和服务器之间的<strong>所有请求</strong>，可以针对特定的请求分析请求数据、设置断点、调试 web 应用、修改请求的数据，甚至可以修改服务器返回的数据。</p>
+</blockquote>
+<p><strong>工作原理：它是以代理 web 服务器的形式工作的，使用代理地址 <code>127.0.0.1</code>，端口 <code>8888</code>。</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">浏览器  →  Fiddler(127.0.0.1:8888)  →  目标服务器</span><br><span class="line">浏览器  ←  Fiddler                 ←  目标服务器</span><br></pre></td></tr></table></figure>
+<p>既然本机 HTTP 通信都会经过这个代理，Fiddler 自然就能拦截到所有请求。</p>
+<blockquote>
+<p><strong>和浏览器 F12 的区别</strong>：F12 只能看浏览器发出去的请求，而且<strong>关掉标签页就没了</strong>；Fiddler 是系统级代理，<strong>手机 App、其他程序、甚至另一台设备的请求</strong>都能抓——所以做移动端接口分析时基本都用它。</p>
+</blockquote>
+<h3 id="安装与配置"><a class="markdownIt-Anchor" href="#安装与配置"></a> 安装与配置</h3>
+<p><strong>下载</strong>：官网 <a target="_blank" rel="noopener" href="https://www.telerik.com/download/fiddler">https://www.telerik.com/download/fiddler</a>，选好相关信息（用途、邮箱、国家）后点 Download。</p>
+<p><strong>安装</strong>：双击安装包 → <strong>I Agree</strong> → 选安装目录（默认即可）→ <strong>Install</strong> → <strong>Close</strong>。</p>
+<p><strong>配置</strong>：<code>Tools &gt; Options &gt; Connections</code></p>
+<ol>
+<li><strong>端口默认是 8888</strong>，可以修改；</li>
+<li>勾选 <strong>Allow remote computers to connect</strong>，然后<strong>重启 Fiddler</strong>，再次打开时会弹出一个信息，选 <strong>OK</strong> 即可（这一步是为了让别的设备能连上你的代理）；</li>
+<li><strong>Fiddler 默认只抓 http 请求，要抓 https 请求，需要进入 <code>Tools &gt; Fiddler Options</code> 打开对应的 https 解密选项</strong>（这也是&quot;装了 Fiddler 但抓不到 https 包&quot;的常见原因）。</li>
+</ol>
+<blockquote>
+<p>抓 https 的本质是 Fiddler 用它自己的证书做中间人解密——<strong>所以它会往系统里装一张根证书</strong>。这也是为什么在公司环境里装 Fiddler 前最好确认一下合规要求。</p>
+</blockquote>
+<h3 id="界面面板速查"><a class="markdownIt-Anchor" href="#界面面板速查"></a> 界面面板速查</h3>
+<p>Fiddler 的每个请求都能切成很多种视图来看，<strong>知道哪个面板解决什么问题，比记住所有按钮有用</strong>。</p>
+<p><strong>请求（Request）部分</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>面板</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Headers</strong></td>
+<td>客户端发给服务器的 HTTP 请求头，<strong>分级视图</strong>，含 Web 客户端信息、Cookie、传输状态等</td>
+</tr>
+<tr>
+<td><strong>Textview</strong></td>
+<td>把 POST 请求的 body 显示为文本</td>
+</tr>
+<tr>
+<td><strong>WebForms</strong></td>
+<td>显示请求的 <strong>GET 参数和 POST body 内容</strong>（表单类接口最常用）</td>
+</tr>
+<tr>
+<td><strong>HexView</strong></td>
+<td>用十六进制显示请求</td>
+</tr>
+<tr>
+<td><strong>Auth</strong></td>
+<td>显示响应头中的 <code>Proxy-Authorization</code>（代理身份验证）和 <code>Authorization</code>（授权）</td>
+</tr>
+<tr>
+<td><strong>Raw</strong></td>
+<td>把整个请求显示为纯文本</td>
+</tr>
+<tr>
+<td><strong>JSON</strong></td>
+<td>显示 JSON 格式文件</td>
+</tr>
+<tr>
+<td><strong>XML</strong></td>
+<td>请求 body 是 XML 时，用分级 XML 树显示</td>
+</tr>
+</tbody>
+</table>
+<p><strong>响应（Response）部分</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>面板</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Transformer</strong></td>
+<td>显示响应的编码信息</td>
+</tr>
+<tr>
+<td><strong>Headers</strong></td>
+<td>分级视图显示响应头</td>
+</tr>
+<tr>
+<td><strong>TextView</strong></td>
+<td>用文本显示响应 body</td>
+</tr>
+<tr>
+<td><strong>SyntaxView</strong></td>
+<td>响应数据（语法高亮）</td>
+</tr>
+<tr>
+<td><strong>ImageView</strong></td>
+<td>请求是图片资源时，直接显示图片</td>
+</tr>
+<tr>
+<td><strong>HexView</strong></td>
+<td>十六进制显示响应</td>
+</tr>
+<tr>
+<td><strong>WebView</strong></td>
+<td>响应在 Web 浏览器中的<strong>预览效果</strong></td>
+</tr>
+<tr>
+<td><strong>Auth</strong></td>
+<td>显示响应头中的 <code>Proxy-Authorization</code> 和 <code>Authorization</code> 信息</td>
+</tr>
+<tr>
+<td><strong>Caching</strong></td>
+<td>显示该请求的缓存信息</td>
+</tr>
+<tr>
+<td><strong>Privacy</strong></td>
+<td>显示该请求的私密（P3P）信息</td>
+</tr>
+<tr>
+<td><strong>Raw</strong></td>
+<td>把整个响应显示为纯文本</td>
+</tr>
+<tr>
+<td><strong>JSON</strong></td>
+<td>显示 JSON 格式文件</td>
+</tr>
+<tr>
+<td><strong>XML</strong></td>
+<td>响应 body 是 XML 时，用分级 XML 树显示</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>日常最常用的三个</strong>：<code>Headers</code> 抄请求头、<code>WebForms</code> 看 POST 参数、<code>Raw</code> 看原始请求体。<strong>抓不到参数时，先看 Raw——它是不会骗人的那一层。</strong></p>
+</blockquote>
+<h2 id="五-踩坑表"><a class="markdownIt-Anchor" href="#五-踩坑表"></a> 五、踩坑表</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>//li/span</code> 取不到元素</td>
+<td><code>&lt;span&gt;</code> 是后代不是直接子元素</td>
+<td>改成 <code>//li//span</code></td>
+</tr>
+<tr>
+<td>循环里每个节点都取到全部数据</td>
+<td>用了 <code>//xxx</code> 绝对路径</td>
+<td>用 <code>./xxx</code> 或 <code>.//xxx</code>（带点号）</td>
+</tr>
+<tr>
+<td>索引取错元素</td>
+<td>XPath 从 <strong>1</strong> 开始</td>
+<td><code>[1]</code> 是第一个，别写 <code>[0]</code></td>
+</tr>
+<tr>
+<td>拿到元素却打印不出文本</td>
+<td>元素是 <code>_Element</code> 对象</td>
+<td>用 <code>.text</code></td>
+</tr>
+<tr>
+<td>想取属性却拿到节点</td>
+<td>忘了 <code>@</code></td>
+<td><code>//li/a/@href</code></td>
+</tr>
+<tr>
+<td>Fiddler 抓不到 https</td>
+<td>默认只解 http</td>
+<td>在 Fiddler Options 里开启 https 解密并信任证书</td>
+</tr>
+<tr>
+<td>手机连不上 Fiddler</td>
+<td>没允许远程连接 / 不在同一网段</td>
+<td>勾选 Allow remote computers 并重启</td>
+</tr>
+<tr>
+<td>拿到一堆乱码请求</td>
+<td>没开对应面板</td>
+<td>用 Raw / HexView 看原始内容</td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<ol>
+<li><strong>XPath 是为 XML 设计的</strong>，HTML 转成 XML 树之后就能用路径精确导航；</li>
+<li><strong>两个必须记住的符号规则</strong>：<code>/</code> 是直接子节点、<code>//</code> 是所有后代；循环里用相对路径必须带 <code>.</code>；</li>
+<li><strong>lxml 三步</strong>：<code>from lxml import etree</code> → <code>etree.HTML(html)</code> → <code>.xpath('表达式')</code>，<strong>返回的永远是列表</strong>；</li>
+<li><strong>XPath 与 BeautifulSoup 不是二选一</strong>：日常页面用 <code>select</code> 更快，结构刁钻的页面用 XPath 更稳；</li>
+<li><strong>Fiddler 是系统级代理</strong>（127.0.0.1:8888），比 F12 强在能抓非浏览器流量、能改包、能设断点——<strong>手机 App 的接口分析基本靠它</strong>。</li>
+</ol>
+<p>爬虫系列到这里，&quot;发请求—解析—存储—定位&quot;的完整链条就通了。下一篇是这个系列的最后一篇：<strong>反爬机制全貌与验证码识别</strong>——当对方开始封你的 IP、给你弹验证码时该怎么办。</p>
+<blockquote>
+<p>说明：本文依据课件《4.爬虫中的进阶技能》两份笔记整理（XPath 全部语法表与 lxml 八个实测例子、Fiddler 的面板说明清单原样保留）。Fiddler 的安装步骤原本是截图，我按流程改写成了文字，并补充了&quot;与 F12 的区别&quot;&quot;抓 https 的本质是中间人证书&quot;这两点说明。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文連結：</strong><a href="https://utdog.github.io/zh-TW/2025/05/22/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-XPath%E4%B8%8E%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/">https://utdog.github.io/zh-TW/2025/05/22/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-XPath%E4%B8%8E%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版權：</strong>本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 授權協議。轉載請註明出處！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">贊助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">請作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6%EF%BC%9AXPath%20%E4%B8%8E%20Fiddler%20%E6%8A%93%E5%8C%85&amp;desc=%E7%88%AC%E8%99%AB%E7%B3%BB%E5%88%97%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%9AXML%20%E4%B8%8E%20XPath%20%E5%9F%BA%E7%A1%80%E3%80%81%E8%B7%AF%E5%BE%84%E8%A1%A8%E8%BE%BE%E5%BC%8F%2F%E8%B0%93%E8%AF%AD%2F%E9%80%9A%E9%85%8D%E7%AC%A6%E8%AF%AD%E6%B3%95%E3%80%81lxml%20%E4%B8%89%E6%AD%A5%E7%94%A8%E6%B3%95%E4%B8%8E%E5%85%AB%E4%B8%AA%E5%AE%9E%E6%88%98%E4%BE%8B%E5%AD%90%EF%BC%88%E5%90%AB%20%2F%2F%20%E4%B8%8E%20%2F%20%E7%9A%84%E5%8C%BA%E5%88%AB%E3%80%81%E8%8A%82%E7%82%B9%E5%86%85%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%EF%BC%89%EF%BC%8C%E4%BB%A5%E5%8F%8A%20Fiddler%20%E7%9A%84%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%8E%E8%AF%B7%E6%B1%82%2F%E5%93%8D%E5%BA%94%E9%9D%A2%E6%9D%BF%E9%80%9F%E6%9F%A5%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="爬虫进阶：XPath 与 Fiddler 抓包">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="爬虫进阶：XPath 与 Fiddler 抓包">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/46.jpg" data-sizes="auto" alt="爬虫高级：反爬机制与验证码识别" class="lazyload">
+        
+        <a href="/zh-TW/2025/05/23/%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7-%E5%8F%8D%E7%88%AC%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            爬虫高级：反爬机制与验证码识别
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/28.jpg" data-sizes="auto" alt="爬虫解析与存储：BeautifulSoup、JSON 与持久化" class="lazyload">
+      
+      <a href="/zh-TW/2025/05/21/%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          爬虫解析与存储：BeautifulSoup、JSON 与持久化
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基於&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6xpath-%E4%B8%8E-fiddler-%E6%8A%93%E5%8C%85"><span class="toc-number">1.</span> <span class="toc-text"> 爬虫进阶：XPath 与 Fiddler 抓包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-xml-%E4%B8%8E-xpath"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、XML 与 XPath</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%85%88%E8%AE%B2-xml"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 为什么先讲 XML</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#xml-%E7%9A%84%E8%8A%82%E7%82%B9%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.2.</span> <span class="toc-text"> XML 的节点关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-xpath"><span class="toc-number">1.1.3.</span> <span class="toc-text"> 什么是 XPath</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-xpath-%E8%AF%AD%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、XPath 语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E5%85%AD%E4%B8%AA%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 最常用的六个表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%93%E8%AF%ADpredicates"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 谓语（Predicates）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%E4%B8%8E%E5%A4%9A%E8%B7%AF%E5%BE%84"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 通配符与多路径</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-lxml-%E5%BA%93"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、lxml 库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%B5%81%E7%A8%8B%E4%B8%89%E6%AD%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 使用流程（三步）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AB%E4%B8%AA%E5%AE%9E%E6%88%98%E4%BE%8B%E5%AD%90"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 八个实战例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E5%86%99%E6%B3%95%E5%85%88%E5%8F%96%E8%8A%82%E7%82%B9%E5%88%97%E8%A1%A8%E5%86%8D%E9%80%90%E4%B8%AA%E8%8A%82%E7%82%B9%E7%BB%A7%E7%BB%AD%E5%8F%96"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 最常用的写法：先取节点列表，再逐个节点继续取</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%8A%93%E5%8C%85%E7%A5%9E%E5%99%A8-fiddler"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、抓包神器 Fiddler</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fiddler-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.4.1.</span> <span class="toc-text"> Fiddler 是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 安装与配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2%E9%9D%A2%E6%9D%BF%E9%80%9F%E6%9F%A5"><span class="toc-number">1.4.3.</span> <span class="toc-text"> 界面面板速查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E8%B8%A9%E5%9D%91%E8%A1%A8"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、踩坑表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "爬虫进阶：XPath 与 Fiddler 抓包",
+          url: "https://utdog.github.io/2025/05/22/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-XPath%E4%B8%8E%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/",
+          excerpt: "",
+          description: "爬虫系列第四篇：XML 与 XPath 基础、路径表达式/谓语/通配符语法、lxml 三步用法与八个实战例子（含 // 与 / 的区别、节点内相对路径），以及 Fiddler 的代理原理、配置与请求/响应面板速查。",
+          stripContent: " 爬虫进阶：XPath 与 Fiddler 抓包  前言 上一篇的 BeautifulSoup 好用，但它有一个前提：页面得有像样的 class 和 id。 真实项目里经常遇到这种情况——一堆嵌套的 &amp;lt;div&amp;gt;，class 全是 a1b2c3 这种随机串，select 根本下不去手。这时候就该 XPath 出场了：它按&amp;quot;路径&amp;quot;定位节点，能精确到&amp;quot;第几个、哪个父节点下面的哪一层&amp;quot;。 这一篇讲两件事：  XPath + lxml：写更精确的定位表达",
+          date: "Thu May 22 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 18:38:21 GMT+0800",
+          cover: "/images/45.jpg",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

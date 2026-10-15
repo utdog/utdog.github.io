@@ -1,0 +1,1385 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-TW"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本部落格所有文章除特別聲明外，均採用 BY-NC-SA 授權協議。轉載請註明出處！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    Git 与 Gitee：从单人版本控制到多人协作 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="课程课件整理：工作区&#x2F;暂存区&#x2F;仓库区三个区、Gitee 建仓与 SSH 公钥、master+dev+个人分支的协作策略、合并冲突的手动解决，以及 reflog 回退与打标签发布。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 与 Gitee：从单人版本控制到多人协作">
+<meta property="og:url" content="https://utdog.github.io/zh-TW/2025/05/12/Git%E4%B8%8EGitee/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="课程课件整理：工作区&#x2F;暂存区&#x2F;仓库区三个区、Gitee 建仓与 SSH 公钥、master+dev+个人分支的协作策略、合并冲突的手动解决，以及 reflog 回退与打标签发布。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-05-12T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:18:36.380Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="Git">
+<meta property="article:tag" content="工具">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈禱中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/">首頁</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/archives">歸檔</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/about">關於</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/friend">友鏈</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 訂閱" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜尋"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">正體中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" class="selected">正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/12/Git与Gitee/';
+            
+              langMap['en'] = '/en/2025/05/12/Git与Gitee/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/12/Git与Gitee/';
+            
+              langMap['ja'] = '/ja/2025/05/12/Git与Gitee/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/41.jpg" alt="Git 与 Gitee：从单人版本控制到多人协作">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Git 与 Gitee：从单人版本控制到多人协作</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#git-%E4%B8%8E-gitee%E4%BB%8E%E5%8D%95%E4%BA%BA%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%88%B0%E5%A4%9A%E4%BA%BA%E5%8D%8F%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text"> Git 与 Gitee：从单人版本控制到多人协作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、安装与配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%B8%89%E4%B8%AA%E5%8C%BA%E5%85%88%E6%8A%8A%E4%BB%A3%E7%A0%81%E6%94%BE%E5%9C%A8%E5%93%AA%E6%83%B3%E6%B8%85%E6%A5%9A"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、三个区：先把「代码放在哪」想清楚</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E5%BB%BA%E4%BB%93-ssh-%E5%85%AC%E9%92%A5"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、远程仓库：建仓 + SSH 公钥</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9C%A8-gitee-%E4%B8%8A%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1. 在 Gitee 上创建项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE-ssh-%E5%85%AC%E9%92%A5"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2. 配置 SSH 公钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%85%8B%E9%9A%86%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 3. 克隆项目</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%94%AF%E7%AD%96%E7%95%A5%E4%B8%89%E6%9D%A1%E7%BA%BF%E5%90%84%E5%8F%B8%E5%85%B6%E8%81%8C"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、分支策略：三条线各司其职</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%97%A5%E5%B8%B8%E5%BC%80%E5%8F%91%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、日常开发循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%90%88%E5%B9%B6%E4%B8%8E%E5%86%B2%E7%AA%81%E4%B8%8D%E6%85%8C%E6%89%8B%E5%8A%A8%E6%94%B9%E5%B0%B1%E8%A1%8C"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、合并与冲突：不慌，手动改就行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#push-%E8%A2%AB%E6%8B%92%E7%BB%9D%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">1.6.1.</span> <span class="toc-text"> push 被拒绝怎么办</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9C%8B%E6%87%82%E5%86%B2%E7%AA%81%E6%A0%87%E8%AE%B0"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 看懂冲突标记</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%8E%86%E5%8F%B2-%E5%9B%9E%E9%80%80%E4%B8%8E%E5%8F%91%E5%B8%83"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、历史、回退与发布</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E5%B8%83dev-master-%E6%89%93%E6%A0%87%E7%AD%BE"><span class="toc-number">1.7.1.</span> <span class="toc-text"> 发布：dev → master → 打标签</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Git与Gitee" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-12T12:00:00.000Z" itemprop="datePublished">2025-05-12</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/zh-TW/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="git-与-gitee从单人版本控制到多人协作"><a class="markdownIt-Anchor" href="#git-与-gitee从单人版本控制到多人协作"></a> Git 与 Gitee：从单人版本控制到多人协作</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>在学 Git 之前，我的「版本管理」方式是给文件夹改名：<code>项目</code>、<code>项目-改</code>、<code>项目-最终</code>、<code>项目-最终2</code>。课程里第一次用 Git 管项目时，最直观的冲击是<strong>代码有了可回退的历史</strong>；而多人协作那一课则让我明白，Git 真正解决的问题是**「几个人同时改同一个项目，怎么不互相覆盖」**。</p>
+<p>课件用的是<strong>码云（Gitee）</strong>：GitHub 服务器在国外，国内访问经常抽风，而 Gitee 速度快、免费、私有库不限额。命令本身和 GitHub 完全一样，换个远程地址即可。</p>
+<h2 id="一-安装与配置"><a class="markdownIt-Anchor" href="#一-安装与配置"></a> 一、安装与配置</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Ubuntu 下安装</span></span><br><span class="line">sudo apt-get install git</span><br><span class="line">git            # 能打印出 usage 就说明装好了</span><br></pre></td></tr></table></figure>
+<p>装完<strong>第一件事是配置身份</strong>，否则第一次 <code>commit</code> 必定失败：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;你的名字&quot;</span><br><span class="line">git config --global user.email &quot;你的邮箱&quot;</span><br></pre></td></tr></table></figure>
+<p>不配置的话会看到这段报错（课件里专门截了图）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">*** Please tell me who you are.</span><br><span class="line">Run</span><br><span class="line">  git config --global user.email &quot;you@example.com&quot;</span><br><span class="line">  git config --global user.name &quot;Your Name&quot;</span><br><span class="line">fatal: unable to auto-detect email address</span><br></pre></td></tr></table></figure>
+<p>参数里的 <code>--global</code> 表示对当前用户全局生效；去掉它则只在当前仓库生效。配置最终写进 <code>~/.gitconfig</code>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[user]</span></span><br><span class="line">    <span class="attr">email</span> = <span class="string">&#x27;huanggui0915@foxmail.com&#x27;</span></span><br><span class="line">    <span class="attr">name</span> = <span class="string">&#x27;hgf&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>协同开发时用户名不能重复</strong>，否则提交记录分不清谁是谁。</p>
+<h2 id="二-三个区先把代码放在哪想清楚"><a class="markdownIt-Anchor" href="#二-三个区先把代码放在哪想清楚"></a> 二、三个区：先把「代码放在哪」想清楚</h2>
+<p>这是 Git 最核心的概念，课件用一张图讲透了：</p>
+<pre class="mermaid">graph LR
+    A[工作区<br/>你写代码的地方] -->|git add| B[暂存区<br/>准备提交的内容]
+    B -->|git commit| C[仓库区<br/>一个版本的历史]
+    C -->|git push| D[远程仓库<br/>Gitee]
+    D -->|git pull| A</pre>
+<ul>
+<li><strong>工作区</strong>：你实际编辑文件的地方，增删改都发生在这里；</li>
+<li><strong>暂存区</strong>：介于工作区和仓库区之间，<code>git add</code> 把改动放进来；</li>
+<li><strong>仓库区</strong>：<code>git commit</code> 后形成一条永久记录，可查看、可回退；</li>
+<li><strong>远程仓库</strong>：<code>push</code> 送上去、<code>pull</code> 拉下来（就是 Gitee 上的那个仓库）。</li>
+</ul>
+<p>对应命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git status                    # 看哪些文件没提交</span><br><span class="line">git add ./                    # 把当前目录下所有改动加入暂存区</span><br><span class="line">git add git.py                # 也可以只加某个文件</span><br><span class="line">git commit -m &#x27;创建两个add方法&#x27;   # 暂存区 → 仓库区，形成一条记录</span><br><span class="line"></span><br><span class="line">git checkout -- git.py        # 用暂存区的内容覆盖工作区（放弃当前改动）</span><br><span class="line">git reset HEAD^               # 回退版本，注意是回到暂存区，不是直接回到工作区</span><br></pre></td></tr></table></figure>
+<p><code>git checkout -- 文件</code> 这个命令很实用：不小心把某段代码删了、又还没提交，用它就能恢复——<strong>前提是那段代码已经 <code>add</code> 过</strong>。</p>
+<h2 id="三-远程仓库建仓-ssh-公钥"><a class="markdownIt-Anchor" href="#三-远程仓库建仓-ssh-公钥"></a> 三、远程仓库：建仓 + SSH 公钥</h2>
+<h3 id="1-在-gitee-上创建项目"><a class="markdownIt-Anchor" href="#1-在-gitee-上创建项目"></a> 1. 在 Gitee 上创建项目</h3>
+<p>登录 <a target="_blank" rel="noopener" href="https://gitee.com">gitee.com</a> → 概览 → 创建项目。注意<strong>公有库和私有库都不限数量</strong>，练习项目直接建私有库更省心。</p>
+<h3 id="2-配置-ssh-公钥"><a class="markdownIt-Anchor" href="#2-配置-ssh-公钥"></a> 2. 配置 SSH 公钥</h3>
+<p>要让本机能和 Gitee 通信，得先把自己机器的公钥交给 Gitee：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rm -r ~/.ssh                    # 如果里面有旧密钥，先清掉（课件这一步）</span><br><span class="line">ssh-keygen -t rsa -C &quot;你的邮箱&quot;</span><br></pre></td></tr></table></figure>
+<p>执行后会问三件事：保存路径（留空默认 <code>~/.ssh</code>）、密码（可留空，填了以后每次操作都要输）、确认密码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd ~/.ssh</span><br><span class="line">ls                              # 看到 id_rsa（私钥）和 id_rsa.pub（公钥）</span><br><span class="line">cat id_rsa.pub                  # 复制输出的整段内容</span><br></pre></td></tr></table></figure>
+<p>把复制的公钥粘到 Gitee 的「设置 → SSH 公钥」里即可。<strong>私钥 <code>id_rsa</code> 绝不能外传</strong>，公钥可以随便给。</p>
+<h3 id="3-克隆项目"><a class="markdownIt-Anchor" href="#3-克隆项目"></a> 3. 克隆项目</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir django_web &amp;&amp; cd django_web</span><br><span class="line">git clone git@gitee.com:huangguifeng/django_blog.git</span><br><span class="line">cd django_blog</span><br></pre></td></tr></table></figure>
+<p>第一次连接会提示是否信任主机，输入 <code>yes</code>。克隆下来的目录自带完整的 Git 历史，不需要再 <code>init</code>。</p>
+<h2 id="四-分支策略三条线各司其职"><a class="markdownIt-Anchor" href="#四-分支策略三条线各司其职"></a> 四、分支策略：三条线各司其职</h2>
+<p>课件给的协作规范非常清晰，项目里公用分支 + 个人分支：</p>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>master</code></td>
+<td><strong>用于发布</strong>，默认分支。dev 测试没问题后才合并进来</td>
+</tr>
+<tr>
+<td><code>dev</code></td>
+<td><strong>开发阶段的整合分支</strong>，每个人阶段性代码都往这里合</td>
+</tr>
+<tr>
+<td>个人分支（如 <code>it</code>、<code>agou</code>）</td>
+<td>每个人自己的开发分支，互相不干扰</td>
+</tr>
+</tbody>
+</table>
+<p>整体流程是：<strong>开发之初建好仓库 → 组员克隆框架、同步分支、各自开发 → 需要发布时把各分支合并到 dev，再合并到 master。</strong></p>
+<p>常用分支命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git branch                                    # 查看所有分支（* 表示当前分支）</span><br><span class="line">git branch dev                                # 创建分支</span><br><span class="line">git checkout dev                              # 切换分支</span><br><span class="line">git checkout -b it                            # 创建并切换</span><br><span class="line">git push origin dev                           # 把本地分支推到服务器</span><br><span class="line">git branch --set-upstream-to=origin/dev dev   # 让本地分支跟踪服务器分支</span><br><span class="line">git checkout -b it origin/it                  # 创建本地分支并直接跟踪远程分支</span><br><span class="line">git checkout -d 分支名称                       # 删除分支（删了找不回来，慎用）</span><br></pre></td></tr></table></figure>
+<p><strong>为什么要跟踪分支？</strong> 因为只有建立了跟踪关系，<code>git push</code> / <code>git pull</code> 才知道该和服务器上的哪个分支打交道。</p>
+<h2 id="五-日常开发循环"><a class="markdownIt-Anchor" href="#五-日常开发循环"></a> 五、日常开发循环</h2>
+<p>单人开发其实就是反复三步：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add ./</span><br><span class="line">git commit -m &#x27;搭建django博客框架&#x27;</span><br><span class="line">git push origin it</span><br></pre></td></tr></table></figure>
+<p>课件的建议很实在：<strong>每天下班前把当天开发的内容推送到服务器</strong>，这样本机出意外还有一份备份。</p>
+<p>拉代码和同步：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git pull                       # 拉取并合并服务器代码</span><br><span class="line">git merge dev                  # 把 dev 的更新合并到当前分支</span><br></pre></td></tr></table></figure>
+<p>如果要把「自己分支以外」的分支推上去，顺序必须是：<strong>先获取（pull）→ 解决冲突 → 再推送</strong>。</p>
+<h2 id="六-合并与冲突不慌手动改就行"><a class="markdownIt-Anchor" href="#六-合并与冲突不慌手动改就行"></a> 六、合并与冲突：不慌，手动改就行</h2>
+<p>当项目功能开发完成，就要合并到 <code>dev</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git checkout dev               # 1. 切到 dev</span><br><span class="line">git pull                       # 2. 拉最新代码</span><br><span class="line">git merge agou                 # 3. 合并自己分支的代码</span><br><span class="line">git add ./                     # 4. 加入暂存区</span><br><span class="line">git commit -m &#x27;agou合并分支&#x27;     # 5. 提交</span><br><span class="line">git push origin dev            # 6. 推送到服务器</span><br></pre></td></tr></table></figure>
+<h3 id="push-被拒绝怎么办"><a class="markdownIt-Anchor" href="#push-被拒绝怎么办"></a> push 被拒绝怎么办</h3>
+<p>多人改同一个文件时，你 <code>push</code> 会遇到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">更新被拒绝，因为远程仓库包含您本地尚不存在的提交</span><br><span class="line">提示：请先使用 git pull 同步</span><br></pre></td></tr></table></figure>
+<p>这不是「代码错了」，而是<strong>有人比你先进了同一个文件</strong>。按照提示做：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull</span><br></pre></td></tr></table></figure>
+<h3 id="看懂冲突标记"><a class="markdownIt-Anchor" href="#看懂冲突标记"></a> 看懂冲突标记</h3>
+<p><code>pull</code> 之后 Git 会在冲突文件里插入三行标记：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span><br><span class="line">print(&#x27;打狗棒法真的好耶，真的&#x27;)      ← 当前版本（你写的）</span><br><span class="line">=======</span><br><span class="line">print(&#x27;打狗棒法真的好耶&#x27;)           ← 分界线</span><br><span class="line">print(&#x27;少林功夫&#x27;)</span><br><span class="line">&gt;&gt;&gt;&gt;&gt;&gt;&gt; 8f81b29cf10eb8aa11e68b5c9810e58470a4ee20   ← 服务器版本的提交号</span><br></pre></td></tr></table></figure>
+<p>处理步骤：</p>
+<ol>
+<li><strong>打开冲突文件，手动决定保留哪段</strong>（两段都需要就都留下）；</li>
+<li><strong>删掉 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>、<code>=======</code>、<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> 这三行标记</strong>；</li>
+<li>如果拿不准别人那段代码该不该保留，<strong>直接找写这段代码的同事确认</strong>（课件原话：不能确定是否保留，可以与编写该语句的人员沟通）；</li>
+<li>改完保存，再 <code>add</code> → <code>commit</code> → <code>push</code>，冲突就解决了。</li>
+</ol>
+<blockquote>
+<p>口诀：<strong>冲突不是错误，只是 Git 不知道你想留哪一版；决定权永远在人手里。</strong></p>
+</blockquote>
+<h2 id="七-历史-回退与发布"><a class="markdownIt-Anchor" href="#七-历史-回退与发布"></a> 七、历史、回退与发布</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git log                        # 查看详细提交日志</span><br><span class="line">git reflog                     # 查看所有 HEAD 移动记录（回退错了还能救回来）</span><br><span class="line">git diff HEAD^ -- git.py       # 对比上一个版本与当前工作区</span><br><span class="line">git reset HEAD^                # 回退到上一个版本（回到暂存区）</span><br><span class="line">git reset 15a237e              # 回退到指定提交号</span><br><span class="line">git checkout -- git.py         # 把暂存区的内容恢复到工作区</span><br></pre></td></tr></table></figure>
+<p>版本号的说法要记住：</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HEAD</code></td>
+<td>当前版本（最新提交）</td>
+</tr>
+<tr>
+<td><code>HEAD^</code></td>
+<td>上一个版本</td>
+</tr>
+<tr>
+<td><code>HEAD^^</code> 或 <code>HEAD~2</code></td>
+<td>上两个版本</td>
+</tr>
+<tr>
+<td>一串哈希（如 <code>8f81b29</code>）</td>
+<td>指定的某次提交</td>
+</tr>
+</tbody>
+</table>
+<p><code>git diff</code> 的输出里 <strong><code>+</code> 表示工作区比仓库区多出来的内容，<code>-</code> 表示少掉的内容</strong>。</p>
+<h3 id="发布dev-master-打标签"><a class="markdownIt-Anchor" href="#发布dev-master-打标签"></a> 发布：dev → master → 打标签</h3>
+<p>所有组员都合并到 <code>dev</code>、测试没问题之后，就可以发布：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git checkout dev &amp;&amp; git pull          # 1. 切到 dev 并拉取全部合并后的代码</span><br><span class="line">git checkout master                   # 2. 切到 master</span><br><span class="line">git merge dev                         # 3. 合并 dev</span><br><span class="line">git add ./ &amp;&amp; git commit -m &#x27;发布&#x27;     # 4. 提交</span><br><span class="line">git tag v1.0                          # 5. 打标签（给这次发布起个好记的名字）</span><br><span class="line">git push origin master                # 6. 推送到服务器</span><br></pre></td></tr></table></figure>
+<p><strong>打标签的意义</strong>：将来线上出问题，能快速定位「当时发布的是哪一版代码」。</p>
+<h2 id="八-踩坑记录"><a class="markdownIt-Anchor" href="#八-踩坑记录"></a> 八、踩坑记录</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Please tell me who you are</code></td>
+<td>没配 <a target="_blank" rel="noopener" href="http://user.name">user.name</a> / user.email</td>
+<td><code>git config --global</code> 补上</td>
+</tr>
+<tr>
+<td><code>push</code> 提示更新被拒绝</td>
+<td>远程有别人新提交</td>
+<td><code>git pull</code> 合并冲突后再 push</td>
+</tr>
+<tr>
+<td><code>git push</code> 不知道怎么推哪个分支</td>
+<td>本地分支没跟踪远程分支</td>
+<td><code>git branch --set-upstream-to=origin/分支 分支</code></td>
+</tr>
+<tr>
+<td>代码删掉想恢复</td>
+<td>工作区被改坏</td>
+<td>若已 <code>add</code> 过，用 <code>git checkout -- 文件</code></td>
+</tr>
+<tr>
+<td>回退后代码「不见了」</td>
+<td><code>git reset</code> 只回到暂存区</td>
+<td>再 <code>git checkout -- 文件</code> 恢复到工作区</td>
+</tr>
+<tr>
+<td><code>ssh-keygen</code> 后连不上</td>
+<td>公钥没配到 Gitee，或有旧密钥</td>
+<td>删旧 <code>~/.ssh</code> 重新生成并粘贴公钥</td>
+</tr>
+<tr>
+<td>第一次 <code>clone</code> 卡住</td>
+<td>提示是否信任主机没回答</td>
+<td>输入 <code>yes</code></td>
+</tr>
+<tr>
+<td>分支删错了</td>
+<td><code>git checkout -d</code> 不可恢复</td>
+<td>用 <code>git reflog</code> 找提交号抢救</td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>Git 的知识点看着多，其实可以压缩成四句话：</p>
+<ol>
+<li><strong>三个区</strong>：改在工作区，<code>add</code> 到暂存区，<code>commit</code> 进仓库区，<code>push</code> 上服务器；</li>
+<li><strong>分支各司其职</strong>：个人分支开发 → dev 集成 → master 发布；</li>
+<li><strong>冲突不可怕</strong>：<code>pull</code> → 手动改 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> 之间的内容 → <code>add</code>/<code>commit</code>/<code>push</code>；</li>
+<li><strong>历史能回退</strong>：<code>reflog</code> 是最后的安全网。</li>
+</ol>
+<p>顺带一提，本博客也用 Git 管理（源码在本地仓库、生成结果推送到 GitHub Pages），但流程和课件完全不同：Hexo 是<strong>静态站点</strong>，<code>hexo generate</code> 出来的 <code>public/</code> 全量推送到 Pages 仓库，不需要分支策略；而课件这套 master/dev/个人分支的玩法，是为「多人协作写同一个应用」准备的。</p>
+<blockquote>
+<p>说明：本文依据课件《09-git和码云》整理，命令与流程均来自课件；其中「<code>reflog</code> 抢救误删分支」「markdown 化的工作区/暂存区流程图」是我补充的说明。</p>
+</blockquote>
+<p>下一篇写 Linux 基础：目录结构、权限、查找与编辑——那是把自己写的代码真正放到服务器上跑起来的前提。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文連結：</strong><a href="https://utdog.github.io/zh-TW/2025/05/12/Git%E4%B8%8EGitee/">https://utdog.github.io/zh-TW/2025/05/12/Git%E4%B8%8EGitee/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版權：</strong>本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 授權協議。轉載請註明出處！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">贊助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">請作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=Git%20%E4%B8%8E%20Gitee%EF%BC%9A%E4%BB%8E%E5%8D%95%E4%BA%BA%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%88%B0%E5%A4%9A%E4%BA%BA%E5%8D%8F%E4%BD%9C&amp;desc=%E8%AF%BE%E7%A8%8B%E8%AF%BE%E4%BB%B6%E6%95%B4%E7%90%86%EF%BC%9A%E5%B7%A5%E4%BD%9C%E5%8C%BA%2F%E6%9A%82%E5%AD%98%E5%8C%BA%2F%E4%BB%93%E5%BA%93%E5%8C%BA%E4%B8%89%E4%B8%AA%E5%8C%BA%E3%80%81Gitee%20%E5%BB%BA%E4%BB%93%E4%B8%8E%20SSH%20%E5%85%AC%E9%92%A5%E3%80%81master%2Bdev%2B%E4%B8%AA%E4%BA%BA%E5%88%86%E6%94%AF%E7%9A%84%E5%8D%8F%E4%BD%9C%E7%AD%96%E7%95%A5%E3%80%81%E5%90%88%E5%B9%B6%E5%86%B2%E7%AA%81%E7%9A%84%E6%89%8B%E5%8A%A8%E8%A7%A3%E5%86%B3%EF%BC%8C%E4%BB%A5%E5%8F%8A%20reflog%20%E5%9B%9E%E9%80%80%E4%B8%8E%E6%89%93%E6%A0%87%E7%AD%BE%E5%8F%91%E5%B8%83%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="Git 与 Gitee：从单人版本控制到多人协作">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="Git 与 Gitee：从单人版本控制到多人协作">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/Git/" rel="tag">Git</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/43.jpg" data-sizes="auto" alt="Linux 基础：服务器上的常用命令" class="lazyload">
+        
+        <a href="/zh-TW/2025/05/13/Linux%E5%9F%BA%E7%A1%80/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Linux 基础：服务器上的常用命令
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/39.jpg" data-sizes="auto" alt="MySQL 进阶：外键、视图、存储过程、触发器与事务" class="lazyload">
+      
+      <a href="/zh-TW/2025/05/11/MySQL%E8%BF%9B%E9%98%B6/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          MySQL 进阶：外键、视图、存储过程、触发器与事务
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基於&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#git-%E4%B8%8E-gitee%E4%BB%8E%E5%8D%95%E4%BA%BA%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%88%B0%E5%A4%9A%E4%BA%BA%E5%8D%8F%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text"> Git 与 Gitee：从单人版本控制到多人协作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、安装与配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E4%B8%89%E4%B8%AA%E5%8C%BA%E5%85%88%E6%8A%8A%E4%BB%A3%E7%A0%81%E6%94%BE%E5%9C%A8%E5%93%AA%E6%83%B3%E6%B8%85%E6%A5%9A"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、三个区：先把「代码放在哪」想清楚</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E5%BB%BA%E4%BB%93-ssh-%E5%85%AC%E9%92%A5"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、远程仓库：建仓 + SSH 公钥</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9C%A8-gitee-%E4%B8%8A%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1. 在 Gitee 上创建项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE-ssh-%E5%85%AC%E9%92%A5"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2. 配置 SSH 公钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%85%8B%E9%9A%86%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 3. 克隆项目</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%88%86%E6%94%AF%E7%AD%96%E7%95%A5%E4%B8%89%E6%9D%A1%E7%BA%BF%E5%90%84%E5%8F%B8%E5%85%B6%E8%81%8C"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、分支策略：三条线各司其职</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%97%A5%E5%B8%B8%E5%BC%80%E5%8F%91%E5%BE%AA%E7%8E%AF"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、日常开发循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E5%90%88%E5%B9%B6%E4%B8%8E%E5%86%B2%E7%AA%81%E4%B8%8D%E6%85%8C%E6%89%8B%E5%8A%A8%E6%94%B9%E5%B0%B1%E8%A1%8C"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、合并与冲突：不慌，手动改就行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#push-%E8%A2%AB%E6%8B%92%E7%BB%9D%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">1.6.1.</span> <span class="toc-text"> push 被拒绝怎么办</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9C%8B%E6%87%82%E5%86%B2%E7%AA%81%E6%A0%87%E8%AE%B0"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 看懂冲突标记</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E5%8E%86%E5%8F%B2-%E5%9B%9E%E9%80%80%E4%B8%8E%E5%8F%91%E5%B8%83"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、历史、回退与发布</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E5%B8%83dev-master-%E6%89%93%E6%A0%87%E7%AD%BE"><span class="toc-number">1.7.1.</span> <span class="toc-text"> 发布：dev → master → 打标签</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "Git 与 Gitee：从单人版本控制到多人协作",
+          url: "https://utdog.github.io/2025/05/12/Git%E4%B8%8EGitee/",
+          excerpt: "",
+          description: "课程课件整理：工作区/暂存区/仓库区三个区、Gitee 建仓与 SSH 公钥、master+dev+个人分支的协作策略、合并冲突的手动解决，以及 reflog 回退与打标签发布。",
+          stripContent: " Git 与 Gitee：从单人版本控制到多人协作  前言 在学 Git 之前，我的「版本管理」方式是给文件夹改名：项目、项目-改、项目-最终、项目-最终2。课程里第一次用 Git 管项目时，最直观的冲击是代码有了可回退的历史；而多人协作那一课则让我明白，Git 真正解决的问题是**「几个人同时改同一个项目，怎么不互相覆盖」**。 课件用的是码云（Gitee）：GitHub 服务器在国外，国内访问经常抽风，而 Gitee 速度快、免费、私有库不限额。命令本身和 GitHub 完全一样，换个远程地",
+          date: "Mon May 12 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:18:36 GMT+0800",
+          cover: "/images/41.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

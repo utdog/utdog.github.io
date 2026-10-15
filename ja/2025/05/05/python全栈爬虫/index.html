@@ -41,23 +41,18 @@
 
   
   
-    <meta name="description" content="python全栈爬虫  前言 爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚哪些事不能做。所有示例都以公开的、允许抓取的页面为例。  一、爬虫的基本流程 graph LR     A[分析目标页面] --">
+    <meta name="description" content="Python 爬虫实战笔记：Requests 与 BeautifulSoup、翻页限速、反爬应对、Scrapy 工程化与数据入库。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="python全栈爬虫">
 <meta property="og:url" content="https://utdog.github.io/ja/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/index.html">
 <meta property="og:site_name" content="MyBlog">
-<meta property="og:description" content="python全栈爬虫  前言 爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚哪些事不能做。所有示例都以公开的、允许抓取的页面为例。  一、爬虫的基本流程 graph LR     A[分析目标页面] --">
+<meta property="og:description" content="Python 爬虫实战笔记：Requests 与 BeautifulSoup、翻页限速、反爬应对、Scrapy 工程化与数据入库。">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2025-05-04T16:38:11.000Z">
-<meta property="article:modified_time" content="2026-10-15T07:23:30.925Z">
+<meta property="article:modified_time" content="2026-10-15T10:40:39.656Z">
 <meta property="article:author" content="单婉贺">
 <meta property="article:tag" content="python">
-<meta name="twitter:card" content="&lt;twitter:card&gt;">
-<meta name="twitter:image" content="https://utdog.github.io/ja/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/%3Ctwitter:image%3E">
-<meta name="twitter:creator" content="@&lt;twitter:creator&gt;">
-<meta name="twitter:site" content="<twitter:site>">
-<meta property="fb:admins" content="&lt;fb:admin_id&gt;">
-<meta property="fb:app_id" content="&lt;fb:app_id&gt;">
+<meta name="twitter:card" content="summary_large_image">
   
   
     <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
@@ -321,7 +316,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">28</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
@@ -329,7 +324,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">22</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -450,6 +445,17 @@
         <h1 id="python全栈爬虫"><a class="markdownIt-Anchor" href="#python全栈爬虫"></a> python全栈爬虫</h1>
 <h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
 <p>爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚<strong>哪些事不能做</strong>。所有示例都以公开的、允许抓取的页面为例。</p>
+<blockquote>
+<p><strong>关于本文的范围（补记）</strong></p>
+<p>这篇写于我系统看课件之前，是一份<strong>通用爬虫概览</strong>。后来我按课件《03-爬虫课件-全栈开发班》另写了一组更贴近课堂的系列：<a href="/2025/05/19/%E7%88%AC%E8%99%AB%E5%85%A5%E9%97%A8-%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%93%E5%8C%85/">《爬虫入门：原理与抓包》</a>、<a href="/2025/05/20/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-Requests%E4%B8%8E%E6%AD%A3%E5%88%99/">《Requests 与正则表达式》</a>、<a href="/2025/05/21/%E7%88%AC%E8%99%AB%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%AD%98%E5%82%A8/">《解析与存储》</a>、<a href="/2025/05/22/%E7%88%AC%E8%99%AB%E8%BF%9B%E9%98%B6-XPath%E4%B8%8E%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/">《XPath 与 Fiddler 抓包》</a>、<a href="/2025/05/23/%E7%88%AC%E8%99%AB%E9%AB%98%E7%BA%A7-%E5%8F%8D%E7%88%AC%E4%B8%8E%E9%AA%8C%E8%AF%81%E7%A0%81/">《反爬与验证码》</a>。</p>
+<p>对照课件后需要说明清楚——<strong>课件的五个阶段没有覆盖本文的这三节</strong>：</p>
+<ul>
+<li>第五节里的 <strong>Playwright</strong>（课件讲的是控制台抓包分析 AJAX 接口，没用浏览器自动化）；</li>
+<li>第七节 <strong>Scrapy 工程化</strong>（课件没有讲框架、中间件与分布式）；</li>
+<li>第九节 <strong>并发提速</strong>（课件没有 asyncio / aiohttp 异步爬虫的内容）。</li>
+</ul>
+<p><strong>这三部分属于我的自学扩展，不是课程内容</strong>；课件同样没有 JS 逆向与字体反爬的讲义。</p>
+</blockquote>
 <h2 id="一-爬虫的基本流程"><a class="markdownIt-Anchor" href="#一-爬虫的基本流程"></a> 一、爬虫的基本流程</h2>
 <pre class="mermaid">graph LR
     A[分析目标页面] --> B[发送请求]
@@ -654,7 +660,7 @@
       
         <div class="share-wrapper">
   
-    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB&amp;desc=python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="python全栈爬虫">
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB&amp;desc=Python%20%E7%88%AC%E8%99%AB%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0%EF%BC%9ARequests%20%E4%B8%8E%20BeautifulSoup%E3%80%81%E7%BF%BB%E9%A1%B5%E9%99%90%E9%80%9F%E3%80%81%E5%8F%8D%E7%88%AC%E5%BA%94%E5%AF%B9%E3%80%81Scrapy%20%E5%B7%A5%E7%A8%8B%E5%8C%96%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%85%A5%E5%BA%93%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="python全栈爬虫">
       <div class="share-icon icon icon-qq">
         
       </div>
@@ -666,7 +672,7 @@
           <div id="share-weixin">
             <div class="share-weixin-dom">
               <div class="share-weixin-content">
-                <img id="share-weixin-banner"> 
+                <img id="share-weixin-banner" alt=""> 
                 <div id="share-weixin-title"></div>
                 <div id="share-weixin-desc"></div>
               </div>
@@ -675,7 +681,7 @@
                   <div id="share-weixin-author"></div>
                   <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
                 </div>
-                <img id="share-weixin-qr" >
+                <img id="share-weixin-qr" alt="" >
               </div>
             </div>
             <div class="share-weixin-canvas"></div>
@@ -703,13 +709,13 @@
       
       <div class="article-nav-link-wrap article-nav-link-left">
         
-          <img data-src="/images/1.jpg" data-sizes="auto" alt="OCS网课助手的使用" class="lazyload">
+          <img data-src="/images/33.jpg" data-sizes="auto" alt="Django 博客项目实战（上）：建项目、设计模型与首页" class="lazyload">
         
-        <a href="/ja/2025/05/15/OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8/"></a>
+        <a href="/ja/2025/05/06/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8A/"></a>
         <div class="article-nav-caption">次の記事</div>
         <h3 class="article-nav-title">
           
-            OCS网课助手的使用
+            Django 博客项目实战（上）：建项目、设计模型与首页
           
         </h3>
       </div>
@@ -771,11 +777,11 @@
       <div>
         <span class="icon-brush"></span>
         <!-- 全站总字数 -->
-        16.3k
+        92k
         &nbsp;|&nbsp;
         <!-- 我们自己算一下所有文章的阅读时长之和 -->
         
-        65分钟
+        366分钟
       </div>
     
     
@@ -813,7 +819,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">28</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
@@ -821,7 +827,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">22</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -924,7 +930,7 @@
             <div id="reimu-hits"></div>
             <div id="reimu-pagination" class="reimu-pagination"></div>
           </div>
-          <img class="reimu-bg" src="/images/reimu.png"/>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
         </div>
       </div>
     
@@ -1150,10 +1156,10 @@
           title: "python全栈爬虫",
           url: "https://utdog.github.io/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/",
           excerpt: "",
-          description: "",
-          stripContent: " python全栈爬虫  前言 爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚哪些事不能做。所有示例都以公开的、允许抓取的页面为例。  一、爬虫的基本流程 graph LR     A[分析目标页面] --&gt; B[发送请求]     B --&gt; C{拿到响应?}     C --&gt;|失败| D[重试 / ",
+          description: "Python 爬虫实战笔记：Requests 与 BeautifulSoup、翻页限速、反爬应对、Scrapy 工程化与数据入库。",
+          stripContent: " python全栈爬虫  前言 爬虫是我学 Python 之后最有成就感的项目类型：几十行代码就能把网页上的数据整理成一张干净的表格。但爬虫也是最容易踩线的技术——所以这篇笔记除了记录 Requests、BeautifulSoup、Scrapy 这些工具的用法，也会写清楚哪些事不能做。所有示例都以公开的、允许抓取的页面为例。  关于本文的范围（补记） 这篇写于我系统看课件之前，是一份通用爬虫概览。后来我按课件《03-爬虫课件-全栈开发班》另写了一组更贴近课堂的系列：《爬虫入门：原理与抓包》、《R",
           date: "Mon May 05 2025 00:38:11 GMT+0800",
-          updated: "Thu Oct 15 2026 15:23:30 GMT+0800",
+          updated: "Thu Oct 15 2026 18:40:39 GMT+0800",
           cover: "/images/42.jpg",
         };
       </script>

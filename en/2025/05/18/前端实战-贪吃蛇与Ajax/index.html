@@ -1,0 +1,1423 @@
+
+  <!DOCTYPE html>
+  <html lang="en"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = 'All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    前端实战：贪吃蛇与 Ajax |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="前端课件整理：自执行函数与模块化拆分思路，用构造函数加原型写贪吃蛇（Food&#x2F;Snake&#x2F;Game 三模块、尾随头移动算法、定时器与键盘控制），以及 Ajax 的 XHR 四步、readyState 与状态码、JSON 转换和 jQuery 写法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端实战：贪吃蛇与 Ajax">
+<meta property="og:url" content="https://utdog.github.io/en/2025/05/18/%E5%89%8D%E7%AB%AF%E5%AE%9E%E6%88%98-%E8%B4%AA%E5%90%83%E8%9B%87%E4%B8%8EAjax/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="前端课件整理：自执行函数与模块化拆分思路，用构造函数加原型写贪吃蛇（Food&#x2F;Snake&#x2F;Game 三模块、尾随头移动算法、定时器与键盘控制），以及 Ajax 的 XHR 四步、readyState 与状态码、JSON 转换和 jQuery 写法。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-18T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T10:31:42.001Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="项目实战">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">Loading...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/">Home</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/archives">Archives</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/about">About</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/friend">Friend</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="Search"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">English</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" class="selected">English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/18/前端实战-贪吃蛇与Ajax/';
+            
+              langMap['en'] = '/en/2025/05/18/前端实战-贪吃蛇与Ajax/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/18/前端实战-贪吃蛇与Ajax/';
+            
+              langMap['ja'] = '/ja/2025/05/18/前端实战-贪吃蛇与Ajax/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/48.jpg" alt="前端实战：贪吃蛇与 Ajax">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">前端实战：贪吃蛇与 Ajax</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E5%AE%9E%E6%88%98%E8%B4%AA%E5%90%83%E8%9B%87%E4%B8%8E-ajax"><span class="toc-number">1.</span> <span class="toc-text"> 前端实战：贪吃蛇与 Ajax</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%87%AA%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0%E4%B8%8E%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、自执行函数与模块化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%B4%AA%E5%90%83%E8%9B%87food-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、贪吃蛇：Food 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%B4%AA%E5%90%83%E8%9B%87snake-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、贪吃蛇：Snake 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E7%AE%97%E6%B3%95%E5%B0%BE%E9%9A%8F%E5%A4%B4"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 移动算法：尾随头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%83%E9%A3%9F%E7%89%A9%E7%9A%84%E5%88%A4%E6%96%AD%E4%B8%8E%E5%8F%98%E9%95%BF"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 吃食物的判断与变长</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E8%B4%AA%E5%90%83%E8%9B%87game-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、贪吃蛇：Game 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E5%BE%AA%E7%8E%AF%E4%B8%8E%E6%92%9E%E5%A2%99%E5%88%A4%E6%96%AD"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 游戏循环与撞墙判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E6%96%B9%E5%90%91"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 键盘控制方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-ajax%E4%B8%8D%E5%88%B7%E6%96%B0%E9%A1%B5%E9%9D%A2%E4%B9%9F%E8%83%BD%E6%8B%BF%E6%95%B0%E6%8D%AE"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、Ajax：不刷新页面也能拿数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%94%9F%E5%86%99%E6%B3%95%E5%9B%9B%E6%AD%A5"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 原生写法：四步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E7%89%88%E8%BF%98%E8%A6%81%E5%88%A4%E6%96%AD-http-%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">1.5.2.</span> <span class="toc-text"> 完整版：还要判断 HTTP 状态码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json-%E4%B8%8E-js-%E5%AF%B9%E8%B1%A1%E4%BA%92%E8%BD%AC"><span class="toc-number">1.5.3.</span> <span class="toc-text"> JSON 与 JS 对象互转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jquery-%E5%86%99%E6%B3%95"><span class="toc-number">1.5.4.</span> <span class="toc-text"> jQuery 写法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%B8%A9%E5%9D%91%E9%80%9F%E6%9F%A5"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、踩坑速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-前端实战-贪吃蛇与Ajax" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-18T12:00:00.000Z" itemprop="datePublished">2025-05-18</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/en/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="前端实战贪吃蛇与-ajax"><a class="markdownIt-Anchor" href="#前端实战贪吃蛇与-ajax"></a> 前端实战：贪吃蛇与 Ajax</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>上一篇把 JS 的语法、DOM、对象都过了一遍。这一篇是前端课件的收官：先把前面学的<strong>对象、原型、数组、定时器、键盘事件</strong>串成一个真正的项目——贪吃蛇；再学一个让页面&quot;不用刷新就能拿数据&quot;的技术——Ajax。</p>
+<p>课件 day22 的案例里，老师的原话是&quot;<strong>我会完全按照工作里面模块化开发的思想来写</strong>&quot;。所以这两块正好代表了前端开发的两条主线：<strong>页面里的逻辑怎么组织</strong>，和<strong>页面怎么跟服务器说话</strong>。</p>
+<blockquote>
+<p>说明：day22 同样没有 <code>笔记</code> 目录，以下代码与结论均整理自案例文件（<code>02-自执行函数.html</code>、<code>03贪吃蛇项目.html</code>、<code>04-Ajax.html</code>、<code>05-完整版Ajax.html</code>、<code>06-jq的ajax请求数据.html</code>）。</p>
+</blockquote>
+<h2 id="一-自执行函数与模块化"><a class="markdownIt-Anchor" href="#一-自执行函数与模块化"></a> 一、自执行函数与模块化</h2>
+<p>平时写函数是&quot;先定义，再调用&quot;：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">fun</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;我是一个函数&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">fun</span>();</span><br></pre></td></tr></table></figure>
+<p><strong>自执行函数</strong>（IIFE，立即调用函数表达式）是定义完立刻调用自己，不需要再写一行调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 写法：把整个函数声明用小括号包起来，后面再跟一对小括号立即执行</span></span><br><span class="line">(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;我也是一个函数&quot;</span>);</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>为什么要绕这一下？因为<strong>函数体形成了一个独立的作用域</strong>：里面声明的变量外面看不见，不会污染全局。这就解决了多人协作时&quot;变量重名互相覆盖&quot;的问题。</p>
+<p>于是就有了课件那种写法——<strong>把变量藏在自执行函数里，只把需要给外面用的东西挂到 <code>window</code> 上</strong>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 食物对象（一个模块）</span></span><br><span class="line">(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> foodArr = [];              <span class="comment">// 这个数组只有本模块内部能用</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">Food</span>(<span class="params">x, y, width, height, bg</span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title class_">Food</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">init</span> = <span class="keyword">function</span> (<span class="params">scope</span>) &#123; <span class="comment">/* ... */</span> &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">Food</span> = <span class="title class_">Food</span>;            <span class="comment">// 只把构造函数暴露出去</span></span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 外面就能拿到，但拿不到 foodArr</span></span><br><span class="line"><span class="keyword">let</span> food = <span class="keyword">new</span> <span class="title class_">Food</span>();</span><br></pre></td></tr></table></figure>
+<p>有意思的是 <code>window.Food = Food;</code> 这一句——它<strong>既是模块的出口，也是古人肉实现模块系统的方式</strong>。现在用 ES6 的 <code>export</code> / <code>import</code>，思路完全一样：内部实现私有，对外只暴露接口。</p>
+<p>课件的贪吃蛇就是这么拆的，三个模块各管一件事：</p>
+<pre class="mermaid">graph TD
+    A["Food 食物模块<br/>坐标 + 随机位置"] --> C["Game 游戏模块<br/>组装 + 循环 + 控制"]
+    B["Snake 蛇模块<br/>身体数组 + 移动"] --> C
+    C --> D["定时器驱动游戏循环<br/>setInterval 150ms"]
+    C --> E["键盘控制方向<br/>keydown 37/38/39/40"]</pre>
+<h2 id="二-贪吃蛇food-模块"><a class="markdownIt-Anchor" href="#二-贪吃蛇food-模块"></a> 二、贪吃蛇：Food 模块</h2>
+<p>食物的本质是<strong>地图上一个 20×20 的小方块 div</strong>，位置随机但要<strong>对齐网格</strong>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建食物对象（位置，宽度，高度，颜色）</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Food</span>(<span class="params">x, y, width, height, bg</span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">x</span> = x || <span class="number">0</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">y</span> = y || <span class="number">0</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">width</span> = width || <span class="number">20</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">height</span> = height || <span class="number">20</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">bg</span> = bg || <span class="string">&#x27;green&#x27;</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">count</span> = <span class="number">0</span>;              <span class="comment">// 顺便记分</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法放在原型上，站在资源共享的角度来写</span></span><br><span class="line"><span class="title class_">Food</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">init</span> = <span class="keyword">function</span> (<span class="params">scope</span>) &#123;</span><br><span class="line">  <span class="title function_">remove</span>();                    <span class="comment">// 先删掉上一个食物</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> div = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&quot;div&quot;</span>);</span><br><span class="line">  scope.<span class="title function_">append</span>(div);</span><br><span class="line">  div.<span class="property">style</span>.<span class="property">width</span> = <span class="variable language_">this</span>.<span class="property">width</span> + <span class="string">&quot;px&quot;</span>;</span><br><span class="line">  div.<span class="property">style</span>.<span class="property">height</span> = <span class="variable language_">this</span>.<span class="property">height</span> + <span class="string">&quot;px&quot;</span>;</span><br><span class="line">  div.<span class="property">style</span>.<span class="property">background</span> = <span class="variable language_">this</span>.<span class="property">bg</span>;</span><br><span class="line">  div.<span class="property">style</span>.<span class="property">position</span> = <span class="string">&quot;absolute&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 随机食物：移动的是每个小方块的倍数</span></span><br><span class="line">  <span class="comment">// 总长度 ÷ 小方块宽度 = 有多少列</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">x</span> = div.<span class="property">style</span>.<span class="property">left</span> = <span class="built_in">parseInt</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * (scope.<span class="property">offsetWidth</span> / <span class="variable language_">this</span>.<span class="property">width</span>)) * <span class="variable language_">this</span>.<span class="property">width</span> + <span class="string">&quot;px&quot;</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">y</span> = div.<span class="property">style</span>.<span class="property">top</span> = <span class="built_in">parseInt</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * (scope.<span class="property">offsetHeight</span> / <span class="variable language_">this</span>.<span class="property">height</span>)) * <span class="variable language_">this</span>.<span class="property">height</span> + <span class="string">&quot;px&quot;</span>;</span><br><span class="line"></span><br><span class="line">  foodArr.<span class="title function_">push</span>(div);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>两个关键点：</p>
+<ol>
+<li><strong>随机位置必须对齐网格</strong>：先算出地图能放下多少列（<code>scope.offsetWidth / this.width</code>），取一个随机<strong>整数</strong>列号，再乘回方块宽度。直接随机像素值的话，蛇头永远碰不到食物。</li>
+<li><strong><code>remove()</code> 为什么用数组</strong>：因为食物被吃掉后要&quot;再出现一个&quot;，用数组保存所有食物 dom，删除时循环 <code>removeChild</code> + <code>splice</code>。</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">remove</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; foodArr.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">let</span> item = foodArr[i];</span><br><span class="line">    item.<span class="property">parentNode</span>.<span class="title function_">removeChild</span>(item);   <span class="comment">// 从地图上删除</span></span><br><span class="line">    foodArr.<span class="title function_">splice</span>(i, <span class="number">1</span>);                <span class="comment">// 从数组里删除</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这段是<strong>为了讲解才写成循环</strong>的，实际 play 时数组里最多一个元素。如果真要删一堆，倒着循环 <code>for (let i = arr.length - 1; i &gt;= 0; i--)</code> 更安全——正着删会因为 <code>splice</code> 改变下标而漏掉元素（下面的 <code>removeSnake</code> 就踩过这个坑，所以它是倒着写的）。</p>
+</blockquote>
+<h2 id="三-贪吃蛇snake-模块"><a class="markdownIt-Anchor" href="#三-贪吃蛇snake-模块"></a> 三、贪吃蛇：Snake 模块</h2>
+<p>蛇的本质是<strong>一串格子的坐标</strong>，用对象数组描述每一节的 <code>x, y, color</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Snake</span>(<span class="params">width, height, direction</span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">width</span> = width || <span class="number">20</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">height</span> = height || <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 构建蛇的身体（第一节是蛇头，红色）</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">body</span> = [</span><br><span class="line">    &#123; <span class="attr">x</span>: <span class="number">3</span>, <span class="attr">y</span>: <span class="number">2</span>, <span class="attr">color</span>: <span class="string">&#x27;red&#x27;</span> &#125;,</span><br><span class="line">    &#123; <span class="attr">x</span>: <span class="number">2</span>, <span class="attr">y</span>: <span class="number">2</span>, <span class="attr">color</span>: <span class="string">&#x27;green&#x27;</span> &#125;,</span><br><span class="line">    &#123; <span class="attr">x</span>: <span class="number">1</span>, <span class="attr">y</span>: <span class="number">2</span>, <span class="attr">color</span>: <span class="string">&#x27;green&#x27;</span> &#125;</span><br><span class="line">  ];</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">direction</span> = direction || <span class="string">&#x27;right&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意这里的坐标是<strong>格号</strong>（第 3 列、第 2 行），不是像素。渲染时才乘上格子宽高：<code>div.style.left = item.x * this.width + &quot;px&quot;</code>。<strong>用格号而不是像素，是这类网格游戏最省事的地方</strong>——移动就是 <code>x += 1</code>。</p>
+<h3 id="移动算法尾随头"><a class="markdownIt-Anchor" href="#移动算法尾随头"></a> 移动算法：尾随头</h3>
+<p>蛇怎么动？不需要记录每一步历史，只要<strong>从尾巴开始，每一节都移到前一节的位置，蛇头单独往方向上加一格</strong>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Snake</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">move</span> = <span class="keyword">function</span> (<span class="params">scope, food, snake</span>) &#123;</span><br><span class="line">  <span class="comment">// 从最后一节开始往前循环：每一节都去找它前面那一节的位置</span></span><br><span class="line">  <span class="keyword">let</span> i = <span class="variable language_">this</span>.<span class="property">body</span>.<span class="property">length</span> - <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span> (; i &gt; <span class="number">0</span>; i--) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">body</span>[i].<span class="property">x</span> = <span class="variable language_">this</span>.<span class="property">body</span>[i - <span class="number">1</span>].<span class="property">x</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">body</span>[i].<span class="property">y</span> = <span class="variable language_">this</span>.<span class="property">body</span>[i - <span class="number">1</span>].<span class="property">y</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 蛇头单独按方向走一格</span></span><br><span class="line">  <span class="keyword">switch</span> (<span class="variable language_">this</span>.<span class="property">direction</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;right&#x27;</span>:  <span class="variable language_">this</span>.<span class="property">body</span>[i].<span class="property">x</span> += <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;left&#x27;</span>:   <span class="variable language_">this</span>.<span class="property">body</span>[i].<span class="property">x</span> -= <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;bottom&#x27;</span>: <span class="variable language_">this</span>.<span class="property">body</span>[i].<span class="property">y</span> += <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;top&#x27;</span>:    <span class="variable language_">this</span>.<span class="property">body</span>[i].<span class="property">y</span> -= <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>循环结束后 <code>i</code> 正好等于 <code>0</code>，所以 <code>this.body[i]</code> 就是蛇头——<strong>这个 <code>i</code> 的复用是老师说的&quot;大招&quot;</strong>，省了一次 <code>this.body[0]</code>。</p>
+<h3 id="吃食物的判断与变长"><a class="markdownIt-Anchor" href="#吃食物的判断与变长"></a> 吃食物的判断与变长</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 蛇头坐标换算成像素，跟食物坐标比较</span></span><br><span class="line"><span class="keyword">let</span> headX = <span class="variable language_">this</span>.<span class="property">body</span>[<span class="number">0</span>].<span class="property">x</span> * snake.<span class="property">width</span>;</span><br><span class="line"><span class="keyword">let</span> headY = <span class="variable language_">this</span>.<span class="property">body</span>[<span class="number">0</span>].<span class="property">y</span> * snake.<span class="property">height</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (headX == <span class="built_in">parseInt</span>(food.<span class="property">x</span>) &amp;&amp; headY == <span class="built_in">parseInt</span>(food.<span class="property">y</span>)) &#123;</span><br><span class="line">  <span class="comment">// 把小蛇的尾巴复制一份加到数组最后（蛇就变长了）</span></span><br><span class="line">  <span class="keyword">let</span> last = <span class="variable language_">this</span>.<span class="property">body</span>[<span class="variable language_">this</span>.<span class="property">body</span>.<span class="property">length</span> - <span class="number">1</span>];</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">body</span>.<span class="title function_">push</span>(&#123; <span class="attr">x</span>: last.<span class="property">x</span>, <span class="attr">y</span>: last.<span class="property">y</span>, <span class="attr">color</span>: last.<span class="property">color</span> &#125;);</span><br><span class="line"></span><br><span class="line">  food.<span class="title function_">init</span>(scope);                    <span class="comment">// 重新生成食物</span></span><br><span class="line">  food.<span class="property">count</span>++;                        <span class="comment">// 分数 +1</span></span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;.score&quot;</span>).<span class="property">innerHTML</span> = food.<span class="property">count</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>变长的写法很取巧：<strong>把尾巴复制一份追加到数组末尾</strong>。下一帧移动时，最后一节会去找前一节的位置，看起来就像&quot;多长了一节&quot;。</p>
+<h2 id="四-贪吃蛇game-模块"><a class="markdownIt-Anchor" href="#四-贪吃蛇game-模块"></a> 四、贪吃蛇：Game 模块</h2>
+<p>游戏对象把前面两个模块<strong>组合</strong>起来，再管游戏循环和键盘控制：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Game</span>(<span class="params">scope</span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">scope</span> = scope;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">food</span> = <span class="keyword">new</span> <span class="title class_">Food</span>();        <span class="comment">// 组合</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">snake</span> = <span class="keyword">new</span> <span class="title class_">Snake</span>();      <span class="comment">// 组合</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">timer</span> = <span class="literal">null</span>;             <span class="comment">// 工作经验：先声明定时器变量</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">isDeath</span> = <span class="literal">false</span>;          <span class="comment">// 状态</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">Game</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">init</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">food</span>.<span class="title function_">init</span>(<span class="variable language_">this</span>.<span class="property">scope</span>);</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">snake</span>.<span class="title function_">init</span>(<span class="variable language_">this</span>.<span class="property">scope</span>);</span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">gameMove</span>();               <span class="comment">// 开启动画（游戏循环）</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">changeDirection</span>();        <span class="comment">// 开启键盘控制</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="游戏循环与撞墙判断"><a class="markdownIt-Anchor" href="#游戏循环与撞墙判断"></a> 游戏循环与撞墙判断</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Game</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">gameMove</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> that = <span class="variable language_">this</span>;               <span class="comment">// ★ 关键的一招</span></span><br><span class="line">  that.<span class="property">timer</span> = <span class="built_in">setInterval</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// console.log(this);  // 发现这个 this 指向 window</span></span><br><span class="line">    <span class="comment">// console.log(that);  // 保存一下之后，that 指向 Game 实例</span></span><br><span class="line">    that.<span class="property">snake</span>.<span class="title function_">move</span>(that.<span class="property">scope</span>, that.<span class="property">food</span>, that.<span class="property">snake</span>);</span><br><span class="line">    that.<span class="property">snake</span>.<span class="title function_">init</span>(that.<span class="property">scope</span>);        <span class="comment">// 重新渲染蛇</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> maxX = that.<span class="property">scope</span>.<span class="property">offsetWidth</span> / that.<span class="property">snake</span>.<span class="property">width</span>;    <span class="comment">// 横向最大格数</span></span><br><span class="line">    <span class="keyword">let</span> maxY = that.<span class="property">scope</span>.<span class="property">offsetHeight</span> / that.<span class="property">snake</span>.<span class="property">height</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> headX = that.<span class="property">snake</span>.<span class="property">body</span>[<span class="number">0</span>].<span class="property">x</span>;</span><br><span class="line">    <span class="keyword">let</span> headY = that.<span class="property">snake</span>.<span class="property">body</span>[<span class="number">0</span>].<span class="property">y</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (headX &lt; <span class="number">0</span> || headX &gt;= maxX) &#123;   <span class="comment">// 撞左右墙</span></span><br><span class="line">      <span class="built_in">clearInterval</span>(that.<span class="property">timer</span>);</span><br><span class="line">      that.<span class="property">isDeath</span> = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (headY &lt; <span class="number">0</span> || headY &gt;= maxY) &#123;   <span class="comment">// 撞上下墙</span></span><br><span class="line">      <span class="built_in">clearInterval</span>(that.<span class="property">timer</span>);</span><br><span class="line">      that.<span class="property">isDeath</span> = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (that.<span class="property">isDeath</span>) &#123;</span><br><span class="line">      <span class="keyword">let</span> status = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;.status&quot;</span>);</span><br><span class="line">      status.<span class="property">innerHTML</span> = <span class="string">&quot;游戏结束&quot;</span>;</span><br><span class="line">      status.<span class="property">className</span> = <span class="string">&quot;fail&quot;</span>;        <span class="comment">// 换个类名变成红色</span></span><br><span class="line"></span><br><span class="line">      <span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;          <span class="comment">// 延迟一点再弹，避免阻塞渲染</span></span><br><span class="line">        <span class="title function_">alert</span>(<span class="string">&quot;得分:&quot;</span> + that.<span class="property">food</span>.<span class="property">count</span>);</span><br><span class="line">      &#125;, <span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, <span class="number">150</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong><code>let that = this</code> 是这一课最重要的坑</strong>。<code>setInterval</code> 里的回调函数是由 <code>window</code> 调用的，所以回调里的 <code>this</code> 指向 <code>window</code>，直接写 <code>this.snake</code> 会报 <code>Cannot read properties of undefined</code>。提前用 <code>that</code> 把 <code>this</code>（Game 实例）存下来，回调里一律用 <code>that</code>。</p>
+<blockquote>
+<p>这个&quot;保存 this&quot;的套路在 <code>changeDirection()</code> 里也用了一次。现在可以用<strong>箭头函数</strong>避免：箭头函数不绑定自己的 <code>this</code>，会继承外层的 <code>this</code>，所以 <code>setInterval(() =&gt; &#123; this.snake.move(...) &#125;)</code> 直接就能用。</p>
+</blockquote>
+<h3 id="键盘控制方向"><a class="markdownIt-Anchor" href="#键盘控制方向"></a> 键盘控制方向</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Game</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">changeDirection</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> that = <span class="variable language_">this</span>;</span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;keydown&quot;</span>, <span class="keyword">function</span> (<span class="params">e</span>) &#123;</span><br><span class="line">    <span class="keyword">switch</span> (e.<span class="property">keyCode</span>) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">37</span>: that.<span class="property">snake</span>.<span class="property">direction</span> = <span class="string">&quot;left&quot;</span>;   <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">38</span>: that.<span class="property">snake</span>.<span class="property">direction</span> = <span class="string">&quot;top&quot;</span>;    <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">39</span>: that.<span class="property">snake</span>.<span class="property">direction</span> = <span class="string">&quot;right&quot;</span>;  <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">40</span>: that.<span class="property">snake</span>.<span class="property">direction</span> = <span class="string">&quot;bottom&quot;</span>; <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>键</th>
+<th>keyCode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>←</td>
+<td>37</td>
+</tr>
+<tr>
+<td>↑</td>
+<td>38</td>
+</tr>
+<tr>
+<td>→</td>
+<td>39</td>
+</tr>
+<tr>
+<td>↓</td>
+<td>40</td>
+</tr>
+</tbody>
+</table>
+<p>最后四行启动游戏：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> scope = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;.scope&quot;</span>);   <span class="comment">// 获取地图</span></span><br><span class="line"><span class="keyword">let</span> game = <span class="keyword">new</span> <span class="title class_">Game</span>(scope);                     <span class="comment">// 实例化</span></span><br><span class="line">game.<span class="title function_">init</span>();                                    <span class="comment">// 跑起来</span></span><br></pre></td></tr></table></figure>
+<p><strong>整个项目看下来，前一篇学的&quot;构造函数 + 原型&quot;是骨架，数组的 <code>push/pop</code> 是血肉，定时器是心脏，键盘事件是方向盘</strong>——没有一行是新语法，全是组合。</p>
+<h2 id="五-ajax不刷新页面也能拿数据"><a class="markdownIt-Anchor" href="#五-ajax不刷新页面也能拿数据"></a> 五、Ajax：不刷新页面也能拿数据</h2>
+<p>Ajax = <strong>Asynchronous JavaScript And XML</strong>（异步的 JavaScript 和 XML）。它的核心优势是：<strong>不用等整个页面重新加载</strong>，就能从服务器拿到数据。</p>
+<p>课件列的四个优点：</p>
+<ol>
+<li>不需要插件支持（浏览器原生就有）；</li>
+<li>用户体验极佳（页面不闪、不跳）；</li>
+<li>提高了 Web 性能——可以<strong>局部发送请求</strong>，不用请求整个页面；</li>
+<li>减轻服务器的压力和带宽负担。</li>
+</ol>
+<h3 id="原生写法四步"><a class="markdownIt-Anchor" href="#原生写法四步"></a> 原生写法：四步</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">window</span>.<span class="property">onload</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> btn = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;btn&quot;</span>);</span><br><span class="line">  <span class="keyword">let</span> biaoti = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;biaoti&quot;</span>);</span><br><span class="line"></span><br><span class="line">  btn.<span class="property">onclick</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 1. 创建 Ajax 实例对象</span></span><br><span class="line">    <span class="keyword">let</span> xhr = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 设置请求方法和是否异步（第一个参数：get / post / put / delete）</span></span><br><span class="line">    xhr.<span class="title function_">open</span>(<span class="string">&quot;get&quot;</span>, <span class="string">&quot;https://yapi.pro/mock/71391/user/myAwards&quot;</span>, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 发送请求</span></span><br><span class="line">    xhr.<span class="title function_">send</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 监听状态</span></span><br><span class="line">    xhr.<span class="property">onreadystatechange</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (xhr.<span class="property">readyState</span> == <span class="number">4</span>) &#123;                 <span class="comment">// 响应完成</span></span><br><span class="line">        biaoti.<span class="property">innerHTML</span> = xhr.<span class="property">responseText</span>;     <span class="comment">// 拿到数据渲染到页面</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong><code>readyState</code> 有五个状态</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>请求未初始化（还没调用 <code>open()</code>）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>请求已经建立（还没调用 <code>send()</code>）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>请求已经发送</td>
+</tr>
+<tr>
+<td>3</td>
+<td>请求正在处理</td>
+</tr>
+<tr>
+<td>4</td>
+<td>响应完成，<strong>可以获取并操作后台数据了</strong></td>
+</tr>
+</tbody>
+</table>
+<p><code>onreadystatechange</code> 会在这几个状态变化时反复触发，所以<strong>必须判断 <code>readyState == 4</code></strong>，否则会在数据还没回来时就渲染，页面上是一片空白。</p>
+<h3 id="完整版还要判断-http-状态码"><a class="markdownIt-Anchor" href="#完整版还要判断-http-状态码"></a> 完整版：还要判断 HTTP 状态码</h3>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (xhr.<span class="property">readyState</span> == <span class="number">4</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (xhr.<span class="property">status</span> &gt;= <span class="number">200</span> &amp;&amp; xhr.<span class="property">status</span> &lt; <span class="number">300</span> || xhr.<span class="property">status</span> == <span class="number">304</span>) &#123;</span><br><span class="line">    biaoti.<span class="property">innerHTML</span> = xhr.<span class="property">responseText</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;抱歉后台文件找不到&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>2xx</code></td>
+<td>成功（<code>200</code> 成功接收了数据）</td>
+</tr>
+<tr>
+<td><code>3xx</code></td>
+<td>重定向（<code>304</code> 表示用了缓存）</td>
+</tr>
+<tr>
+<td><code>4xx</code></td>
+<td>客户端问题（<code>404</code> 文件找不到）</td>
+</tr>
+<tr>
+<td><code>5xx</code></td>
+<td>服务器问题（<code>500</code> 后台报错）</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>readyState == 4</code> 只代表&quot;请求走完了&quot;，不代表&quot;成功&quot;</strong>——服务器返回 404、500 时它也是 4。所以真正的判断是两层：<code>readyState</code> 看流程，<code>status</code> 看结果。</p>
+<h3 id="json-与-js-对象互转"><a class="markdownIt-Anchor" href="#json-与-js-对象互转"></a> JSON 与 JS 对象互转</h3>
+<p>服务器返回的多半是 JSON 字符串，不能直接当对象用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj  = &#123; <span class="attr">a</span>: <span class="string">&#x27;Hello&#x27;</span>, <span class="attr">b</span>: <span class="string">&#x27;World&#x27;</span> &#125;;          <span class="comment">// 这是对象</span></span><br><span class="line"><span class="keyword">let</span> json = <span class="string">&#x27;&#123;&quot;a&quot;: &quot;Hello&quot;, &quot;b&quot;: &quot;World&quot;&#125;&#x27;</span>;      <span class="comment">// 这是 JSON 字符串，本质是字符串</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// JSON 字符串 → JS 对象</span></span><br><span class="line"><span class="keyword">let</span> o = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="string">&#x27;&#123;&quot;a&quot;: &quot;Hello&quot;, &quot;b&quot;: &quot;World&quot;&#125;&#x27;</span>);   <span class="comment">// &#123;a: &#x27;Hello&#x27;, b: &#x27;World&#x27;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// JS 对象 → JSON 字符串（发给后台前用）</span></span><br><span class="line"><span class="keyword">let</span> j = <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123; <span class="attr">a</span>: <span class="string">&#x27;Hello&#x27;</span>, <span class="attr">b</span>: <span class="string">&#x27;World&#x27;</span> &#125;);   <span class="comment">// &#x27;&#123;&quot;a&quot;: &quot;Hello&quot;, &quot;b&quot;: &quot;World&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>记忆口诀：<strong><code>parse</code> 是解析（字符串变对象），<code>stringify</code> 是字符串化（对象变字符串）</strong>。</p>
+<blockquote>
+<p>注意 JSON 的<strong>键名必须用双引号</strong>：<code>&#123;&quot;a&quot;: 1&#125;</code> 是合法 JSON，<code>&#123;a: 1&#125;</code> 和 <code>&#123;'a': 1&#125;</code> 都不是——这是手写 JSON 最容易错的地方。</p>
+</blockquote>
+<h3 id="jquery-写法"><a class="markdownIt-Anchor" href="#jquery-写法"></a> jQuery 写法</h3>
+<p>原生四步在 jQuery 里压成两三行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="variable language_">document</span>).<span class="title function_">ready</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  $(<span class="string">&quot;input&quot;</span>).<span class="title function_">click</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 最简写法：$.get(url, 回调)</span></span><br><span class="line">    $.<span class="title function_">get</span>(<span class="string">&quot;https://api.waqi.info/api/attsse/8288/&quot;</span>, <span class="keyword">function</span> (<span class="params">data</span>) &#123;</span><br><span class="line">      $(<span class="string">&quot;p&quot;</span>).<span class="title function_">html</span>(data);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 完整写法（能配置更多参数）</span></span><br><span class="line">  $.<span class="title function_">ajax</span>(&#123;</span><br><span class="line">    <span class="attr">type</span>: <span class="string">&quot;get&quot;</span>,</span><br><span class="line">    <span class="attr">url</span>: <span class="string">&quot;https://api.waqi.info/api/attsse/8288/&quot;</span>,</span><br><span class="line">    <span class="attr">success</span>: <span class="keyword">function</span> (<span class="params">res</span>) &#123;</span><br><span class="line">      $(<span class="string">&quot;p&quot;</span>).<span class="title function_">html</span>(res);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><strong><code>$.get</code> / <code>$.post</code> 是 <code>$.ajax</code> 的语法糖</strong>：内部帮你创建了 XHR、设了回调、判断了状态码，所以回调函数能拿到的 <code>data</code> 已经是成功返回的数据了。</p>
+<h2 id="六-踩坑速查"><a class="markdownIt-Anchor" href="#六-踩坑速查"></a> 六、踩坑速查</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cannot read properties of undefined</code></td>
+<td>定时器回调里 <code>this</code> 指向 window，不是实例</td>
+<td>提前 <code>let that = this</code>，或用箭头函数</td>
+</tr>
+<tr>
+<td>渲染出来一片空白</td>
+<td>没判断 <code>readyState == 4</code></td>
+<td>在状态为 4 时再操作数据</td>
+</tr>
+<tr>
+<td>请求 404/500 但代码没报错</td>
+<td>只判断了 <code>readyState</code>，没判断 <code>status</code></td>
+<td>再加一层 <code>status</code> 判断</td>
+</tr>
+<tr>
+<td><code>JSON.parse</code> 报 <code>Unexpected token</code></td>
+<td>数据本身不是合法 JSON</td>
+<td>检查键名双引号；先 <code>console.log</code> 看原始数据</td>
+</tr>
+<tr>
+<td><code>Uncaught SyntaxError</code> + 中文乱码</td>
+<td>文件编码不是 UTF-8</td>
+<td>加 <code>&lt;meta charset=&quot;UTF-8&quot;&gt;</code>，编辑器另存为 UTF-8</td>
+</tr>
+<tr>
+<td>删除数组元素时漏删</td>
+<td>正序循环里 <code>splice</code> 改变了下标</td>
+<td>倒序循环 <code>for (let i = arr.length - 1; i &gt;= 0; i--)</code></td>
+</tr>
+<tr>
+<td>食物随机位置永远吃不到</td>
+<td>随机到了像素值，没对齐网格</td>
+<td>先取随机列号再乘格子宽</td>
+</tr>
+<tr>
+<td>换了方向马上撞自己</td>
+<td>一帧内连续按键改变方向</td>
+<td>加方向校验 / 限制每帧只响应一次</td>
+</tr>
+<tr>
+<td>请求发不出去（跨域报错）</td>
+<td>浏览器同源策略</td>
+<td>开发时让后端加 CORS 响应头，或用代理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p><strong>自执行函数 + 构造函数 + 原型 = 一个可以拆模块的小项目</strong>。贪吃蛇只有三件事：食物在网格上随机出现、蛇按&quot;尾随头&quot;往前走、游戏循环用 <code>setInterval</code> 驱动加键盘改方向。坐标用格号不用像素，是这个项目最舒服的一个设计。</p>
+<p><strong>Ajax = XMLHttpRequest + 状态判断 + 数据转换</strong>。原生四步（<code>new</code> → <code>open</code> → <code>send</code> → <code>onreadystatechange</code>）看清原理，实际写的时候用 jQuery 的 <code>$.get</code> 或 <code>$.ajax</code> 省事。判断成功要<strong>两层</strong>：<code>readyState == 4</code> 说明流程走完，<code>status</code> 在 200–304 才说明结果 OK。</p>
+<p>回头看这一套前端课件：从 HTML 标签 → CSS 选择器与布局 → 原生 JS 语法与 DOM → 对象与原型 → jQuery 与 Bootstrap → 一个完整项目和 Ajax 交互，<strong>这条线走完，一个静态页面的所有技能点就齐了</strong>。再往后就是后端（Django 部分已经写过三篇）和爬虫。</p>
+<blockquote>
+<p>说明：本文依据课件 day22 的五个案例文件整理，代码片段为案例中的原始写法（含 <code>let that = this</code>、<code>parseInt</code> 等&quot;当时的写法&quot;），<code>箭头函数为什么能避免 this 问题</code>、<code>倒序删除</code>、<code>跨域</code> 那几处是我补充的说明。</p>
+</blockquote>
+<p>下一篇开始写爬虫系列：《爬虫是什么：HTTP 基础与 Requests 入门》。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>Author: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>Permalink: </strong><a href="https://utdog.github.io/en/2025/05/18/%E5%89%8D%E7%AB%AF%E5%AE%9E%E6%88%98-%E8%B4%AA%E5%90%83%E8%9B%87%E4%B8%8EAjax/">https://utdog.github.io/en/2025/05/18/%E5%89%8D%E7%AB%AF%E5%AE%9E%E6%88%98-%E8%B4%AA%E5%90%83%E8%9B%87%E4%B8%8EAjax/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>License: </strong>All articles on this blog are licensed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> license agreement unless otherwise stated. Please indicate the source when reprinting!</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">Sponsor</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">Buy me a coffee</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=%E5%89%8D%E7%AB%AF%E5%AE%9E%E6%88%98%EF%BC%9A%E8%B4%AA%E5%90%83%E8%9B%87%E4%B8%8E%20Ajax&amp;desc=%E5%89%8D%E7%AB%AF%E8%AF%BE%E4%BB%B6%E6%95%B4%E7%90%86%EF%BC%9A%E8%87%AA%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0%E4%B8%8E%E6%A8%A1%E5%9D%97%E5%8C%96%E6%8B%86%E5%88%86%E6%80%9D%E8%B7%AF%EF%BC%8C%E7%94%A8%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%8A%A0%E5%8E%9F%E5%9E%8B%E5%86%99%E8%B4%AA%E5%90%83%E8%9B%87%EF%BC%88Food%2FSnake%2FGame%20%E4%B8%89%E6%A8%A1%E5%9D%97%E3%80%81%E5%B0%BE%E9%9A%8F%E5%A4%B4%E7%A7%BB%E5%8A%A8%E7%AE%97%E6%B3%95%E3%80%81%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%8E%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%EF%BC%89%EF%BC%8C%E4%BB%A5%E5%8F%8A%20Ajax%20%E7%9A%84%20XHR%20%E5%9B%9B%E6%AD%A5%E3%80%81readyState%20%E4%B8%8E%E7%8A%B6%E6%80%81%E7%A0%81%E3%80%81JSON%20%E8%BD%AC%E6%8D%A2%E5%92%8C%20jQuery%20%E5%86%99%E6%B3%95%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="前端实战：贪吃蛇与 Ajax">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="前端实战：贪吃蛇与 Ajax">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/JavaScript/" rel="tag">JavaScript</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/" rel="tag">项目实战</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/11.jpg" data-sizes="auto" alt="爬虫入门：原理、HTTP 与抓包" class="lazyload">
+        
+        <a href="/en/2025/05/19/%E7%88%AC%E8%99%AB%E5%85%A5%E9%97%A8-%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%93%E5%8C%85/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            爬虫入门：原理、HTTP 与抓包
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/44.jpg" data-sizes="auto" alt="前端进阶：jQuery 与 Bootstrap" class="lazyload">
+      
+      <a href="/en/2025/05/17/%E5%89%8D%E7%AB%AF%E8%BF%9B%E9%98%B6-jQuery%E4%B8%8EBootstrap/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          前端进阶：jQuery 与 Bootstrap
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E5%AE%9E%E6%88%98%E8%B4%AA%E5%90%83%E8%9B%87%E4%B8%8E-ajax"><span class="toc-number">1.</span> <span class="toc-text"> 前端实战：贪吃蛇与 Ajax</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%87%AA%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0%E4%B8%8E%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、自执行函数与模块化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%B4%AA%E5%90%83%E8%9B%87food-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、贪吃蛇：Food 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%B4%AA%E5%90%83%E8%9B%87snake-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、贪吃蛇：Snake 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E7%AE%97%E6%B3%95%E5%B0%BE%E9%9A%8F%E5%A4%B4"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 移动算法：尾随头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%83%E9%A3%9F%E7%89%A9%E7%9A%84%E5%88%A4%E6%96%AD%E4%B8%8E%E5%8F%98%E9%95%BF"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 吃食物的判断与变长</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E8%B4%AA%E5%90%83%E8%9B%87game-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、贪吃蛇：Game 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E5%BE%AA%E7%8E%AF%E4%B8%8E%E6%92%9E%E5%A2%99%E5%88%A4%E6%96%AD"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 游戏循环与撞墙判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E6%96%B9%E5%90%91"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 键盘控制方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-ajax%E4%B8%8D%E5%88%B7%E6%96%B0%E9%A1%B5%E9%9D%A2%E4%B9%9F%E8%83%BD%E6%8B%BF%E6%95%B0%E6%8D%AE"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、Ajax：不刷新页面也能拿数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%94%9F%E5%86%99%E6%B3%95%E5%9B%9B%E6%AD%A5"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 原生写法：四步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E7%89%88%E8%BF%98%E8%A6%81%E5%88%A4%E6%96%AD-http-%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-number">1.5.2.</span> <span class="toc-text"> 完整版：还要判断 HTTP 状态码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json-%E4%B8%8E-js-%E5%AF%B9%E8%B1%A1%E4%BA%92%E8%BD%AC"><span class="toc-number">1.5.3.</span> <span class="toc-text"> JSON 与 JS 对象互转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jquery-%E5%86%99%E6%B3%95"><span class="toc-number">1.5.4.</span> <span class="toc-text"> jQuery 写法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%B8%A9%E5%9D%91%E9%80%9F%E6%9F%A5"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、踩坑速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "前端实战：贪吃蛇与 Ajax",
+          url: "https://utdog.github.io/2025/05/18/%E5%89%8D%E7%AB%AF%E5%AE%9E%E6%88%98-%E8%B4%AA%E5%90%83%E8%9B%87%E4%B8%8EAjax/",
+          excerpt: "",
+          description: "前端课件整理：自执行函数与模块化拆分思路，用构造函数加原型写贪吃蛇（Food/Snake/Game 三模块、尾随头移动算法、定时器与键盘控制），以及 Ajax 的 XHR 四步、readyState 与状态码、JSON 转换和 jQuery 写法。",
+          stripContent: " 前端实战：贪吃蛇与 Ajax  前言 上一篇把 JS 的语法、DOM、对象都过了一遍。这一篇是前端课件的收官：先把前面学的对象、原型、数组、定时器、键盘事件串成一个真正的项目——贪吃蛇；再学一个让页面&amp;quot;不用刷新就能拿数据&amp;quot;的技术——Ajax。 课件 day22 的案例里，老师的原话是&amp;quot;我会完全按照工作里面模块化开发的思想来写&amp;quot;。所以这两块正好代表了前端开发的两条主线：页面里的逻辑怎么组织，和页面怎么跟服务器说话。  说明：day22 同样没有 笔记 目录",
+          date: "Sun May 18 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 18:31:42 GMT+0800",
+          cover: "/images/48.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

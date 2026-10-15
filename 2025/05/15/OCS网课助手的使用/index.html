@@ -41,23 +41,18 @@
 
   
   
-    <meta name="description" content="OCS网课助手的使用  前言 网课平台上重复性的操作（找题目、对答案、来回切换页面）很耗时间，OCS 网课助手是我用过的比较完整的一个开源辅助脚本。这篇笔记只记录怎么安装、怎么使用、有哪些坑，同时把边界写清楚：它适合用来查题库、对答案、整理错题，不该被用来代替自己完成本该自己完成的学习任务。请先确认所在学校和平台的规定，再决定要不要用。  一、它是什么 OCS（Online Course Scr">
+    <meta name="description" content="OCS 网课助手的安装与配置笔记：题库匹配、常用功能、常见问题以及使用边界。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OCS网课助手的使用">
 <meta property="og:url" content="https://utdog.github.io/2025/05/15/OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="MyBlog">
-<meta property="og:description" content="OCS网课助手的使用  前言 网课平台上重复性的操作（找题目、对答案、来回切换页面）很耗时间，OCS 网课助手是我用过的比较完整的一个开源辅助脚本。这篇笔记只记录怎么安装、怎么使用、有哪些坑，同时把边界写清楚：它适合用来查题库、对答案、整理错题，不该被用来代替自己完成本该自己完成的学习任务。请先确认所在学校和平台的规定，再决定要不要用。  一、它是什么 OCS（Online Course Scr">
+<meta property="og:description" content="OCS 网课助手的安装与配置笔记：题库匹配、常用功能、常见问题以及使用边界。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-05-14T17:12:38.000Z">
-<meta property="article:modified_time" content="2026-10-15T07:23:30.922Z">
+<meta property="article:modified_time" content="2026-10-15T07:31:24.562Z">
 <meta property="article:author" content="单婉贺">
 <meta property="article:tag" content="工具">
-<meta name="twitter:card" content="&lt;twitter:card&gt;">
-<meta name="twitter:image" content="https://utdog.github.io/2025/05/15/OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8/%3Ctwitter:image%3E">
-<meta name="twitter:creator" content="@&lt;twitter:creator&gt;">
-<meta name="twitter:site" content="<twitter:site>">
-<meta property="fb:admins" content="&lt;fb:admin_id&gt;">
-<meta property="fb:app_id" content="&lt;fb:app_id&gt;">
+<meta name="twitter:card" content="summary_large_image">
   
   
     <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
@@ -321,7 +316,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">28</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -329,7 +324,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">22</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -606,7 +601,7 @@
       
         <div class="share-wrapper">
   
-    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8&amp;desc=OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="OCS网课助手的使用">
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8&amp;desc=OCS%20%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE%E7%AC%94%E8%AE%B0%EF%BC%9A%E9%A2%98%E5%BA%93%E5%8C%B9%E9%85%8D%E3%80%81%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8%E8%BE%B9%E7%95%8C%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="OCS网课助手的使用">
       <div class="share-icon icon icon-qq">
         
       </div>
@@ -618,7 +613,7 @@
           <div id="share-weixin">
             <div class="share-weixin-dom">
               <div class="share-weixin-content">
-                <img id="share-weixin-banner"> 
+                <img id="share-weixin-banner" alt=""> 
                 <div id="share-weixin-title"></div>
                 <div id="share-weixin-desc"></div>
               </div>
@@ -627,7 +622,7 @@
                   <div id="share-weixin-author"></div>
                   <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
                 </div>
-                <img id="share-weixin-qr" >
+                <img id="share-weixin-qr" alt="" >
               </div>
             </div>
             <div class="share-weixin-canvas"></div>
@@ -652,17 +647,31 @@
   
   <nav id="article-nav" data-aos="fade-up">
     
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/30.jpg" data-sizes="auto" alt="CSS 基础：选择器、盒模型与布局" class="lazyload">
+        
+        <a href="/2025/05/15/%E5%89%8D%E7%AB%AF%E5%85%A5%E9%97%A8-CSS/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            CSS 基础：选择器、盒模型与布局
+          
+        </h3>
+      </div>
+    
     
     
     <div class="article-nav-link-wrap article-nav-link-right">
       
-        <img data-src="/images/42.jpg" data-sizes="auto" alt="python全栈爬虫" class="lazyload">
+        <img data-src="/images/29.jpg" data-sizes="auto" alt="前端入门：HTML 标签与页面结构" class="lazyload">
       
-      <a href="/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/"></a>
+      <a href="/2025/05/14/%E5%89%8D%E7%AB%AF%E5%85%A5%E9%97%A8-HTML/"></a>
       <div class="article-nav-caption">后一篇</div>
       <h3 class="article-nav-title">
         
-          python全栈爬虫
+          前端入门：HTML 标签与页面结构
         
       </h3>
     </div>
@@ -709,11 +718,11 @@
       <div>
         <span class="icon-brush"></span>
         <!-- 全站总字数 -->
-        16.3k
+        92k
         &nbsp;|&nbsp;
         <!-- 我们自己算一下所有文章的阅读时长之和 -->
         
-        65分钟
+        366分钟
       </div>
     
     
@@ -751,7 +760,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">28</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -759,7 +768,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">22</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -862,7 +871,7 @@
             <div id="reimu-hits"></div>
             <div id="reimu-pagination" class="reimu-pagination"></div>
           </div>
-          <img class="reimu-bg" src="/images/reimu.png"/>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
         </div>
       </div>
     
@@ -1088,10 +1097,10 @@
           title: "OCS网课助手的使用",
           url: "https://utdog.github.io/2025/05/15/OCS%E7%BD%91%E8%AF%BE%E5%8A%A9%E6%89%8B%E7%9A%84%E4%BD%BF%E7%94%A8/",
           excerpt: "",
-          description: "",
+          description: "OCS 网课助手的安装与配置笔记：题库匹配、常用功能、常见问题以及使用边界。",
           stripContent: " OCS网课助手的使用  前言 网课平台上重复性的操作（找题目、对答案、来回切换页面）很耗时间，OCS 网课助手是我用过的比较完整的一个开源辅助脚本。这篇笔记只记录怎么安装、怎么使用、有哪些坑，同时把边界写清楚：它适合用来查题库、对答案、整理错题，不该被用来代替自己完成本该自己完成的学习任务。请先确认所在学校和平台的规定，再决定要不要用。  一、它是什么 OCS（Online Course Script）是一个浏览器用户脚本（userscript），通过 Tampermonkey 这类脚本管理器",
           date: "Thu May 15 2025 01:12:38 GMT+0800",
-          updated: "Thu Oct 15 2026 15:23:30 GMT+0800",
+          updated: "Thu Oct 15 2026 15:31:24 GMT+0800",
           cover: "/images/1.jpg",
         };
       </script>

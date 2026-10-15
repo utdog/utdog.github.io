@@ -1,0 +1,1414 @@
+
+  <!DOCTYPE html>
+  <html lang="ja"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本ブログのすべての文書は、特に指定されていない限り、BY-NC-SA ライセンスに従っています。引用の際は出典を明記してください！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    Django 项目部署上线：uwsgi + nginx + conda 实战 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="把 single_blog 部署到阿里云 ECS 的完整记录：WSGI&#x2F;uwsgi&#x2F;uWSGI 概念辨析、uwsgi.ini 配置、nginx 源码编译与三个依赖报错、STATIC_ROOT 与 collectstatic，以及缩略图在线上失效的坑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django 项目部署上线：uwsgi + nginx + conda 实战">
+<meta property="og:url" content="https://utdog.github.io/ja/2025/05/08/Django%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="把 single_blog 部署到阿里云 ECS 的完整记录：WSGI&#x2F;uwsgi&#x2F;uWSGI 概念辨析、uwsgi.ini 配置、nginx 源码编译与三个依赖报错、STATIC_ROOT 与 collectstatic，以及缩略图在线上失效的坑。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2025-05-08T13:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:13:41.380Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="Django">
+<meta property="article:tag" content="部署">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/">ホーム</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/archives">アーカイブ</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/about">プロフィール</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/friend">フレンド</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="検索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" class="selected">日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/08/Django项目部署上线/';
+            
+              langMap['en'] = '/en/2025/05/08/Django项目部署上线/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/08/Django项目部署上线/';
+            
+              langMap['ja'] = '/ja/2025/05/08/Django项目部署上线/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/35.jpg" alt="Django 项目部署上线：uwsgi + nginx + conda 实战">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Django 项目部署上线：uwsgi + nginx + conda 实战</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#django-%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BFuwsgi-nginx-conda-%E5%AE%9E%E6%88%98"><span class="toc-number">1.</span> <span class="toc-text"> Django 项目部署上线：uwsgi + nginx + conda 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%85%88%E6%8A%8A%E4%B8%89%E4%B8%AA%E5%90%8D%E5%AD%97%E5%88%86%E6%B8%85wsgi-uwsgi-uwsgi"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、先把三个名字分清：WSGI &#x2F; uwsgi &#x2F; uWSGI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E9%83%A8%E7%BD%B2%E5%89%8D%E5%BF%85%E5%81%9A%E7%9A%84%E5%9B%9B%E4%BB%B6%E4%BA%8B"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、部署前必做的四件事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83%E6%8D%A2%E6%BA%90-conda-%E4%B8%8E%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、服务器环境：换源、conda 与虚拟环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-uwsgi%E5%85%88%E6%8A%8A%E5%BA%94%E7%94%A8%E5%8D%95%E7%8B%AC%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、uWSGI：先把应用单独跑起来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-nginx%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E7%9A%84%E4%B8%89%E4%B8%AA%E6%8A%A5%E9%94%99"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、nginx：源码编译的三个报错</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%89%E7%BA%A7%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 配置文件的三级结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%98%B6%E6%AE%B5%E6%9C%80%E5%AE%B9%E6%98%93%E5%B4%A9%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、静态文件：部署阶段最容易崩的地方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%89%E5%85%A8%E7%BB%84%E6%9C%80%E5%AE%B9%E6%98%93%E5%BF%BD%E7%95%A5%E7%9A%84%E4%B8%80%E6%AD%A5"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、云服务器安全组：最容易忽略的一步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E9%83%A8%E7%BD%B2%E6%A3%80%E6%9F%A5%E6%B8%85%E5%8D%95"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、部署检查清单</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%B8%B8%E8%A7%81%E6%95%85%E9%9A%9C%E9%80%9F%E6%9F%A5"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、常见故障速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Django项目部署上线" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-08T13:00:00.000Z" itemprop="datePublished">2025-05-08</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/ja/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="django-项目部署上线uwsgi-nginx-conda-实战"><a class="markdownIt-Anchor" href="#django-项目部署上线uwsgi-nginx-conda-实战"></a> Django 项目部署上线：uwsgi + nginx + conda 实战</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>本地 <code>python manage.py runserver</code> 能跑，和「别人能访问」是两件事。这是 Django 班的最后一课：把 <code>single_blog</code> 部署到一台阿里云 ECS（Ubuntu/CentOS）上。整个过程我踩的坑大多不在 Django 本身，而在<strong>nginx 编译依赖、静态文件路径、云服务器安全组</strong>这三处。</p>
+<p>这篇笔记按实际部署顺序记录，配置都来自课程课件，可以直接对照。</p>
+<h2 id="一-先把三个名字分清wsgi-uwsgi-uwsgi"><a class="markdownIt-Anchor" href="#一-先把三个名字分清wsgi-uwsgi-uwsgi"></a> 一、先把三个名字分清：WSGI / uwsgi / uWSGI</h2>
+<p>课件开篇专门强调这一点，因为这三个词差一个字母，含义完全不同：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>是什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WSGI</strong></td>
+<td>Web Server Gateway Interface，Python PEP333 提出的<strong>通信协议</strong>规范，约定 wsgi server 怎么调用 web 应用</td>
+</tr>
+<tr>
+<td><strong>uwsgi</strong></td>
+<td>一种<strong>线路协议</strong>（不是通信协议），常用于 uWSGI 服务器与其他网络服务器之间的数据通信</td>
+</tr>
+<tr>
+<td><strong>uWSGI</strong></td>
+<td>一个<strong>Web 服务器</strong>，实现了 uwsgi 和 WSGI 两种协议</td>
+</tr>
+</tbody>
+</table>
+<p>为什么需要 WSGI：Django、Flask 这些框架内部实现各不相同，如果没有统一规范，服务器就得为每个框架写一套适配；有了 WSGI，只要双方都遵守协议，<strong>应用和服务器就能随意组合</strong>。</p>
+<p>nginx 与 uWSGI 的完整交互流程：</p>
+<pre class="mermaid">graph TD
+    A[浏览器] -->|HTTP 请求| B[nginx 80/8888]
+    B -->|静态文件| C[直接返回 static 目录]
+    B -->|动态请求 uwsgi_pass| D[uWSGI 8080]
+    D --> E[WSGI]
+    E --> F[Django 视图]
+    F --> E --> D --> B --> A</pre>
+<p>六步：① nginx 作为对外的服务接口接收 HTTP 请求，解包分析；② 静态文件请求，nginx 按配置目录直接返回；③ 动态请求通过配置转发给 uWSGI；④ uWSGI 处理后再转给 WSGI，WSGI 调用 Django 的某个视图函数；⑤ Django 返回结果交给 WSGI 打包，再回给 uWSGI；⑥ uWSGI 回给 nginx，nginx 最终返回给浏览器。</p>
+<p><strong>nginx 负责静态文件和反向代理，uWSGI 负责跑 Python 应用</strong>——这就是典型的动静分离。</p>
+<h2 id="二-部署前必做的四件事"><a class="markdownIt-Anchor" href="#二-部署前必做的四件事"></a> 二、部署前必做的四件事</h2>
+<p>课件把这一步叫「部署准备」，漏一件都会在后面报错：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. settings.py 关闭调试开关</span></span><br><span class="line">DEBUG = <span class="literal">False</span>                 <span class="comment"># 用户请求出错时看到错误页，而不是完整堆栈</span></span><br><span class="line">ALLOWED_HOSTS = [<span class="string">&#x27;*&#x27;</span>, ]       <span class="comment"># 生产环境建议写成具体域名/IP</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 导出依赖清单（在本地虚拟环境里执行）</span></span><br><span class="line">conda activate py36_yangtuo</span><br><span class="line">pip freeze &gt; requirements.txt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3. 把整个项目 + requirements.txt 上传到服务器</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">   可用 WinSCP、FTP，或者提交到 Git 后在服务器 git <span class="built_in">clone</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">4. 删除本地测试时生成的迁移文件，否则服务器上无法重新迁移</span></span><br></pre></td></tr></table></figure>
+<p>第 4 条是课件特意点出来的：本地测试时数据库里已经执行过迁移，那些 <code>0001_initial.py</code> 之类如果直接带到新服务器，<code>migrate</code> 会因为「迁移记录与数据库不一致」出问题。<strong>新环境就该重新 <code>makemigrations</code> + <code>migrate</code>。</strong></p>
+<h2 id="三-服务器环境换源-conda-与虚拟环境"><a class="markdownIt-Anchor" href="#三-服务器环境换源-conda-与虚拟环境"></a> 三、服务器环境：换源、conda 与虚拟环境</h2>
+<p>国内服务器第一步永远是换 pip 源，否则装包能等到怀疑人生：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/.pip &amp;&amp; cd ~/.pip &amp;&amp; touch pip.conf</span><br><span class="line">sudo vim ~/.pip/pip.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line"><span class="attr">index-url</span> = https://pypi.tuna.tsinghua.edu.cn/simple/</span><br><span class="line"><span class="section">[install]</span></span><br><span class="line"><span class="attr">trusted-host</span> = pypi.tuna.tsinghua.edu.cn</span><br></pre></td></tr></table></figure>
+<p>（阿里云内网还可以换成 <code>http://mirrors.cloud.aliyuncs.com/pypi/simple/</code>，更快。）</p>
+<p>课程里介绍了两种虚拟环境方案：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">方案 A：virtualenv + virtualenvwrapper（课件 10 用的是这套）</span></span><br><span class="line">sudo apt-get install python-virtualenv</span><br><span class="line">sudo pip install virtualenvwrapper</span><br><span class="line">mkdir $HOME/.virtualenvs</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在 ~/.bashrc 里加：<span class="built_in">export</span> WORKON_HOME=<span class="variable">$HOME</span>/.virtualenvs</span></span><br><span class="line">source /usr/local/bin/virtualenvwrapper.sh</span><br><span class="line">source ~/.bashrc</span><br><span class="line"></span><br><span class="line">mkvirtualenv py3            # 创建</span><br><span class="line">workon py3                  # 进入</span><br><span class="line">deactivate                  # 退出</span><br><span class="line">rmvirtualenv py3            # 删除（慎用）</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">方案 B：conda（课件 11 实际用的是这套，服务器上装 Miniconda）</span></span><br><span class="line">wget https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-py310_23.10.0-1-Linux-x86_64.sh</span><br><span class="line">bash Miniconda3-py310_23.10.0-1-Linux-x86_64.sh    # 一路回车 + yes，路径与&quot;加入环境变量&quot;都选 yes</span><br><span class="line"></span><br><span class="line">conda env list                                      # 查看已有环境</span><br><span class="line">conda create --name py36_conda python=3.6           # 建环境</span><br><span class="line">conda activate py36_conda                           # 激活</span><br><span class="line">conda env export &gt; py36_conda.yaml                  # 导出环境</span><br><span class="line">conda env create -f py36_conda.yaml                 # 还原环境</span><br><span class="line">conda remove -n py36_conda --all                    # 删除环境</span><br></pre></td></tr></table></figure>
+<p><strong>要注意的几个细节</strong>（课件里都踩过）：</p>
+<ul>
+<li>用 conda 装 DjangoUeditor 这类本地包会失败，要 <code>python -m pip install --upgrade pip</code> 后用 pip 装，或者直接 <code>conda install --yes --file requirements.txt</code>；</li>
+<li><code>DjangoUeditor</code> 是用 <code>python setup.py install</code> 装进 site-packages 的，服务器上要么重新安装，要么把本地 <code>site-packages/DjangoUeditor</code> 整个目录复制到服务器的<strong>相同位置</strong>；</li>
+<li>haystack 的中文检索改过源码（<code>ChineseAnalyzer.py</code>、<code>whoosh_cn_backend.py</code>），这两个文件也要一起复制到服务器 site-packages 的对应目录，否则线上搜不到中文。</li>
+</ul>
+<h2 id="四-uwsgi先把应用单独跑起来"><a class="markdownIt-Anchor" href="#四-uwsgi先把应用单独跑起来"></a> 四、uWSGI：先把应用单独跑起来</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">conda activate py36_conda</span><br><span class="line">pip install uwsgi</span><br></pre></td></tr></table></figure>
+<p>在项目根目录建 <code>uwsgi.ini</code>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[uwsgi]</span></span><br><span class="line"><span class="comment"># 使用 nginx 连接时使用 socket</span></span><br><span class="line"><span class="attr">socket</span> = <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8080</span></span><br><span class="line"><span class="comment"># 直接做 web 服务器时用 http（调试阶段先开这个）</span></span><br><span class="line"><span class="comment"># http = 127.0.0.1:8080</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 项目目录</span></span><br><span class="line"><span class="attr">chdir</span> = /cychome/single_blog</span><br><span class="line"><span class="comment"># 项目中 wsgi.py 文件的目录，相对于项目目录</span></span><br><span class="line"><span class="attr">wsgi-file</span> = single_blog/wsgi.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启进程数</span></span><br><span class="line"><span class="attr">processes</span> = <span class="number">4</span></span><br><span class="line"><span class="comment"># 每个进程开的线程数量</span></span><br><span class="line"><span class="attr">threads</span> = <span class="number">2</span></span><br><span class="line"><span class="comment"># 开启主进程</span></span><br><span class="line"><span class="attr">master</span> = <span class="literal">True</span></span><br><span class="line"><span class="comment"># 保存 uwsgi pid 号文件</span></span><br><span class="line"><span class="attr">pidfile</span> = uwsgi.pid</span><br><span class="line"><span class="comment"># 日志文件</span></span><br><span class="line"><span class="attr">daemonize</span> = uwsgi.log</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">uwsgi --ini uwsgi.ini          # 启动</span><br><span class="line">ps aux | grep uwsgi            # 看进程</span><br><span class="line">tail -100f /cychome/single_blog/uwsgi.log   # 看日志</span><br><span class="line">uwsgi --stop uwsgi.pid         # 停止</span><br><span class="line">curl 127.0.0.1:8080            # 本机自测</span><br></pre></td></tr></table></figure>
+<p><strong>这里有一个很重要的顺序</strong>：先用 <code>http=127.0.0.1:8080</code> 直接测通（浏览器访问 <code>http://服务器IP:8080/index/</code>），确认 Django 自己能跑；<strong>测试没问题后，再把 <code>http</code> 注释掉、启用 <code>socket</code>，重启 uwsgi 接上 nginx</strong>。先排掉应用层的问题，再去查 nginx，能省掉一半时间。</p>
+<blockquote>
+<p>另外切记：<strong>启用 uwsgi 之后，改了视图或配置都需要重启 uwsgi 才生效</strong>，这点和 <code>runserver</code> 的自动重载完全不同。</p>
+</blockquote>
+<h2 id="五-nginx源码编译的三个报错"><a class="markdownIt-Anchor" href="#五-nginx源码编译的三个报错"></a> 五、nginx：源码编译的三个报错</h2>
+<p>课件里完整走了一遍源码安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tar zxvf nginx-1.6.3.tar.gz</span><br><span class="line">cd nginx-1.6.3</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<p><code>./configure</code> 阶段几乎一定会报错，课件记录了三个：</p>
+<table>
+<thead>
+<tr>
+<th>报错</th>
+<th>缺什么</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>the HTTP rewrite module requires the PCRE library</code></td>
+<td>PCRE</td>
+<td><code>sudo apt install libpcre3 libpcre3-dev</code></td>
+</tr>
+<tr>
+<td><code>the HTTP gzip module requires the zlib library</code></td>
+<td>zlib</td>
+<td>下载 zlib 源码解压安装（<code>./configure &amp;&amp; make &amp;&amp; sudo make install</code>）</td>
+</tr>
+<tr>
+<td>其他 SSL 相关</td>
+<td>openssl</td>
+<td><code>sudo apt install openssl libssl-dev</code></td>
+</tr>
+</tbody>
+</table>
+<p>如果 Ubuntu 上嫌编译麻烦，直接 <code>sudo apt-get install nginx</code> 也行（课件后面也用了这种方式）；源码装的话默认落在 <code>/usr/local/nginx/</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/nginx/</span><br><span class="line">sudo sbin/nginx              # 启动</span><br><span class="line">ps ajx | grep nginx          # 看进程</span><br><span class="line">sudo sbin/nginx -s stop      # 停止</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">apt 装的用 service 管理</span></span><br><span class="line">sudo service nginx start|restart|stop</span><br></pre></td></tr></table></figure>
+<h3 id="配置文件的三级结构"><a class="markdownIt-Anchor" href="#配置文件的三级结构"></a> 配置文件的三级结构</h3>
+<p>nginx 处理 HTTP 请求主要看三个节点：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http      —— 所有 http 请求的处理</span><br><span class="line">  server  —— 监听端口、绑定服务器</span><br><span class="line">    location —— 匹配请求路径，转到对应处理</span><br></pre></td></tr></table></figure>
+<p>把动态请求转给 uwsgi，就是加一段 <code>location</code>：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8888</span>;                      <span class="comment"># 云服务器上用 8888（80 常被占用/需备案）</span></span><br><span class="line">    <span class="attribute">server_name</span> yangtuo.com;          <span class="comment"># 域名，没有就写 127.0.0.1 或服务器 IP</span></span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">include</span> uwsgi_params;         <span class="comment"># 把参数都转给 uwsgi</span></span><br><span class="line">        <span class="attribute">uwsgi_pass</span> <span class="number">127.0.0.1:8080</span>;    <span class="comment"># uwsgi 的 ip 与端口</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> /static &#123;</span><br><span class="line">        <span class="attribute">alias</span> /var/www/myblog/static/;   <span class="comment"># 静态文件直接由 nginx 返回</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>uwsgi_params</code> 是 nginx 自带的参数文件，<code>uwsgi_pass</code> 要和 <code>uwsgi.ini</code> 里的 <code>socket</code> 对上。</p>
+<p>有个细节坑：<code>/etc/nginx/nginx.conf</code> 里有一行 <code>include /etc/nginx/conf.d/*.conf;</code>，同时 Ubuntu 版还有 <code>include /etc/nginx/sites-enabled/*.conf;</code>——<strong>默认配置会占用 80 端口</strong>，自己加 server 前先把默认那行注释掉，否则「配置改了却不生效」或者直接端口冲突。</p>
+<h2 id="六-静态文件部署阶段最容易崩的地方"><a class="markdownIt-Anchor" href="#六-静态文件部署阶段最容易崩的地方"></a> 六、静态文件：部署阶段最容易崩的地方</h2>
+<p>Django 在 <code>DEBUG=True</code> 时由自己托管静态文件，<strong><code>DEBUG=False</code> 之后必须交给 nginx</strong>，否则 CSS/JS/图片全 404。三步：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 建静态文件目录</span></span><br><span class="line">sudo mkdir -p /var/www/myblog/static/</span><br><span class="line">sudo chmod 777 /var/www/myblog/static/</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 2. settings.py 指向 nginx 的目录</span></span><br><span class="line"><span class="comment"># 开发时用的这两行要注释掉：</span></span><br><span class="line"><span class="comment"># STATICFILES_DIRS = [os.path.join(BASE_DIR, &#x27;static&#x27;)]</span></span><br><span class="line"><span class="comment"># MEDIA_ROOT = os.path.join(BASE_DIR, &#x27;static/media&#x27;)</span></span><br><span class="line">STATIC_ROOT = <span class="string">&#x27;/var/www/myblog/static/&#x27;</span></span><br><span class="line">STATIC_URL = <span class="string">&#x27;/static/&#x27;</span></span><br><span class="line">MEDIA_ROOT = os.path.join(STATIC_ROOT, <span class="string">&quot;media&quot;</span>)</span><br><span class="line">MEDIA_URL = <span class="string">&#x27;/static/media/&#x27;</span></span><br><span class="line">THUMB_DIR = os.path.join(STATIC_ROOT, <span class="string">&#x27;media/thumb/&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3. 把所有静态文件收集到 STATIC_ROOT</span></span><br><span class="line">python manage.py collectstatic       # 会提示是否覆盖，输入 yes</span><br></pre></td></tr></table></figure>
+<p><strong>缩略图那个坑</strong>（课件专门记了一笔）：<code>Post.save()</code> 里原来算缩略图 url 的方式是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">self</span>.thumb = ImageFieldFile(<span class="variable language_">self</span>, <span class="variable language_">self</span>.thumb, thumb_path.split(BASE_DIR)[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><code>BASE_DIR</code> 在本地指项目根目录，没问题；但部署后 <code>THUMB_DIR</code> 变成了 <code>/var/www/myblog/static/media/thumb/</code>，不在 <code>BASE_DIR</code> 下了，<code>split(BASE_DIR)[-1]</code> 切不出以 <code>/static/</code> 开头的路径，图片就 404。改成按 <code>STATIC_ROOT</code> 切：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">self</span>.thumb = ImageFieldFile(<span class="variable language_">self</span>, <span class="variable language_">self</span>.thumb, <span class="string">&#x27;/static/&#x27;</span> + thumb_path.split(settings.STATIC_ROOT)[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>教训</strong>：凡是「路径拼接」的代码，只要目录结构在部署后会变，就一定会出问题——所以部署后要把涉及路径的功能（头像、缩略图、附件）都点一遍。</p>
+<h2 id="七-云服务器安全组最容易忽略的一步"><a class="markdownIt-Anchor" href="#七-云服务器安全组最容易忽略的一步"></a> 七、云服务器安全组：最容易忽略的一步</h2>
+<p>在阿里云的控制台里，<strong>端口不是开了服务就能访问的</strong>，还要在安全组里放行：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">云服务器 / 实例 / 安全组 / 内网入方向全部规则 / 手动添加：</span><br><span class="line">  8080  0.0.0.0/0    （uwsgi 自测用）</span><br><span class="line">  8888  0.0.0.0/0    （nginx 对外端口）</span><br></pre></td></tr></table></figure>
+<p>另外防火墙一般直接关掉（云服务器由安全组统一管控）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl disable firewalld</span><br><span class="line">systemctl status firewalld</span><br></pre></td></tr></table></figure>
+<p>现象对照：<strong>本机 <code>curl 127.0.0.1:8888</code> 通、外网打不开 → 十有八九是安全组没放行</strong>，不是 nginx 的问题。</p>
+<h2 id="八-部署检查清单"><a class="markdownIt-Anchor" href="#八-部署检查清单"></a> 八、部署检查清单</h2>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令 / 配置</th>
+<th>验证方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>关调试</td>
+<td><code>DEBUG=False</code>、<code>ALLOWED_HOSTS</code></td>
+<td>故意访问不存在页面，看到错误页而非堆栈</td>
+</tr>
+<tr>
+<td>依赖</td>
+<td><code>pip freeze &gt; requirements.txt</code>、服务器 <code>pip install -r</code></td>
+<td><code>pip list</code> 对照</td>
+</tr>
+<tr>
+<td>迁移</td>
+<td>删旧迁移文件 → <code>makemigrations</code> + <code>migrate</code></td>
+<td><code>createsuperuser</code> 后能登录 admin</td>
+</tr>
+<tr>
+<td>uwsgi</td>
+<td><code>uwsgi --ini uwsgi.ini</code></td>
+<td><code>curl 127.0.0.1:8080</code></td>
+</tr>
+<tr>
+<td>nginx</td>
+<td><code>nginx.conf</code> 加 <code>location</code> + <code>/static</code></td>
+<td><code>curl 127.0.0.1:8888</code></td>
+</tr>
+<tr>
+<td>静态文件</td>
+<td><code>STATIC_ROOT</code> + <code>collectstatic</code> + <code>chmod</code></td>
+<td>打开首页看 CSS/图片是否加载</td>
+</tr>
+<tr>
+<td>媒体文件</td>
+<td><code>MEDIA_ROOT</code>/<code>THUMB_DIR</code> 指向 STATIC_ROOT</td>
+<td>上传一张封面，看缩略图是否显示</td>
+</tr>
+<tr>
+<td>安全组</td>
+<td>放行 8080 / 8888</td>
+<td>外部浏览器访问</td>
+</tr>
+</tbody>
+</table>
+<h2 id="九-常见故障速查"><a class="markdownIt-Anchor" href="#九-常见故障速查"></a> 九、常见故障速查</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>可能原因</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>502 Bad Gateway</td>
+<td>uwsgi 没起来 / <code>uwsgi_pass</code> 端口不对</td>
+<td><code>ps aux | grep uwsgi</code>，看 <code>uwsgi.log</code></td>
+</tr>
+<tr>
+<td>页面样式全丢</td>
+<td><code>collectstatic</code> 没做或 <code>STATIC_ROOT</code> 不对</td>
+<td>重跑 <code>collectstatic</code>，检查 nginx <code>alias</code></td>
+</tr>
+<tr>
+<td>改代码不生效</td>
+<td>没重启 uwsgi</td>
+<td><code>uwsgi --stop uwsgi.pid</code> 后再 <code>--ini</code> 启动</td>
+</tr>
+<tr>
+<td>外网访问不了，本机 curl 正常</td>
+<td>安全组/防火墙</td>
+<td>控制台放行端口</td>
+</tr>
+<tr>
+<td><code>configure: error</code> 缺库</td>
+<td>PCRE / zlib / openssl</td>
+<td>按上表装依赖</td>
+</tr>
+<tr>
+<td>上传的图片 404，缩略图不显示</td>
+<td>路径按 BASE_DIR 拼接</td>
+<td>改成按 STATIC_ROOT 拼，见第六节</td>
+</tr>
+<tr>
+<td>中文搜索无结果</td>
+<td>haystack 改了源码没同步到服务器</td>
+<td>复制 <code>ChineseAnalyzer.py</code>、<code>whoosh_cn_backend.py</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>部署这一课的价值不在于记住命令，而在于理解**「谁负责哪一段」**：nginx 管对外的端口、静态文件和反向代理，uWSGI 管跑 Python 应用，WSGI 是两者之间的约定，Django 只管业务逻辑。想通这条链路之后，502、静态 404、端口不通这三类报错就都能对号入座了。</p>
+<p>顺带一提，本博客（Hexo 静态站点）的部署和这里是两条完全不同的路：它没有「应用进程」，<code>hexo generate</code> 出的就是纯静态文件，推到 GitHub Pages 即可，不需要 uwsgi 和 nginx。<strong>动态站点部署的是进程，静态站点部署的是文件</strong>——这句话是我学完这一课最直观的收获。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>著者: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>パーマリンク: </strong><a href="https://utdog.github.io/ja/2025/05/08/Django%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF/">https://utdog.github.io/ja/2025/05/08/Django%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>ライセンス: </strong>本ブログのすべての文書は、特に指定されていない限り、<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> ライセンスに従っています。引用の際は出典を明記してください！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">スポンサー</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">コーヒーを買ってください</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=Django%20%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF%EF%BC%9Auwsgi%20%2B%20nginx%20%2B%20conda%20%E5%AE%9E%E6%88%98&amp;desc=%E6%8A%8A%20single_blog%20%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%20ECS%20%E7%9A%84%E5%AE%8C%E6%95%B4%E8%AE%B0%E5%BD%95%EF%BC%9AWSGI%2Fuwsgi%2FuWSGI%20%E6%A6%82%E5%BF%B5%E8%BE%A8%E6%9E%90%E3%80%81uwsgi.ini%20%E9%85%8D%E7%BD%AE%E3%80%81nginx%20%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E4%B8%8E%E4%B8%89%E4%B8%AA%E4%BE%9D%E8%B5%96%E6%8A%A5%E9%94%99%E3%80%81STATIC_ROOT%20%E4%B8%8E%20collectstatic%EF%BC%8C%E4%BB%A5%E5%8F%8A%E7%BC%A9%E7%95%A5%E5%9B%BE%E5%9C%A8%E7%BA%BF%E4%B8%8A%E5%A4%B1%E6%95%88%E7%9A%84%E5%9D%91%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="Django 项目部署上线：uwsgi + nginx + conda 实战">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="Django 项目部署上线：uwsgi + nginx + conda 实战">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Django/" rel="tag">Django</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/%E9%83%A8%E7%BD%B2/" rel="tag">部署</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/32.jpg" data-sizes="auto" alt="Python 网络编程：从 socket 到 IO 多路复用" class="lazyload">
+        
+        <a href="/ja/2025/05/09/Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"></a>
+        <div class="article-nav-caption">次の記事</div>
+        <h3 class="article-nav-title">
+          
+            Python 网络编程：从 socket 到 IO 多路复用
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/34.jpg" data-sizes="auto" alt="Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索" class="lazyload">
+      
+      <a href="/ja/2025/05/07/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8B/"></a>
+      <div class="article-nav-caption">前の記事</div>
+      <h3 class="article-nav-title">
+        
+          Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#django-%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BFuwsgi-nginx-conda-%E5%AE%9E%E6%88%98"><span class="toc-number">1.</span> <span class="toc-text"> Django 项目部署上线：uwsgi + nginx + conda 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%85%88%E6%8A%8A%E4%B8%89%E4%B8%AA%E5%90%8D%E5%AD%97%E5%88%86%E6%B8%85wsgi-uwsgi-uwsgi"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、先把三个名字分清：WSGI &#x2F; uwsgi &#x2F; uWSGI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E9%83%A8%E7%BD%B2%E5%89%8D%E5%BF%85%E5%81%9A%E7%9A%84%E5%9B%9B%E4%BB%B6%E4%BA%8B"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、部署前必做的四件事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83%E6%8D%A2%E6%BA%90-conda-%E4%B8%8E%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、服务器环境：换源、conda 与虚拟环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-uwsgi%E5%85%88%E6%8A%8A%E5%BA%94%E7%94%A8%E5%8D%95%E7%8B%AC%E8%B7%91%E8%B5%B7%E6%9D%A5"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、uWSGI：先把应用单独跑起来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-nginx%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E7%9A%84%E4%B8%89%E4%B8%AA%E6%8A%A5%E9%94%99"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、nginx：源码编译的三个报错</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%89%E7%BA%A7%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 配置文件的三级结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%98%B6%E6%AE%B5%E6%9C%80%E5%AE%B9%E6%98%93%E5%B4%A9%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、静态文件：部署阶段最容易崩的地方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%89%E5%85%A8%E7%BB%84%E6%9C%80%E5%AE%B9%E6%98%93%E5%BF%BD%E7%95%A5%E7%9A%84%E4%B8%80%E6%AD%A5"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、云服务器安全组：最容易忽略的一步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E9%83%A8%E7%BD%B2%E6%A3%80%E6%9F%A5%E6%B8%85%E5%8D%95"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、部署检查清单</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%B8%B8%E8%A7%81%E6%95%85%E9%9A%9C%E9%80%9F%E6%9F%A5"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、常见故障速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "Django 项目部署上线：uwsgi + nginx + conda 实战",
+          url: "https://utdog.github.io/2025/05/08/Django%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF/",
+          excerpt: "",
+          description: "把 single_blog 部署到阿里云 ECS 的完整记录：WSGI/uwsgi/uWSGI 概念辨析、uwsgi.ini 配置、nginx 源码编译与三个依赖报错、STATIC_ROOT 与 collectstatic，以及缩略图在线上失效的坑。",
+          stripContent: " Django 项目部署上线：uwsgi + nginx + conda 实战  前言 本地 python manage.py runserver 能跑，和「别人能访问」是两件事。这是 Django 班的最后一课：把 single_blog 部署到一台阿里云 ECS（Ubuntu/CentOS）上。整个过程我踩的坑大多不在 Django 本身，而在nginx 编译依赖、静态文件路径、云服务器安全组这三处。 这篇笔记按实际部署顺序记录，配置都来自课程课件，可以直接对照。  一、先把三个名字分清：W",
+          date: "Thu May 08 2025 21:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:13:41 GMT+0800",
+          cover: "/images/35.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

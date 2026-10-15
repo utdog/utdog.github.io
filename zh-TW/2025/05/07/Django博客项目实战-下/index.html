@@ -1,0 +1,1317 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-TW"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本部落格所有文章除特別聲明外，均採用 BY-NC-SA 授權協議。轉載請註明出處！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="single_blog 项目扩展篇：不用 auth 自建用户系统、session 做每日一赞、Post.save() 两段式生成缩略图、UEditor 富文本接入，以及 haystack+whoosh+jieba 中文全文检索的三处源码改造。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索">
+<meta property="og:url" content="https://utdog.github.io/zh-TW/2025/05/07/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8B/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="single_blog 项目扩展篇：不用 auth 自建用户系统、session 做每日一赞、Post.save() 两段式生成缩略图、UEditor 富文本接入，以及 haystack+whoosh+jieba 中文全文检索的三处源码改造。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-05-07T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:10:52.908Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="项目实战">
+<meta property="article:tag" content="Django">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈禱中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/">首頁</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/archives">歸檔</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/about">關於</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/zh-TW/friend">友鏈</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 訂閱" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜尋"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">正體中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" class="selected">正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/07/Django博客项目实战-下/';
+            
+              langMap['en'] = '/en/2025/05/07/Django博客项目实战-下/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/07/Django博客项目实战-下/';
+            
+              langMap['ja'] = '/ja/2025/05/07/Django博客项目实战-下/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/34.jpg" alt="Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#django-%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E4%B8%8B%E7%99%BB%E5%BD%95%E6%B3%A8%E5%86%8C-%E8%AF%84%E8%AE%BA%E7%82%B9%E8%B5%9E-%E7%BC%A9%E7%95%A5%E5%9B%BE%E4%B8%8E%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2"><span class="toc-number">1.</span> <span class="toc-text"> Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%87%AA%E5%BB%BA%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E4%B8%8D%E7%94%A8-auth-%E4%B9%9F%E8%83%BD%E5%81%9A"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、自建用户系统：不用 auth 也能做</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%8E%E7%99%BB%E5%BD%95%E7%B1%BB%E8%A7%86%E5%9B%BE-%E4%B8%80%E6%95%B4%E5%A5%97%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 注册与登录：类视图 + 一整套校验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%AF%84%E8%AE%BA%E8%A7%86%E5%9B%BE%E8%A3%85%E9%A5%B0%E5%99%A8-jsonresponse"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、评论：视图装饰器 + JsonResponse</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%82%B9%E8%B5%9E%E7%94%A8-session-%E5%81%9A%E6%AF%8F%E6%97%A5%E4%B8%80%E8%B5%9E"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、点赞：用 session 做「每日一赞」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AF%8C%E6%96%87%E6%9C%AC%E4%B8%8E%E8%87%AA%E5%8A%A8%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、富文本与自动缩略图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5-djangoueditor"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 接入 DjangoUeditor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%86%99-save-%E7%94%9F%E6%88%90%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 重写 save() 生成缩略图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-haystack-whoosh-jieba%E4%B8%AD%E6%96%87%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、haystack + whoosh + jieba：中文全文检索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%9D%91whoosh-%E9%BB%98%E8%AE%A4%E4%B8%8D%E6%94%AF%E6%8C%81%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 关键坑：whoosh 默认不支持中文分词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="toc-number">1.5.2.</span> <span class="toc-text"> 建立索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%86%99-searchview-%E6%B3%A8%E5%85%A5%E5%85%AC%E5%85%B1%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">1.5.3.</span> <span class="toc-text"> 重写 SearchView 注入公共上下文</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Django博客项目实战-下" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-07T12:00:00.000Z" itemprop="datePublished">2025-05-07</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/zh-TW/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="django-博客项目实战下登录注册-评论点赞-缩略图与全文检索"><a class="markdownIt-Anchor" href="#django-博客项目实战下登录注册-评论点赞-缩略图与全文检索"></a> Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>上篇把博客的骨架搭好了：模型、后台、模板、首页与详情页。这篇写四块「让站点活起来」的扩展——<strong>自建用户系统、评论与点赞、富文本与自动缩略图、中文全文检索</strong>。其中 haystack 那部分的坑最多，网上大部分教程都没讲清中文分词要改源码这件事。</p>
+<h2 id="一-自建用户系统不用-auth-也能做"><a class="markdownIt-Anchor" href="#一-自建用户系统不用-auth-也能做"></a> 一、自建用户系统：不用 auth 也能做</h2>
+<p>课程里没有直接用 Django 自带的 <code>auth</code>，而是新建了一个 <code>login</code> 应用、自己建用户表。理由很实际：<strong>自带 User 表字段固定</strong>（username/email/password…），想加「是否注销」「注册时间」这类业务字段就得额外建 Profile 表关联，不如自己写一张干净的表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># login/models.py</span></span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span>(models.Model):</span><br><span class="line">    username = models.CharField(max_length=<span class="number">16</span>, unique=<span class="literal">True</span>)   <span class="comment"># 用户名唯一</span></span><br><span class="line">    password = models.CharField(max_length=<span class="number">255</span>)               <span class="comment"># 存 sha1 密文</span></span><br><span class="line">    is_delete = models.BooleanField(default=<span class="literal">False</span>)            <span class="comment"># 逻辑删除</span></span><br><span class="line">    create_time = models.DateTimeField(auto_now_add=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        verbose_name_plural = <span class="string">&quot;用户&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.username</span><br></pre></td></tr></table></figure>
+<p>密码不能明文存。课程里的做法是抽一个工具函数集中处理加密：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># utils/Helper.py</span></span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gen_sha1_pwd</span>(<span class="params">password</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;hash 加密&quot;&quot;&quot;</span></span><br><span class="line">    s = hashlib.sha1()</span><br><span class="line">    s.update(password.encode(<span class="string">&quot;utf-8&quot;</span>))</span><br><span class="line">    <span class="keyword">return</span> s.hexdigest()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：SHA-1 现在<strong>不安全</strong>（已被碰撞攻击攻破，且没有加盐，彩虹表可查）。课程用它只是入门演示，正规项目应该用 Django 自带的 <code>make_password</code> / <code>check_password</code>（内部是 PBKDF2）或 bcrypt/argon2。</p>
+</blockquote>
+<h3 id="注册与登录类视图-一整套校验"><a class="markdownIt-Anchor" href="#注册与登录类视图-一整套校验"></a> 注册与登录：类视图 + 一整套校验</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># login/views.py</span></span><br><span class="line"><span class="keyword">from</span> django.views.generic <span class="keyword">import</span> View</span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> JsonResponse</span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render, redirect</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> User</span><br><span class="line"><span class="keyword">from</span> utils.Helper <span class="keyword">import</span> gen_sha1_pwd</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Reg</span>(<span class="title class_ inherited__">View</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;注册&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, request</span>):</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">&quot;login/reg.html&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        username = request.POST.get(<span class="string">&quot;username&quot;</span>)</span><br><span class="line">        password = request.POST.get(<span class="string">&quot;password&quot;</span>)</span><br><span class="line">        cpassword = request.POST.get(<span class="string">&quot;cpassword&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">all</span>([username, password, cpassword]):</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;有必填项未填写&quot;</span>&#125;)</span><br><span class="line">        <span class="keyword">if</span> username.isdigit():</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;账号不能全为数字&quot;</span>&#125;)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> (<span class="number">4</span> &lt; <span class="built_in">len</span>(username) &lt; <span class="number">16</span>):</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;用户名必须4-16位&quot;</span>&#125;)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> re.<span class="keyword">match</span>(<span class="string">&quot;[0-9a-zA-Z!@#$%^&amp;*()]&#123;4,16&#125;&quot;</span>, password):</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;密码为4-16位数字、字母、特殊符号&quot;</span>&#125;)</span><br><span class="line">        <span class="keyword">if</span> password != cpassword:</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;两次输入的密码不一致&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">        u = User()</span><br><span class="line">        u.username = username</span><br><span class="line">        u.password = gen_sha1_pwd(password)</span><br><span class="line">        u.save()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 注册成功直接算登录</span></span><br><span class="line">        request.session[<span class="string">&quot;username&quot;</span>] = u.username</span><br><span class="line">        request.session.set_expiry(<span class="number">24</span> * <span class="number">60</span> * <span class="number">60</span>)      <span class="comment"># 会话有效期一天</span></span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">1</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;注册成功&quot;</span>, <span class="string">&quot;url&quot;</span>: <span class="string">&quot;/&quot;</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>登录视图的逻辑对称，核心是「先查用户是否存在，再比密码哈希」：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Login</span>(<span class="title class_ inherited__">View</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self, request</span>):</span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">&quot;login/login.html&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">post</span>(<span class="params">self, request</span>):</span><br><span class="line">        username = request.POST.get(<span class="string">&quot;username&quot;</span>)</span><br><span class="line">        password = request.POST.get(<span class="string">&quot;password&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">all</span>([username, password]):</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;参数错误&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">        user = User.objects.<span class="built_in">filter</span>(username=username).first()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> user:</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;账号未注册&quot;</span>&#125;)</span><br><span class="line">        <span class="keyword">if</span> user.password != gen_sha1_pwd(password):</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;账号或者密码错误&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;username&quot;</span> <span class="keyword">in</span> request.session:</span><br><span class="line">            <span class="keyword">del</span> request.session[<span class="string">&quot;username&quot;</span>]           <span class="comment"># 把上一个登录的账号下线</span></span><br><span class="line">        request.session[<span class="string">&quot;username&quot;</span>] = user.username</span><br><span class="line">        request.session.set_expiry(<span class="number">24</span> * <span class="number">60</span> * <span class="number">60</span>)</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">1</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;登录成功&quot;</span>, <span class="string">&quot;url&quot;</span>: <span class="string">&quot;/&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">switchuser</span>(<span class="params">request</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;注销 / 切换用户&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;username&quot;</span> <span class="keyword">in</span> request.session:</span><br><span class="line">        <span class="keyword">del</span> request.session[<span class="string">&quot;username&quot;</span>]</span><br><span class="line">    <span class="keyword">return</span> redirect(<span class="string">&quot;/&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>四个值得记的点：</p>
+<ol>
+<li><strong>类视图的 <code>get</code>/<code>post</code> 分派</strong>：同一条 URL，GET 返回页面、POST 处理数据，比在函数里写 <code>if request.method == &quot;POST&quot;</code> 清爽；</li>
+<li><strong>校验顺序</strong>：必填 → 格式 → 一致性 → 唯一性，先便宜的后昂贵的，错误信息只回一条；</li>
+<li><strong><code>filter().first()</code> 而不是 <code>get()</code></strong>：避免账号不存在时抛 <code>DoesNotExist</code> 变成 500；</li>
+<li><strong><code>set_expiry(86400)</code></strong>：不设的话关掉浏览器会话就失效（Django 默认），设了才是「一天内免登录」。</li>
+</ol>
+<p>注册页还有一个 AJAX 小功能：输入用户名时实时提示「账号已存在」。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">check_username</span>(<span class="params">request</span>):</span><br><span class="line">    username = request.POST.get(<span class="string">&quot;username&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> User.objects.<span class="built_in">filter</span>(username=username):</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">1</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;账号已存在&quot;</span>&#125;)</span><br><span class="line">    <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">0</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;账号不存在&quot;</span>&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># login/urls.py</span></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r&#x27;^reg/&#x27;</span>, Reg.as_view()),</span><br><span class="line">    url(<span class="string">r&#x27;^check_username/&#x27;</span>, check_username),</span><br><span class="line">    url(<span class="string">r&#x27;^switchuser/&#x27;</span>, switchuser),</span><br><span class="line">    url(<span class="string">r&#x27;^$&#x27;</span>, Login.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p><strong>什么时候还是该用 Django 自带的 auth</strong>：需要权限体系（分组、权限点）、需要第三方登录、需要密码强度的持续升级时，自带 auth 是更稳的选择；它已经处理好了加盐哈希、密码重置、<code>request.user</code> 注入这些事。这个项目自建只是为了练手。</p>
+<h2 id="二-评论视图装饰器-jsonresponse"><a class="markdownIt-Anchor" href="#二-评论视图装饰器-jsonresponse"></a> 二、评论：视图装饰器 + JsonResponse</h2>
+<p>页面用 AJAX 提交评论，所以接口不能返回页面，要么返回 JSON、要么重定向。这里约定「先判断登录态」：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># myblog/views.py</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">isLogin</span>(<span class="params">view_func</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;登录拦截器（视图装饰器）&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">request, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> request.session.get(<span class="string">&quot;username&quot;</span>):          <span class="comment"># 已登录</span></span><br><span class="line">            <span class="keyword">return</span> view_func(request, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;data&quot;</span>: [], <span class="string">&quot;code&quot;</span>: <span class="number">0</span>,</span><br><span class="line">                             <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;尊敬的用户，请登录之后才能查看评论~&quot;</span>&#125;)</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@isLogin</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">comment</span>(<span class="params">request</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;处理评论&quot;&quot;&quot;</span></span><br><span class="line">    commentID = request.POST.get(<span class="string">&quot;commentID&quot;</span>)</span><br><span class="line">    commentName = request.POST.get(<span class="string">&quot;commentName&quot;</span>)</span><br><span class="line">    commentEmail = request.POST.get(<span class="string">&quot;commentEmail&quot;</span>)</span><br><span class="line">    commentContent = request.POST.get(<span class="string">&quot;commentContent&quot;</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        comment = Comment()</span><br><span class="line">        comment.name = commentName</span><br><span class="line">        comment.email = commentEmail</span><br><span class="line">        comment.content = commentContent</span><br><span class="line">        comment.post_id = commentID               <span class="comment"># 外键可以直接赋 id</span></span><br><span class="line">        comment.save()</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        detail_comment = Comment.objects.<span class="built_in">filter</span>(post=commentID).order_by(<span class="string">&quot;-time&quot;</span>)[:<span class="number">100</span>]</span><br><span class="line">        data_list = []</span><br><span class="line">        <span class="keyword">for</span> com <span class="keyword">in</span> detail_comment:</span><br><span class="line">            data_list.append(&#123;</span><br><span class="line">                <span class="string">&quot;name&quot;</span>: com.name,</span><br><span class="line">                <span class="string">&quot;time&quot;</span>: com.time.strftime(<span class="string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>),   <span class="comment"># datetime 不能直接 JSON 化</span></span><br><span class="line">                <span class="string">&quot;content&quot;</span>: com.content,</span><br><span class="line">            &#125;)</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;data&quot;</span>: data_list, <span class="string">&quot;code&quot;</span>: <span class="number">1</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;请求成功&quot;</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>三个细节：</p>
+<ul>
+<li><strong><code>comment.post_id = commentID</code></strong>：外键赋值时用 <code>post_id</code> 直接给主键值，不用先 <code>Post.objects.get()</code> 查一次；</li>
+<li><strong><code>JsonResponse</code> 不能直接序列化 <code>datetime</code></strong>：必须 <code>strftime</code> 成字符串，或者用 <code>DjangoJSONEncoder</code>；</li>
+<li><strong><code>[:100]</code> 限制条数</strong>：评论多了不能一次全返回。</li>
+</ul>
+<p>CSRF 的处理有两种取舍：模板里带 <code>csrfmiddlewaretoken</code>（安全），或者给视图加 <code>@csrf_exempt</code>（方便但等于关掉这道防线）。这个课程项目为了调试方便用了后者，<strong>正式项目不要这么干</strong>——Django 的 CSRF 保护能挡住跨站伪造提交，关掉等于给攻击者开门。</p>
+<h2 id="三-点赞用-session-做每日一赞"><a class="markdownIt-Anchor" href="#三-点赞用-session-做每日一赞"></a> 三、点赞：用 session 做「每日一赞」</h2>
+<p>点赞的需求是「同一篇文章一天只能点一次」。项目没有单独建点赞记录表，而是把时间戳塞进 session：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">zan</span>(<span class="params">request</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;处理点赞&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        id_ = request.POST.get(<span class="string">&quot;id&quot;</span>)</span><br><span class="line">        p = Post.objects.get(pk=id_)</span><br><span class="line">    <span class="keyword">except</span> Exception:</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: -<span class="number">1</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;参数错误&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">    id_zan = request.session.get(id_ + <span class="string">&quot;zan&quot;</span>, <span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> id_zan <span class="keyword">or</span> time.time() &gt; id_zan:</span><br><span class="line">        p.zan += <span class="number">1</span></span><br><span class="line">        p.save()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 记录&quot;下一次可以点赞的时间&quot; = 明天 0 点</span></span><br><span class="line">        time_now = datetime.datetime.now()</span><br><span class="line">        time_now_zero = datetime.datetime.strptime(</span><br><span class="line">            time_now.strftime(<span class="string">&quot;%Y-%m-%d&quot;</span>), <span class="string">&quot;%Y-%m-%d&quot;</span>)        <span class="comment"># 今天 0 点</span></span><br><span class="line">        time_m = time_now_zero + datetime.timedelta(days=<span class="number">1</span>)   <span class="comment"># 明天 0 点</span></span><br><span class="line">        request.session[id_ + <span class="string">&quot;zan&quot;</span>] = time_m.timestamp()     <span class="comment"># 存时间戳</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: <span class="number">200</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;点赞成功&quot;</span>, <span class="string">&quot;data&quot;</span>: p.zan&#125;)</span><br><span class="line">    <span class="keyword">return</span> JsonResponse(&#123;<span class="string">&quot;code&quot;</span>: -<span class="number">1</span>, <span class="string">&quot;msg&quot;</span>: <span class="string">&quot;点赞失败,请明日再来，谢谢~&quot;</span>, <span class="string">&quot;data&quot;</span>: p.zan&#125;)</span><br></pre></td></tr></table></figure>
+<p>思路是：<strong>在 session 里存「什么时候才能再点」而不是「点过没有」</strong>，判断条件就变成 <code>当前时间 &gt; 记录时间</code>，逻辑更简单。</p>
+<p>局限也很明显：session 存在浏览器 Cookie 里，清缓存、换浏览器、开无痕都能再点一次。要真正防刷得建一张 <code>点赞记录表</code>（用户 + 文章 + 日期，联合唯一），或者用 Redis 记 <code>用户:文章:日期</code> 的键。</p>
+<h2 id="四-富文本与自动缩略图"><a class="markdownIt-Anchor" href="#四-富文本与自动缩略图"></a> 四、富文本与自动缩略图</h2>
+<h3 id="接入-djangoueditor"><a class="markdownIt-Anchor" href="#接入-djangoueditor"></a> 接入 DjangoUeditor</h3>
+<p>后台写文章需要富文本编辑器（加粗、插图、上传附件）。课程用的是 DjangoUeditor，四步接入：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 源码安装（下载 DjangoUeditor3-master 后进目录）</span></span><br><span class="line">python setup.py install</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 2. settings.py 注册</span></span><br><span class="line">INSTALLED_APPS = (..., <span class="string">&quot;DjangoUeditor&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 主路由加一条</span></span><br><span class="line">url(<span class="string">r&#x27;^ueditor/&#x27;</span>, include(<span class="string">&#x27;DjangoUeditor.urls&#x27;</span>)),</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 模型字段换成 UEditorField</span></span><br><span class="line"><span class="keyword">from</span> DjangoUeditor.models <span class="keyword">import</span> UEditorField</span><br><span class="line">content = UEditorField(<span class="string">&quot;内容&quot;</span>, width=<span class="number">800</span>, height=<span class="number">600</span>, imagePath=<span class="string">&quot;myblog/&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>imagePath=&quot;myblog/&quot;</code> 决定编辑器上传的图片放在哪个子目录下。</p>
+<h3 id="重写-save-生成缩略图"><a class="markdownIt-Anchor" href="#重写-save-生成缩略图"></a> 重写 save() 生成缩略图</h3>
+<p>列表页如果直接用封面原图，一张几 MB 的图在首页加载十几次，页面会非常慢。项目在 <code>Post.save()</code> 里自动生成缩略图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># myblog/models.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"><span class="keyword">from</span> django.db.models.fields.files <span class="keyword">import</span> ImageFieldFile</span><br><span class="line"><span class="keyword">from</span> utils.PngUtils <span class="keyword">import</span> make_thumb</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Post</span>(models.Model):</span><br><span class="line">    <span class="comment"># ... 其他字段</span></span><br><span class="line">    img = models.ImageField(<span class="string">&quot;封面&quot;</span>)</span><br><span class="line">    thumb = models.ImageField(<span class="string">&quot;缩略图&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">save</span>(<span class="params">self, force_insert=<span class="literal">False</span>, force_update=<span class="literal">False</span>, using=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">             update_fields=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(Post, <span class="variable language_">self</span>).save()          <span class="comment"># 先保存，让上传的图片真正落盘</span></span><br><span class="line"></span><br><span class="line">        img_name, ext = os.path.splitext(os.path.basename(<span class="variable language_">self</span>.img.path))</span><br><span class="line">        img_path = <span class="variable language_">self</span>.img.path</span><br><span class="line">        pix = make_thumb(img_path)        <span class="comment"># Pillow 压缩</span></span><br><span class="line">        thumb_path = os.path.join(settings.THUMB_DIR, <span class="string">f&quot;<span class="subst">&#123;img_name&#125;</span>_thumb<span class="subst">&#123;ext&#125;</span>&quot;</span>)</span><br><span class="line">        pix.save(thumb_path)</span><br><span class="line"></span><br><span class="line">        thumb_url = thumb_path.split(settings.BASE_DIR)[-<span class="number">1</span>]</span><br><span class="line">        <span class="variable language_">self</span>.thumb = ImageFieldFile(<span class="variable language_">self</span>, <span class="variable language_">self</span>.thumb, thumb_url)</span><br><span class="line">        <span class="built_in">super</span>(Post, <span class="variable language_">self</span>).save()          <span class="comment"># 再把 thumb 字段写回数据库</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># utils/PngUtils.py</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image        <span class="comment"># pip install pillow</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">make_thumb</span>(<span class="params">img_path, size=(<span class="params"><span class="number">80</span>, <span class="number">60</span></span>)</span>):</span><br><span class="line">    pix = Image.<span class="built_in">open</span>(img_path).convert(<span class="string">&quot;RGB&quot;</span>)</span><br><span class="line">    pix.thumbnail(size)      <span class="comment"># 等比压缩到不超过 80x60</span></span><br><span class="line">    <span class="keyword">return</span> pix</span><br></pre></td></tr></table></figure>
+<p><strong>为什么要 save 两次</strong>：<code>ImageField</code> 只有在第一次 <code>save()</code> 之后，<code>self.img.path</code> 才指向真实存在的文件；拿到文件才能用 Pillow 读它、生成缩略图；缩略图存好后又得再 <code>save()</code> 一次才会把 <code>thumb</code> 字段写进数据库。这是个很典型的「依赖前一步结果」的场景，顺序不能颠倒。</p>
+<h2 id="五-haystack-whoosh-jieba中文全文检索"><a class="markdownIt-Anchor" href="#五-haystack-whoosh-jieba中文全文检索"></a> 五、haystack + whoosh + jieba：中文全文检索</h2>
+<p>这是全项目最麻烦的一块。<code>LIKE '%关键词%'</code> 只能做简单匹配，文章一多就没法用；全文检索需要倒排索引，Python 里常用 <strong>haystack（检索框架）+ whoosh（检索引擎）</strong> 的组合——它们是纯 Python 的，不需要额外装服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install django-haystack==2.6.0 whoosh jieba</span><br></pre></td></tr></table></figure>
+<h3 id="关键坑whoosh-默认不支持中文分词"><a class="markdownIt-Anchor" href="#关键坑whoosh-默认不支持中文分词"></a> 关键坑：whoosh 默认不支持中文分词</h3>
+<p>whoosh 自带的是英文的 <code>StemmingAnalyzer</code>，对中文会把整句当成一个词，等于搜不到任何东西。所以要<strong>改源码</strong>做三件事：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 在 site-packages/haystack/backends/ 下新建 ChineseAnalyzer.py</span></span><br><span class="line"><span class="keyword">import</span> jieba</span><br><span class="line"><span class="keyword">from</span> whoosh.analysis <span class="keyword">import</span> Tokenizer, Token</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ChineseTokenizer</span>(<span class="title class_ inherited__">Tokenizer</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, value, positions=<span class="literal">False</span>, chars=<span class="literal">False</span>, keeporiginal=<span class="literal">False</span>,</span></span><br><span class="line"><span class="params">                 removestops=<span class="literal">True</span>, start_pos=<span class="number">0</span>, start_char=<span class="number">0</span>, mode=<span class="string">&#x27;&#x27;</span>, **kwargs</span>):</span><br><span class="line">        t = Token(positions, chars, removestops=removestops, mode=mode, **kwargs)</span><br><span class="line">        seglist = jieba.cut(value, cut_all=<span class="literal">True</span>)          <span class="comment"># jieba 分词</span></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> seglist:</span><br><span class="line">            t.original = t.text = w</span><br><span class="line">            t.boost = <span class="number">1.0</span></span><br><span class="line">            <span class="keyword">if</span> positions:</span><br><span class="line">                t.pos = start_pos</span><br><span class="line">            <span class="keyword">yield</span> t</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ChineseAnalyzer</span>():</span><br><span class="line">    <span class="keyword">return</span> ChineseTokenizer()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 2. 把 whoosh_backend.py 复制一份，改名为 whoosh_cn_backend.py（不要直接改原文件）</span></span><br><span class="line"><span class="comment"># 3. 在这个新文件里把英文分词器换成中文分词器</span></span><br><span class="line"><span class="keyword">from</span> haystack.backends.whoosh_backend <span class="keyword">import</span> WhooshEngine   <span class="comment"># 原引擎</span></span><br><span class="line"><span class="keyword">from</span> .ChineseAnalyzer <span class="keyword">import</span> ChineseAnalyzer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 找到原来这行：</span></span><br><span class="line"><span class="comment">#   schema_fields[field_class.index_fieldname] = TEXT(stored=True, analyzer=StemmingAnalyzer(), ...)</span></span><br><span class="line"><span class="comment"># 改成：</span></span><br><span class="line"><span class="comment">#   schema_fields[field_class.index_fieldname] = TEXT(stored=True, analyzer=ChineseAnalyzer(), ...)</span></span><br></pre></td></tr></table></figure>
+<p>改完在 <code>settings.py</code> 里指向这个自定义后端：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">HAYSTACK_CONNECTIONS = &#123;</span><br><span class="line">    <span class="string">&#x27;default&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;ENGINE&#x27;</span>: <span class="string">&#x27;haystack.backends.whoosh_cn_backend.WhooshEngine&#x27;</span>,   <span class="comment"># 注意是 _cn_</span></span><br><span class="line">        <span class="string">&#x27;PATH&#x27;</span>: os.path.join(BASE_DIR, <span class="string">&#x27;whoosh_index&#x27;</span>),                 <span class="comment"># 索引文件目录</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 数据增删改时自动更新索引</span></span><br><span class="line">HAYSTACK_SIGNAL_PROCESSOR = <span class="string">&#x27;haystack.signals.RealtimeSignalProcessor&#x27;</span></span><br><span class="line">HAYSTACK_SEARCH_RESULTS_PER_PAGE = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="建立索引"><a class="markdownIt-Anchor" href="#建立索引"></a> 建立索引</h3>
+<p>告诉 haystack「给哪个模型、哪些字段建索引」：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># myblog/search_indexes.py</span></span><br><span class="line"><span class="keyword">from</span> haystack <span class="keyword">import</span> indexes</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> Post</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PostInfoIndex</span>(indexes.SearchIndex, indexes.Indexable):</span><br><span class="line">    text = indexes.CharField(document=<span class="literal">True</span>, use_template=<span class="literal">True</span>)   <span class="comment"># 用模板决定索引什么</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_model</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> Post</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">index_queryset</span>(<span class="params">self, using=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.get_model().objects.<span class="built_in">all</span>()</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># templates/search/indexes/myblog/post_text.txt</span><br><span class="line">&#123;&#123; object.title &#125;&#125;</span><br><span class="line">&#123;&#123; object.content &#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>然后生成索引并重进：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py rebuild_index</span><br></pre></td></tr></table></figure>
+<h3 id="重写-searchview-注入公共上下文"><a class="markdownIt-Anchor" href="#重写-searchview-注入公共上下文"></a> 重写 SearchView 注入公共上下文</h3>
+<p>搜索页也要显示右侧热门和最新评论，所以继承 haystack 的 <code>SearchView</code> 再补上下文：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> haystack.generic_views <span class="keyword">import</span> SearchView</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PostSearchView</span>(<span class="title class_ inherited__">SearchView</span>):</span><br><span class="line">    template_name = <span class="string">&#x27;search/search.html&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_context_data</span>(<span class="params">self, **kwargs</span>):</span><br><span class="line">        cont = <span class="built_in">super</span>().get_context_data(**kwargs)</span><br><span class="line">        cont[<span class="string">&quot;sen&quot;</span>] = random.choice(Sentence.objects.<span class="built_in">all</span>())</span><br><span class="line">        cont[<span class="string">&quot;h_p&quot;</span>] = Post.objects.<span class="built_in">all</span>().order_by(<span class="string">&quot;-look&quot;</span>)[:<span class="number">5</span>]</span><br><span class="line">        cont[<span class="string">&quot;latest_comment&quot;</span>] = Comment.objects.<span class="built_in">all</span>().order_by(<span class="string">&quot;-time&quot;</span>)[:<span class="number">5</span>]</span><br><span class="line">        <span class="keyword">return</span> cont</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主路由：用重写后的视图</span></span><br><span class="line">url(<span class="string">r&#x27;^search/&#x27;</span>, PostSearchView.as_view()),</span><br></pre></td></tr></table></figure>
+<p><strong>这里有个必踩的坑</strong>：重写后模板里原来用的分页变量从 <code>page</code> 变成了 <strong><code>page_obj</code></strong>，不改模板就会「搜索结果第二页打不开」。这是 haystack 2.6 与 Django 分页命名不一致导致的，翻文档不如直接看 <code>context</code> 里有什么。</p>
+<h2 id="六-踩坑记录"><a class="markdownIt-Anchor" href="#六-踩坑记录"></a> 六、踩坑记录</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin.E109</code>：list_display 里不能放多对多字段</td>
+<td><code>list_display</code> 直接写了 <code>tags</code></td>
+<td>改写成实例方法 <code>tag()</code>，再配 <code>short_description</code></td>
+</tr>
+<tr>
+<td>已有表新增字段 <code>makemigrations</code> 报错</td>
+<td>新字段没有默认值</td>
+<td>给 <code>default</code> 或设 <code>null=True</code></td>
+</tr>
+<tr>
+<td>搜索结果翻页 404</td>
+<td>变量名从 <code>page</code> 变成 <code>page_obj</code></td>
+<td>模板改用 <code>page_obj</code></td>
+</tr>
+<tr>
+<td>中文搜不到任何结果</td>
+<td>whoosh 用的是英文分词器</td>
+<td>改源码加 <code>ChineseAnalyzer</code> + <code>whoosh_cn_backend</code></td>
+</tr>
+<tr>
+<td>上传的图片 404</td>
+<td>少了 <code>MEDIA_URL</code>/<code>MEDIA_ROOT</code>，或忘记配静态目录</td>
+<td>补配置 + 开发环境配 media 路由</td>
+</tr>
+<tr>
+<td>富文本内容显示成 HTML 源码</td>
+<td>模板里没有转义输出</td>
+<td>用 `</td>
+</tr>
+<tr>
+<td>评论提交 403</td>
+<td>CSRF 校验未通过</td>
+<td>模板加 <code>csrfmiddlewaretoken</code>（推荐）或视图加 <code>@csrf_exempt</code>（仅调试）</td>
+</tr>
+<tr>
+<td>登录后照样提示未登录</td>
+<td>session 没写入/没带 Cookie</td>
+<td>检查 <code>request.session</code> 赋值与 <code>credentials</code> 配置</td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>下篇这四块里，<strong>最值得动手的是 haystack 的中文改造</strong>——它逼着你去看第三方库的源码，理解「分词器决定召回率」这件事；<strong>最容易被忽略的是 <code>Post.save()</code> 的两段式写法</strong>，它体现了一个通用套路：当一步操作依赖上一步的产物时，就老老实实分两步做。而<strong>最该被替换掉的是自建用户系统</strong>：项目是为了练手，真上线应该换回 Django auth（PBKDF2 加盐）或至少换成 <code>make_password</code>/<code>check_password</code>。</p>
+<p>到这里，博客的「内容 + 互动 + 检索」就齐了。下一步本该是部署：虚拟环境、<code>uwsgi</code> 拉起 Django、<code>nginx</code> 反代并托管静态文件、<code>DEBUG</code>/<code>ALLOWED_HOSTS</code>/<code>SECRET_KEY</code> 的收尾——课程对应的课件是 PDF，我还没有解析，就先不凭印象写了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文連結：</strong><a href="https://utdog.github.io/zh-TW/2025/05/07/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8B/">https://utdog.github.io/zh-TW/2025/05/07/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8B/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版權：</strong>本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 授權協議。轉載請註明出處！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">贊助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">請作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=Django%20%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%8B%EF%BC%89%EF%BC%9A%E7%99%BB%E5%BD%95%E6%B3%A8%E5%86%8C%E3%80%81%E8%AF%84%E8%AE%BA%E7%82%B9%E8%B5%9E%E3%80%81%E7%BC%A9%E7%95%A5%E5%9B%BE%E4%B8%8E%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2&amp;desc=single_blog%20%E9%A1%B9%E7%9B%AE%E6%89%A9%E5%B1%95%E7%AF%87%EF%BC%9A%E4%B8%8D%E7%94%A8%20auth%20%E8%87%AA%E5%BB%BA%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E3%80%81session%20%E5%81%9A%E6%AF%8F%E6%97%A5%E4%B8%80%E8%B5%9E%E3%80%81Post.save()%20%E4%B8%A4%E6%AE%B5%E5%BC%8F%E7%94%9F%E6%88%90%E7%BC%A9%E7%95%A5%E5%9B%BE%E3%80%81UEditor%20%E5%AF%8C%E6%96%87%E6%9C%AC%E6%8E%A5%E5%85%A5%EF%BC%8C%E4%BB%A5%E5%8F%8A%20haystack%2Bwhoosh%2Bjieba%20%E4%B8%AD%E6%96%87%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E7%9A%84%E4%B8%89%E5%A4%84%E6%BA%90%E7%A0%81%E6%94%B9%E9%80%A0%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/Django/" rel="tag">Django</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/zh-TW/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/" rel="tag">项目实战</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/35.jpg" data-sizes="auto" alt="Django 项目部署上线：uwsgi + nginx + conda 实战" class="lazyload">
+        
+        <a href="/zh-TW/2025/05/08/Django%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Django 项目部署上线：uwsgi + nginx + conda 实战
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/33.jpg" data-sizes="auto" alt="Django 博客项目实战（上）：建项目、设计模型与首页" class="lazyload">
+      
+      <a href="/zh-TW/2025/05/06/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8A/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          Django 博客项目实战（上）：建项目、设计模型与首页
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基於&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目錄</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#django-%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E4%B8%8B%E7%99%BB%E5%BD%95%E6%B3%A8%E5%86%8C-%E8%AF%84%E8%AE%BA%E7%82%B9%E8%B5%9E-%E7%BC%A9%E7%95%A5%E5%9B%BE%E4%B8%8E%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2"><span class="toc-number">1.</span> <span class="toc-text"> Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%87%AA%E5%BB%BA%E7%94%A8%E6%88%B7%E7%B3%BB%E7%BB%9F%E4%B8%8D%E7%94%A8-auth-%E4%B9%9F%E8%83%BD%E5%81%9A"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、自建用户系统：不用 auth 也能做</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%8E%E7%99%BB%E5%BD%95%E7%B1%BB%E8%A7%86%E5%9B%BE-%E4%B8%80%E6%95%B4%E5%A5%97%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 注册与登录：类视图 + 一整套校验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%AF%84%E8%AE%BA%E8%A7%86%E5%9B%BE%E8%A3%85%E9%A5%B0%E5%99%A8-jsonresponse"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、评论：视图装饰器 + JsonResponse</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%82%B9%E8%B5%9E%E7%94%A8-session-%E5%81%9A%E6%AF%8F%E6%97%A5%E4%B8%80%E8%B5%9E"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、点赞：用 session 做「每日一赞」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%AF%8C%E6%96%87%E6%9C%AC%E4%B8%8E%E8%87%AA%E5%8A%A8%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、富文本与自动缩略图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%85%A5-djangoueditor"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 接入 DjangoUeditor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%86%99-save-%E7%94%9F%E6%88%90%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 重写 save() 生成缩略图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-haystack-whoosh-jieba%E4%B8%AD%E6%96%87%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、haystack + whoosh + jieba：中文全文检索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%9D%91whoosh-%E9%BB%98%E8%AE%A4%E4%B8%8D%E6%94%AF%E6%8C%81%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 关键坑：whoosh 默认不支持中文分词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="toc-number">1.5.2.</span> <span class="toc-text"> 建立索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%86%99-searchview-%E6%B3%A8%E5%85%A5%E5%85%AC%E5%85%B1%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">1.5.3.</span> <span class="toc-text"> 重写 SearchView 注入公共上下文</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分類</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>標籤</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/" aria-label="首頁"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首頁</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/archives" aria-label="歸檔"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">歸檔</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/about" aria-label="關於"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">關於</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/zh-TW/friend" aria-label="友鏈"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友鏈</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索",
+          url: "https://utdog.github.io/2025/05/07/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8B/",
+          excerpt: "",
+          description: "single_blog 项目扩展篇：不用 auth 自建用户系统、session 做每日一赞、Post.save() 两段式生成缩略图、UEditor 富文本接入，以及 haystack+whoosh+jieba 中文全文检索的三处源码改造。",
+          stripContent: " Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索  前言 上篇把博客的骨架搭好了：模型、后台、模板、首页与详情页。这篇写四块「让站点活起来」的扩展——自建用户系统、评论与点赞、富文本与自动缩略图、中文全文检索。其中 haystack 那部分的坑最多，网上大部分教程都没讲清中文分词要改源码这件事。  一、自建用户系统：不用 auth 也能做 课程里没有直接用 Django 自带的 auth，而是新建了一个 login 应用、自己建用户表。理由很实际：自带 User 表字段固",
+          date: "Wed May 07 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:10:52 GMT+0800",
+          cover: "/images/34.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

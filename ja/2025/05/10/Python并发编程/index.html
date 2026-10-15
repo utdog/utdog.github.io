@@ -1,0 +1,1350 @@
+
+  <!DOCTYPE html>
+  <html lang="ja"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本ブログのすべての文書は、特に指定されていない限り、BY-NC-SA ライセンスに従っています。引用の際は出典を明記してください！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    Python 并发编程：进程、线程与协程怎么选 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="课件与课堂源码整理：Process 与 join&#x2F;daemon、Queue 做进程通信、抢票案例复现数据竞争与加锁、GIL 与线程锁&#x2F;信号量&#x2F;Event、死锁与 RLock，以及进程池、线程池和三种协程写法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 并发编程：进程、线程与协程怎么选">
+<meta property="og:url" content="https://utdog.github.io/ja/2025/05/10/Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="课件与课堂源码整理：Process 与 join&#x2F;daemon、Queue 做进程通信、抢票案例复现数据竞争与加锁、GIL 与线程锁&#x2F;信号量&#x2F;Event、死锁与 RLock，以及进程池、线程池和三种协程写法。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2025-05-10T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:18:01.669Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="并发">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/">ホーム</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/archives">アーカイブ</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/about">プロフィール</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/ja/friend">フレンド</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="検索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" class="selected">日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/10/Python并发编程/';
+            
+              langMap['en'] = '/en/2025/05/10/Python并发编程/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/10/Python并发编程/';
+            
+              langMap['ja'] = '/ja/2025/05/10/Python并发编程/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/38.jpg" alt="Python 并发编程：进程、线程与协程怎么选">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Python 并发编程：进程、线程与协程怎么选</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E8%BF%9B%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">1.</span> <span class="toc-text"> Python 并发编程：进程、线程与协程怎么选</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%85%88%E6%8A%8A%E5%9B%9B%E4%B8%AA%E8%AF%8D%E5%88%86%E6%B8%85"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、先把四个词分清</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%8A%8A%E4%BB%BB%E5%8A%A1%E5%8C%85%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、多进程：把任务包成函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#join-%E4%B8%8E-daemon"><span class="toc-number">1.2.1.</span> <span class="toc-text"> join 与 daemon</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E7%B1%BB%E5%B0%81%E8%A3%85%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 用类封装进程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E7%94%A8%E9%98%9F%E5%88%97"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、进程间通信：用队列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B0%E6%8D%AE%E7%AB%9E%E4%BA%89%E6%8A%A2%E7%A5%A8%E6%A1%88%E4%BE%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8A%A0%E9%94%81"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、数据竞争：抢票案例为什么要加锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E-gil"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、多线程与 GIL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E7%BA%BF%E7%A8%8B%E9%94%81-%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%8E-event"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、线程锁、信号量与 Event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%96%A5%E9%94%81"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 互斥锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%80%E6%AC%A1%E6%94%BE%E8%A1%8C%E5%A4%9A%E4%B8%AA"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 信号量：一次放行多个</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-%E4%B8%8E%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-number">1.6.3.</span> <span class="toc-text"> Event 与定时器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%AD%BB%E9%94%81%E4%B8%8E%E9%80%92%E5%BD%92%E9%94%81"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、死锁与递归锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E6%B1%A0%E5%88%AB%E5%86%8D%E6%89%8B%E5%8A%A8%E5%BC%80%E4%B8%80%E7%99%BE%E4%B8%AA%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、池：别再手动开一百个进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%8D%8F%E7%A8%8B%E5%8D%95%E7%BA%BF%E7%A8%8B%E9%87%8C%E7%9A%84%E5%B9%B6%E5%8F%91"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、协程：单线程里的并发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E9%80%89%E5%9E%8B%E9%80%9F%E6%9F%A5"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、选型速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.11.</span> <span class="toc-text"> 十一、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.12.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Python并发编程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-10T12:00:00.000Z" itemprop="datePublished">2025-05-10</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/ja/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="python-并发编程进程-线程与协程怎么选"><a class="markdownIt-Anchor" href="#python-并发编程进程-线程与协程怎么选"></a> Python 并发编程：进程、线程与协程怎么选</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>「同时做多件事」在 Python 里有三种实现：多进程、多线程、协程。这一课的学习路径很顺：先用 <code>Process</code> 开出子进程 → 发现进程间数据不共享，需要 <code>Queue</code> → 用抢票案例看到共享数据会被写坏 → 加锁 → 换多线程，又撞上 GIL → 最后用协程在单线程里做并发。每种方案都是为解决问题而出现的，知道「为什么」比记住 API 重要。</p>
+<h2 id="一-先把四个词分清"><a class="markdownIt-Anchor" href="#一-先把四个词分清"></a> 一、先把四个词分清</h2>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>进程</strong></td>
+<td>程序在计算机中的一次执行过程。程序是静态的文件，进程是动态的过程</td>
+</tr>
+<tr>
+<td><strong>并发</strong></td>
+<td>任务数<strong>多于</strong> CPU 核数，靠操作系统的调度算法让多个任务「一起」执行</td>
+</tr>
+<tr>
+<td><strong>并行</strong></td>
+<td>任务数<strong>小于等于</strong> CPU 核数，多个任务真的同时执行</td>
+</tr>
+<tr>
+<td><strong>同步 / 异步</strong></td>
+<td>同步指一个任务执行完才做下一个；异步指不必等待，可以先做别的</td>
+</tr>
+</tbody>
+</table>
+<p>无论是并发还是并行，在用户看来都是「同时」，但真正干活的 CPU 一个时刻只能执行一个任务——<strong>并发的本质是快速切换，并行的本质是物理上的同时</strong>。</p>
+<h2 id="二-多进程把任务包成函数"><a class="markdownIt-Anchor" href="#二-多进程把任务包成函数"></a> 二、多进程：把任务包成函数</h2>
+<p>创建进程三要素：<strong>封装任务函数 → 用 <code>Process</code> 关联 → <code>start()</code> 启动</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;我是子进程——这是一个什么任务？&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;我是主进程&#x27;</span>)</span><br><span class="line">    p = Process(target=test)      <span class="comment"># target=任务函数</span></span><br><span class="line">    p.start()                     <span class="comment"># 开启进程</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;主进程结束&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 带参数：args 是元组，kwargs 是字典</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;我是子进程，参数是 <span class="subst">&#123;name&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p = Process(target=test, args=(<span class="string">&#x27;石头&#x27;</span>,))     <span class="comment"># 注意单元素元组那个逗号</span></span><br><span class="line">p.start()</span><br></pre></td></tr></table></figure>
+<p>几个必须记住的结论（都来自课件）：</p>
+<ul>
+<li>子进程会<strong>复制父进程的内存空间与代码段</strong>，但只执行指定的那个函数；</li>
+<li>各个进程<strong>执行上互不影响、也没有先后顺序</strong>；</li>
+<li>进程空间独立，<strong>数据不共享</strong>（这一点后面会变成一个大坑）；</li>
+<li><code>multiprocessing</code> 创建的子进程中<strong>无法使用标准输入 <code>input()</code></strong>；</li>
+<li><strong>必须写在 <code>if __name__ == '__main__':</code> 里</strong>，否则 Windows 上会无限递归创建进程。</li>
+</ul>
+<h3 id="join-与-daemon"><a class="markdownIt-Anchor" href="#join-与-daemon"></a> join 与 daemon</h3>
+<p>主进程不会等子进程，想要「等它干完再走」就用 <code>join()</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">p1 = Process(target=test, args=(<span class="string">&#x27;石头2&#x27;</span>,))</span><br><span class="line">p2 = Process(target=test, args=(<span class="string">&#x27;石头1&#x27;</span>,))</span><br><span class="line">p1.start()</span><br><span class="line">p2.start()</span><br><span class="line">p1.join()          <span class="comment"># 主进程阻塞，直到 p1 结束</span></span><br><span class="line">p2.join()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;主进程结束&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>反过来，想让它「随主进程一起退出」就用守护进程：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">p = Process(target=test, args=(<span class="string">&#x27;石头&#x27;</span>,))</span><br><span class="line">p.daemon = <span class="literal">True</span>     <span class="comment"># 必须在 start() 之前设置！</span></span><br><span class="line">p.start()</span><br></pre></td></tr></table></figure>
+<p>进程的常用属性：<code>p.name</code>（进程名）、<code>p.pid</code>（子进程 PID）、<code>p.is_alive()</code>（是否还在生命周期）、<code>p.daemon</code>。用 <code>os.getpid()</code> / <code>os.getppid()</code> 可以自己验证父子关系：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;我是子进程编号是：<span class="subst">&#123;os.getpid()&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;我是子进程的父进程编号是：<span class="subst">&#123;os.getppid()&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="用类封装进程"><a class="markdownIt-Anchor" href="#用类封装进程"></a> 用类封装进程</h3>
+<p>不想用函数，也可以继承 <code>Process</code> 重写 <code>run()</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyProcess</span>(<span class="title class_ inherited__">Process</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()          <span class="comment"># 加载父类属性</span></span><br><span class="line">        <span class="variable language_">self</span>.name = name</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">playGames</span>(<span class="params">self, name</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span>已经单杀了对方<span class="subst">&#123;i + <span class="number">1</span>&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):                  <span class="comment"># 任务必须放到 run 里，start() 会自动调用</span></span><br><span class="line">        <span class="variable language_">self</span>.playGames(<span class="variable language_">self</span>.name)</span><br><span class="line"></span><br><span class="line">myP = MyProcess(<span class="string">&#x27;石头&#x27;</span>)</span><br><span class="line">myP.start()</span><br></pre></td></tr></table></figure>
+<p><code>Thread</code> 的用法完全一样，把 <code>Process</code> 换成 <code>Thread</code> 即可——<code>multiprocessing</code> 的接口就是模仿 <code>threading</code> 设计的。</p>
+<h2 id="三-进程间通信用队列"><a class="markdownIt-Anchor" href="#三-进程间通信用队列"></a> 三、进程间通信：用队列</h2>
+<p>进程空间独立，所以需要专门的手段传数据，最常用的是<strong>消息队列</strong>：在内存里开一块空间，建立队列模型，进程往里面 <code>put</code>、从里面 <code>get</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Queue</span><br><span class="line"><span class="keyword">import</span> queue</span><br><span class="line"></span><br><span class="line">q = Queue(<span class="number">3</span>)              <span class="comment"># 参数是最多存几条消息</span></span><br><span class="line"></span><br><span class="line">q.put(<span class="string">&#x27;123&#x27;</span>)              <span class="comment"># 阻塞式存入</span></span><br><span class="line"><span class="built_in">print</span>(q.full())           <span class="comment"># 判断是否已满</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    q.put_nowait(<span class="string">&#x27;456&#x27;</span>)   <span class="comment"># 非阻塞存入，满了抛 queue.Full</span></span><br><span class="line"><span class="keyword">except</span> queue.Full:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;队列添加不进去了&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(q.qsize())          <span class="comment"># 队列中消息个数</span></span><br><span class="line"><span class="built_in">print</span>(q.get())            <span class="comment"># 阻塞式取出</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    q.get_nowait()        <span class="comment"># 非阻塞取出，空了抛 queue.Empty</span></span><br><span class="line"><span class="keyword">except</span> queue.Empty:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;队列中的数据已经全部取走了&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>课件把它总结成一句话：<strong>消息队列是用来存储待处理任务的池子</strong>，比如「批改试卷」——把试卷全丢进队列，开多个进程/线程一起批。</p>
+<p>由此引出经典的<strong>生产者消费者模式</strong>：生产者和消费者不直接通信，而是通过阻塞队列传递数据，队列起到缓冲区的作用，平衡两边速度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">consumer</span>(<span class="params">q, name</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        res = q.get()</span><br><span class="line">        <span class="keyword">if</span> res <span class="keyword">is</span> <span class="literal">None</span>:          <span class="comment"># 用 None 作为结束信号</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span> 吃 <span class="subst">&#123;res&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">producer</span>(<span class="params">q, name, food</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        res = <span class="string">f&#x27;<span class="subst">&#123;food&#125;</span><span class="subst">&#123;i&#125;</span>&#x27;</span></span><br><span class="line">        q.put(res)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span> 生产了 <span class="subst">&#123;res&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="四-数据竞争抢票案例为什么要加锁"><a class="markdownIt-Anchor" href="#四-数据竞争抢票案例为什么要加锁"></a> 四、数据竞争：抢票案例为什么要加锁</h2>
+<p>进程间数据不共享，但<strong>如果共享的是一份文件，照样会打架</strong>。课程用「抢票」演示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 未加互斥锁之前数据共享.py（节选）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">name</span>):</span><br><span class="line">    data = json.load(<span class="built_in">open</span>(<span class="string">&#x27;count.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>))   <span class="comment"># 1. 读票数</span></span><br><span class="line">    data[<span class="string">&quot;count&quot;</span>] -= <span class="number">1</span>                                          <span class="comment"># 2. 减一</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)                                               <span class="comment"># 3. 模拟耗时</span></span><br><span class="line">    json.dump(data, <span class="built_in">open</span>(<span class="string">&#x27;count.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>))    <span class="comment"># 4. 写回</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">7</span>):          <span class="comment"># 六个进程同时抢</span></span><br><span class="line">        p = Process(target=func, args=(<span class="string">f&#x27;石头<span class="subst">&#123;i&#125;</span>号&#x27;</span>,))</span><br><span class="line">        p.start()</span><br></pre></td></tr></table></figure>
+<p>问题出在「读—改—写」不是一步完成的：六个进程<strong>都读到了同一个初始票数</strong>，各自减 1 后写回，结果票数只减了 1，却打印了六次「购票成功」——这就是<strong>数据竞争</strong>，线上表现就是超卖。</p>
+<p>解决办法是加锁，把「读—改—写」变成一个不可分割的整体：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 已加互斥锁之后数据共享.py（节选）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">name, lock</span>):</span><br><span class="line">    find(name)</span><br><span class="line">    lock.acquire()      <span class="comment"># 上锁</span></span><br><span class="line">    get(name)</span><br><span class="line">    lock.release()      <span class="comment"># 解锁</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    lock = Lock()       <span class="comment"># 注意：锁要作为参数传给子进程</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">7</span>):</span><br><span class="line">        p = Process(target=func, args=(<span class="string">f&#x27;石头<span class="subst">&#123;i&#125;</span>号&#x27;</span>, lock))</span><br><span class="line">        p.start()</span><br></pre></td></tr></table></figure>
+<p>同时把 <code>get</code> 里的判断补严（<code>&lt;= 0</code> 直接 <code>return</code>），才是完整的「余票判断 + 扣减」。</p>
+<p>课件里的一句话总结很到位：<strong>共享带来的问题是竞争，竞争带来的问题是混乱。</strong></p>
+<h2 id="五-多线程与-gil"><a class="markdownIt-Anchor" href="#五-多线程与-gil"></a> 五、多线程与 GIL</h2>
+<p>线程是「轻量级的进程」：一个进程可以有多个线程，<strong>同一进程内的线程共享该进程的全部资源</strong>，创建销毁的开销远小于进程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</span><br><span class="line"></span><br><span class="line">t = Thread(target=task, args=(<span class="number">1</span>,))   <span class="comment"># 参数含义与 Process 完全一致</span></span><br><span class="line">t.start()</span><br></pre></td></tr></table></figure>
+<p>但 Python（CPython）有个绕不开的东西：</p>
+<blockquote>
+<p><strong>GIL（全局解释器锁）</strong>：CPython 解释器特有，让一个进程中同一时刻只能有一个线程被 CPU 调用。</p>
+</blockquote>
+<p>所以选型原则是：</p>
+<table>
+<thead>
+<tr>
+<th>任务类型</th>
+<th>选什么</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>计算密集型</strong>（吃 CPU）</td>
+<td>多进程</td>
+<td>大量数据计算、图像处理</td>
+</tr>
+<tr>
+<td><strong>IO 密集型</strong>（等 IO）</td>
+<td>多线程</td>
+<td>文件读写、网络请求、爬虫</td>
+</tr>
+</tbody>
+</table>
+<p>原因是：多线程虽然不能并行跑 Python 字节码，但<strong>线程在等待 IO 时会释放 GIL</strong>，这期间别的线程可以继续跑；而计算密集型任务没有 IO 等待，多线程就只能排队，还不如直接开进程用满多核。</p>
+<h2 id="六-线程锁-信号量与-event"><a class="markdownIt-Anchor" href="#六-线程锁-信号量与-event"></a> 六、线程锁、信号量与 Event</h2>
+<h3 id="互斥锁"><a class="markdownIt-Anchor" href="#互斥锁"></a> 互斥锁</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Lock</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">n = <span class="number">100</span></span><br><span class="line">mutex = Lock()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>():</span><br><span class="line">    <span class="keyword">global</span> n</span><br><span class="line">    mutex.acquire()</span><br><span class="line">    temp = n</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)     <span class="comment"># 放大竞争窗口</span></span><br><span class="line">    n = temp - <span class="number">1</span></span><br><span class="line">    mutex.release()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    t_l = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">        t = Thread(target=task)</span><br><span class="line">        t_l.append(t)</span><br><span class="line">        t.start()</span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> t_l:</span><br><span class="line">        t.join()        <span class="comment"># 等所有线程结束再打印</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;主&#x27;</span>, n)</span><br></pre></td></tr></table></figure>
+<p>不加锁时结果几乎一定不是 0（100 个线程各自读到旧值），加了锁才会稳定输出 <code>主 0</code>。锁定也可以用 <code>with</code> 写法，代码块结束自动解锁：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> lock:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<h3 id="信号量一次放行多个"><a class="markdownIt-Anchor" href="#信号量一次放行多个"></a> 信号量：一次放行多个</h3>
+<p>互斥锁同一时刻只允许一个任务执行，<strong>信号量可以指定同时允许多少个</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Semaphore</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">black_room</span>(<span class="params">name, s</span>):</span><br><span class="line">    s.acquire()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span>正在上厕所&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span>上完厕所出来了&#x27;</span>)</span><br><span class="line">    s.release()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    s = Semaphore(<span class="number">3</span>)        <span class="comment"># 相当于只有三个坑位</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">        Process(target=black_room, args=(<span class="string">f&#x27;张三<span class="subst">&#123;i + <span class="number">1</span>&#125;</span>&#x27;</span>, s)).start()</span><br></pre></td></tr></table></figure>
+<p>「厕所坑位」这个例子把信号量讲得很直观：三个人同时进，第四个人必须等有人出来。</p>
+<h3 id="event-与定时器"><a class="markdownIt-Anchor" href="#event-与定时器"></a> Event 与定时器</h3>
+<p>线程各自独立、状态不可预测，需要「等某个条件成立再继续」时用 <code>Event</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Event</span><br><span class="line">e = Event()</span><br><span class="line">e.wait(timeout)     <span class="comment"># 阻塞等待，直到被 set</span></span><br><span class="line">e.<span class="built_in">set</span>()             <span class="comment"># 置为真，唤醒所有等待的线程</span></span><br><span class="line">e.clear()           <span class="comment"># 复位</span></span><br><span class="line">e.is_set()          <span class="comment"># 查看当前状态</span></span><br></pre></td></tr></table></figure>
+<p><code>Timer</code> 则是「几秒后执行一次」：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Timer</span><br><span class="line">Timer(<span class="number">3</span>, f, (<span class="string">&#x27;石头&#x27;</span>,)).start()     <span class="comment"># Timer(秒数, 任务, 参数元组)</span></span><br></pre></td></tr></table></figure>
+<h2 id="七-死锁与递归锁"><a class="markdownIt-Anchor" href="#七-死锁与递归锁"></a> 七、死锁与递归锁</h2>
+<p>两个锁交叉获取，就会互相等，谁都走不下去：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">lock1 = threading.Lock()</span><br><span class="line">lock2 = threading.Lock()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">function1</span>():</span><br><span class="line">    lock1.acquire()      <span class="comment"># 拿到锁1</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    lock2.acquire()      <span class="comment"># 等锁2 —— 但锁2被线程2持有</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">function2</span>():</span><br><span class="line">    lock2.acquire()      <span class="comment"># 拿到锁2</span></span><br><span class="line">    lock1.acquire()      <span class="comment"># 等锁1 —— 但锁1被线程1持有</span></span><br></pre></td></tr></table></figure>
+<p>线程 1 等锁 2、线程 2 等锁 1，程序就卡死在那里（课件里配了张死锁示意图）。</p>
+<p>把 <code>Lock</code> 换成 <code>RLock</code>（递归锁）就能避免这种情况：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> RLock</span><br><span class="line">lock1 = lock2 = RLock()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">function1</span>():</span><br><span class="line">    lock1.acquire()      <span class="comment"># 计数器 = 1</span></span><br><span class="line">    lock2.acquire()      <span class="comment"># 计数器 = 2（同一个锁，可重入）</span></span><br><span class="line">    lock1.release()      <span class="comment"># 计数器 = 1</span></span><br><span class="line">    lock2.release()      <span class="comment"># 计数器 = 0</span></span><br></pre></td></tr></table></figure>
+<p><code>RLock</code> 内部维护一个<strong>计数器</strong>：同一个线程可以重复获取同一个锁，只有计数器归零时锁才真正释放。真正工程上更常用的规避手段是<strong>统一加锁顺序</strong>或<strong>给锁设置超时</strong>。</p>
+<h2 id="八-池别再手动开一百个进程"><a class="markdownIt-Anchor" href="#八-池别再手动开一百个进程"></a> 八、池：别再手动开一百个进程</h2>
+<p>每次都 <code>Process(...).start()</code> 在任务多的时候开销很大，用<strong>进程池/线程池</strong>统一管理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ProcessPoolExecutor</span><br><span class="line"></span><br><span class="line">pool_p = ProcessPoolExecutor(<span class="number">10</span>)      <span class="comment"># 最多同时跑 10 个进程；不填则默认为 CPU 核数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun</span>(<span class="params">name, num</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span>正在上课&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">return</span> num + <span class="number">1</span>                    <span class="comment"># 有返回值的任务</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):</span><br><span class="line">        pool_p.submit(fun, <span class="string">f&#x27;石头<span class="subst">&#123;i + <span class="number">1</span>&#125;</span>&#x27;</span>, i + <span class="number">1</span>)     <span class="comment"># 提交任务，参数依次往后写</span></span><br></pre></td></tr></table></figure>
+<p><code>submit</code> 返回一个 <strong>Future 对象</strong>，取返回值有讲究：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 写法一：直接取（注意——result() 会阻塞，写在循环里就等于串行执行了）</span></span><br><span class="line">res = pool_p.submit(fun, name, num)</span><br><span class="line"><span class="built_in">print</span>(res.result())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写法二：先收集，等池子空了再统一取（推荐）</span></span><br><span class="line">ls = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):</span><br><span class="line">    ls.append(pool_p.submit(fun, <span class="string">f&#x27;石头<span class="subst">&#123;i + <span class="number">1</span>&#125;</span>&#x27;</span>, i))</span><br><span class="line">pool_p.shutdown()                     <span class="comment"># 等待池中所有任务结束</span></span><br><span class="line"><span class="keyword">for</span> l <span class="keyword">in</span> ls:</span><br><span class="line">    <span class="built_in">print</span>(l.result())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写法三：回调，任务一结束就自动调用（不需要传参，Future 会自带结果）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">f</span>):</span><br><span class="line">    <span class="built_in">print</span>(f.result())</span><br><span class="line"></span><br><span class="line">res = pool_p.submit(fun, name, num)</span><br><span class="line">res.add_done_callback(get)</span><br></pre></td></tr></table></figure>
+<p>课件专门用 <code>shutdown解决问题.py</code> 演示了写法一的问题：<strong>把 <code>result()</code> 写在提交循环里，取结果时会阻塞，等于把并发变成了串行</strong>。</p>
+<p>线程池只需把类名换成 <code>ThreadPoolExecutor</code>，用法一模一样。</p>
+<h2 id="九-协程单线程里的并发"><a class="markdownIt-Anchor" href="#九-协程单线程里的并发"></a> 九、协程：单线程里的并发</h2>
+<p>协程是「用户态的轻量级线程」，由程序自己调度，操作系统完全感知不到，切换开销比线程小得多。课程里递进了三种写法：</p>
+<p><strong>1. 用生成器的 yield 做任务切换</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fun_A</span>():</span><br><span class="line">    r = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        n = <span class="keyword">yield</span> r              <span class="comment"># 挂起，等下一次 send 传入值</span></span><br><span class="line">        r = <span class="string">f&#x27;任务1执行<span class="subst">&#123;n&#125;</span>&#x27;</span></span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">A = fun_A()</span><br><span class="line">A.send(<span class="literal">None</span>)                     <span class="comment"># 第一次启动生成器必须传 None</span></span><br><span class="line"><span class="built_in">print</span>(A.send(<span class="number">123</span>))               <span class="comment"># 传入值并拿到 yield 的返回值</span></span><br></pre></td></tr></table></figure>
+<p><code>yield</code> 是<strong>暂停而不是结束</strong>，函数进入挂起状态等待下次调用；<code>return</code> 才是结束。</p>
+<p><strong>2. greenlet：手动切换</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> greenlet <span class="keyword">import</span> greenlet</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">A</span>():</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;-------任务1执行-------&#x27;</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        b.switch()               <span class="comment"># 切到另一个协程</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">B</span>():</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;-------任务2执行-------&#x27;</span>)</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        a.switch()</span><br><span class="line"></span><br><span class="line">a = greenlet(A)</span><br><span class="line">b = greenlet(B)</span><br><span class="line">a.switch()</span><br></pre></td></tr></table></figure>
+<p><strong>3. gevent：遇到 IO 自动切换</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gevent</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">eat</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span>在吃饭&#x27;</span>)</span><br><span class="line">    gevent.sleep(<span class="number">2</span>)              <span class="comment"># 用 gevent 的 sleep，别的协程才会被调度</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span>还在吃饭&#x27;</span>)</span><br><span class="line"></span><br><span class="line">e = gevent.spawn(eat, <span class="string">&#x27;李白&#x27;</span>)     <span class="comment"># spawn(任务, 参数)</span></span><br><span class="line">s = gevent.spawn(sleep, <span class="string">&#x27;张三&#x27;</span>)</span><br><span class="line">e.join()</span><br><span class="line">s.join()</span><br></pre></td></tr></table></figure>
+<p>但实际代码里到处是 <code>time.sleep()</code>，总不能让协程都改成 <code>gevent.sleep()</code>——这时用<strong>猴子补丁</strong>把标准库的阻塞函数替换掉：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> gevent <span class="keyword">import</span> monkey</span><br><span class="line">monkey.patch_all()               <span class="comment"># 必须在导入其他模块之前执行</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="comment"># 这之后的 time.sleep() 就会被 gevent 接管，遇到 IO 自动切换协程</span></span><br></pre></td></tr></table></figure>
+<p><code>monkey.patch_all()</code> 的原理是运行时替换 <code>time.sleep</code>、<code>socket</code> 等模块的实现，所以<strong>必须写在最前面</strong>，否则已经导入的模块拿到的是原版函数，补丁不生效。</p>
+<blockquote>
+<p>课程只讲到 gevent。<code>asyncio</code> / <code>async</code> / <code>await</code> 是 Python 3 官方的协程方案，课程没有涉及（我在《python高级编程》里写过一段，属于自学扩展）。</p>
+</blockquote>
+<h2 id="十-选型速查"><a class="markdownIt-Anchor" href="#十-选型速查"></a> 十、选型速查</h2>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>并发单位</th>
+<th>数据共享</th>
+<th>开销</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>多进程</td>
+<td>进程</td>
+<td>不共享（要 Queue）</td>
+<td>大</td>
+<td>计算密集型、需要吃满多核</td>
+</tr>
+<tr>
+<td>多线程</td>
+<td>线程</td>
+<td>共享（要加锁）</td>
+<td>中</td>
+<td>IO 密集型（爬虫、文件、网络）</td>
+</tr>
+<tr>
+<td>协程</td>
+<td>协程（单线程内）</td>
+<td>共享（无需锁，因为不抢占）</td>
+<td>小</td>
+<td>超高并发 IO（gevent）</td>
+</tr>
+</tbody>
+</table>
+<p>再补一句课件的判断标准：<strong>计算操作要用 CPU 多核 → 多进程；IO 操作不需要多核 → 多线程/协程。</strong></p>
+<h2 id="十一-踩坑记录"><a class="markdownIt-Anchor" href="#十一-踩坑记录"></a> 十一、踩坑记录</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Windows 上进程疯狂创建、卡死</td>
+<td>忘了写 <code>if __name__ == '__main__':</code></td>
+<td>进程创建代码必须放在这个判断里</td>
+</tr>
+<tr>
+<td>子进程里 <code>input()</code> 报错</td>
+<td>multiprocessing 子进程无标准输入</td>
+<td>输入放到主进程做</td>
+</tr>
+<tr>
+<td>六个进程买票，票只减了一张</td>
+<td>「读—改—写」不是原子操作</td>
+<td>加锁；判断条件补 <code>&lt;= 0 return</code></td>
+</tr>
+<tr>
+<td>进程加的锁不生效</td>
+<td>锁对象没传给子进程</td>
+<td>锁作为 <code>args</code> 的一部分传进去</td>
+</tr>
+<tr>
+<td>100 个线程减 100 次，结果不是 0</td>
+<td>线程共享变量存在竞争</td>
+<td><code>Lock</code> 或 <code>with lock</code></td>
+</tr>
+<tr>
+<td>程序卡死不动</td>
+<td>死锁（两个锁交叉获取）</td>
+<td>换 <code>RLock</code>、统一加锁顺序、设超时</td>
+</tr>
+<tr>
+<td>线程池取结果反而更慢</td>
+<td><code>result()</code> 写在提交循环里，阻塞成串行</td>
+<td>先收集 Future，<code>shutdown()</code> 后统一取，或用回调</td>
+</tr>
+<tr>
+<td>猴子补丁不生效</td>
+<td><code>monkey.patch_all()</code> 写在 import 之后</td>
+<td>挪到文件最前面</td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>把这一课串起来看，其实只有一条主线：<strong>并发要解决的是「等待」和「共享」两件事</strong>。</p>
+<ul>
+<li>等待：IO 时别傻等 → 多线程（等 IO 时释放 GIL）→ 协程（单线程内切换）</li>
+<li>共享：多线程共享进程资源 → 必须加锁；多进程不共享 → 用队列通信</li>
+<li>计算：想吃满多核 → 只能多进程（GIL 挡着）</li>
+</ul>
+<p>下一篇写 MySQL 进阶：视图、函数与存储过程、触发器、事务隔离级别和设计范式——这些是把「数据」这件事做扎实的部分。</p>
+<blockquote>
+<p>说明：本文代码全部来自课堂源码（<code>day13并发编程-进程和线程</code>、<code>day14进程池</code>、<code>day15协程</code>）与课件讲义（13、14），我只做了注释、排版与踩坑补充。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>著者: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>パーマリンク: </strong><a href="https://utdog.github.io/ja/2025/05/10/Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">https://utdog.github.io/ja/2025/05/10/Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>ライセンス: </strong>本ブログのすべての文書は、特に指定されていない限り、<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> ライセンスに従っています。引用の際は出典を明記してください！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">スポンサー</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">コーヒーを買ってください</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=Python%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%80%8E%E4%B9%88%E9%80%89&amp;desc=%E8%AF%BE%E4%BB%B6%E4%B8%8E%E8%AF%BE%E5%A0%82%E6%BA%90%E7%A0%81%E6%95%B4%E7%90%86%EF%BC%9AProcess%20%E4%B8%8E%20join%2Fdaemon%E3%80%81Queue%20%E5%81%9A%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1%E3%80%81%E6%8A%A2%E7%A5%A8%E6%A1%88%E4%BE%8B%E5%A4%8D%E7%8E%B0%E6%95%B0%E6%8D%AE%E7%AB%9E%E4%BA%89%E4%B8%8E%E5%8A%A0%E9%94%81%E3%80%81GIL%20%E4%B8%8E%E7%BA%BF%E7%A8%8B%E9%94%81%2F%E4%BF%A1%E5%8F%B7%E9%87%8F%2FEvent%E3%80%81%E6%AD%BB%E9%94%81%E4%B8%8E%20RLock%EF%BC%8C%E4%BB%A5%E5%8F%8A%E8%BF%9B%E7%A8%8B%E6%B1%A0%E3%80%81%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%92%8C%E4%B8%89%E7%A7%8D%E5%8D%8F%E7%A8%8B%E5%86%99%E6%B3%95%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="Python 并发编程：进程、线程与协程怎么选">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="Python 并发编程：进程、线程与协程怎么选">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/39.jpg" data-sizes="auto" alt="MySQL 进阶：外键、视图、存储过程、触发器与事务" class="lazyload">
+        
+        <a href="/ja/2025/05/11/MySQL%E8%BF%9B%E9%98%B6/"></a>
+        <div class="article-nav-caption">次の記事</div>
+        <h3 class="article-nav-title">
+          
+            MySQL 进阶：外键、视图、存储过程、触发器与事务
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/32.jpg" data-sizes="auto" alt="Python 网络编程：从 socket 到 IO 多路复用" class="lazyload">
+      
+      <a href="/ja/2025/05/09/Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"></a>
+      <div class="article-nav-caption">前の記事</div>
+      <h3 class="article-nav-title">
+        
+          Python 网络编程：从 socket 到 IO 多路复用
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">見出し</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E8%BF%9B%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%80%8E%E4%B9%88%E9%80%89"><span class="toc-number">1.</span> <span class="toc-text"> Python 并发编程：进程、线程与协程怎么选</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%85%88%E6%8A%8A%E5%9B%9B%E4%B8%AA%E8%AF%8D%E5%88%86%E6%B8%85"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、先把四个词分清</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%8A%8A%E4%BB%BB%E5%8A%A1%E5%8C%85%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、多进程：把任务包成函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#join-%E4%B8%8E-daemon"><span class="toc-number">1.2.1.</span> <span class="toc-text"> join 与 daemon</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E7%B1%BB%E5%B0%81%E8%A3%85%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 用类封装进程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E7%94%A8%E9%98%9F%E5%88%97"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、进程间通信：用队列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%95%B0%E6%8D%AE%E7%AB%9E%E4%BA%89%E6%8A%A2%E7%A5%A8%E6%A1%88%E4%BE%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8A%A0%E9%94%81"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、数据竞争：抢票案例为什么要加锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E-gil"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、多线程与 GIL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E7%BA%BF%E7%A8%8B%E9%94%81-%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%8E-event"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、线程锁、信号量与 Event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%96%A5%E9%94%81"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 互斥锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%80%E6%AC%A1%E6%94%BE%E8%A1%8C%E5%A4%9A%E4%B8%AA"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 信号量：一次放行多个</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#event-%E4%B8%8E%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-number">1.6.3.</span> <span class="toc-text"> Event 与定时器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%AD%BB%E9%94%81%E4%B8%8E%E9%80%92%E5%BD%92%E9%94%81"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、死锁与递归锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E6%B1%A0%E5%88%AB%E5%86%8D%E6%89%8B%E5%8A%A8%E5%BC%80%E4%B8%80%E7%99%BE%E4%B8%AA%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、池：别再手动开一百个进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E5%8D%8F%E7%A8%8B%E5%8D%95%E7%BA%BF%E7%A8%8B%E9%87%8C%E7%9A%84%E5%B9%B6%E5%8F%91"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、协程：单线程里的并发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81-%E9%80%89%E5%9E%8B%E9%80%9F%E6%9F%A5"><span class="toc-number">1.10.</span> <span class="toc-text"> 十、选型速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.11.</span> <span class="toc-text"> 十一、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.12.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "Python 并发编程：进程、线程与协程怎么选",
+          url: "https://utdog.github.io/2025/05/10/Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/",
+          excerpt: "",
+          description: "课件与课堂源码整理：Process 与 join/daemon、Queue 做进程通信、抢票案例复现数据竞争与加锁、GIL 与线程锁/信号量/Event、死锁与 RLock，以及进程池、线程池和三种协程写法。",
+          stripContent: " Python 并发编程：进程、线程与协程怎么选  前言 「同时做多件事」在 Python 里有三种实现：多进程、多线程、协程。这一课的学习路径很顺：先用 Process 开出子进程 → 发现进程间数据不共享，需要 Queue → 用抢票案例看到共享数据会被写坏 → 加锁 → 换多线程，又撞上 GIL → 最后用协程在单线程里做并发。每种方案都是为解决问题而出现的，知道「为什么」比记住 API 重要。  一、先把四个词分清    概念 含义     进程 程序在计算机中的一次执行过程。程序是静态",
+          date: "Sat May 10 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:18:01 GMT+0800",
+          cover: "/images/38.jpg",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

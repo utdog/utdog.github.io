@@ -1,0 +1,1317 @@
+
+  <!DOCTYPE html>
+  <html lang="en"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = 'All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    Django 博客项目实战（上）：建项目、设计模型与首页 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="课程项目 single_blog 完整复现：conda 环境搭建、四张表模型设计、Admin 后台定制、Bootstrap 模板继承，以及首页的每日一句、分页与热门排行。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django 博客项目实战（上）：建项目、设计模型与首页">
+<meta property="og:url" content="https://utdog.github.io/en/2025/05/06/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8A/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="课程项目 single_blog 完整复现：conda 环境搭建、四张表模型设计、Admin 后台定制、Bootstrap 模板继承，以及首页的每日一句、分页与热门排行。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-06T13:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:09:44.757Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="项目实战">
+<meta property="article:tag" content="Django">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">Loading...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/">Home</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/archives">Archives</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/about">About</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/friend">Friend</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="Search"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">English</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" class="selected">English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/06/Django博客项目实战-上/';
+            
+              langMap['en'] = '/en/2025/05/06/Django博客项目实战-上/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/06/Django博客项目实战-上/';
+            
+              langMap['ja'] = '/ja/2025/05/06/Django博客项目实战-上/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/33.jpg" alt="Django 博客项目实战（上）：建项目、设计模型与首页">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Django 博客项目实战（上）：建项目、设计模型与首页</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#django-%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E4%B8%8A%E5%BB%BA%E9%A1%B9%E7%9B%AE-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E9%A6%96%E9%A1%B5"><span class="toc-number">1.</span> <span class="toc-text"> Django 博客项目实战（上）：建项目、设计模型与首页</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、项目概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、搭建项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E5%9B%9B%E5%BC%A0%E8%A1%A8%E8%AF%B4%E6%B8%85%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、模型设计：四张表说清一个博客</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-admin-%E5%90%8E%E5%8F%B0%E5%87%A0%E5%8D%81%E8%A1%8C%E6%8D%A2%E6%9D%A5%E4%B8%80%E4%B8%AA%E8%BF%90%E8%90%A5%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、Admin 后台：几十行换来一个运营系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%A8%A1%E6%9D%BF%E7%BB%A7%E6%89%BF-bootstrap-%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、模板：继承 Bootstrap 模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E9%A6%96%E9%A1%B5%E8%A7%86%E5%9B%BE%E6%AF%8F%E6%97%A5%E4%B8%80%E5%8F%A5-%E5%88%86%E9%A1%B5-%E7%83%AD%E9%97%A8%E6%8E%92%E8%A1%8C"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、首页视图：每日一句 + 分页 + 热门排行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E8%AF%A6%E6%83%85%E9%A1%B5%E4%B8%8A%E4%B8%8B%E7%AF%87%E4%B8%8E%E7%9B%B8%E5%85%B3%E6%8E%A8%E8%8D%90"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、详情页：上下篇与相关推荐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E6%96%B0%E7%89%88-django-%E5%86%99%E6%B3%95%E5%AF%B9%E7%85%A7"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、新版 Django 写法对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E4%B8%8A%E7%BA%BF%E5%89%8D%E5%BF%85%E9%A1%BB%E6%94%B9%E7%9A%84%E4%B8%A4%E5%A4%84"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、上线前必须改的两处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Django博客项目实战-上" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-06T13:00:00.000Z" itemprop="datePublished">2025-05-06</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/en/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="django-博客项目实战上建项目-设计模型与首页"><a class="markdownIt-Anchor" href="#django-博客项目实战上建项目-设计模型与首页"></a> Django 博客项目实战（上）：建项目、设计模型与首页</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>Django 班的收官项目是一个完整的个人技术博客 <code>single_blog</code>：文章发布、分类标签、评论点赞、登录注册、富文本编辑、全文检索，最后还要部署到 Linux 服务器。这是课程里第一个「能拿出去给人看」的东西。</p>
+<p>我把整个过程分上下两篇记录。上篇是地基：<strong>环境与项目搭建、模型设计、Admin 后台、模板继承、首页与详情页</strong>；下篇讲扩展：<strong>登录注册、评论点赞、富文本与缩略图、haystack 全文检索</strong>。</p>
+<blockquote>
+<p>课程用的是 Django 1.8.2，代码里还是 <code>url()</code> 的写法。我在需要的地方补了新版（Django 4/5）的对照写法，方便现在回看。</p>
+</blockquote>
+<h2 id="一-项目概览"><a class="markdownIt-Anchor" href="#一-项目概览"></a> 一、项目概览</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>框架</td>
+<td>Django 1.8.2（课程环境：conda + Python 3.6）</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>SQLite3（开发阶段）</td>
+</tr>
+<tr>
+<td>前端模板</td>
+<td>课程提供的 Bootstrap 个人技术博客响应式模板</td>
+</tr>
+<tr>
+<td>富文本</td>
+<td>DjangoUeditor</td>
+</tr>
+<tr>
+<td>全文检索</td>
+<td>haystack + whoosh（中文分词）</td>
+</tr>
+<tr>
+<td>环境管理</td>
+<td>conda 虚拟环境 <code>py36_yangtuo</code></td>
+</tr>
+</tbody>
+</table>
+<p>功能划分成两个应用：</p>
+<ul>
+<li><strong>myblog</strong>：文章、标签、评论、每日一句、热门排行、详情页</li>
+<li><strong>login</strong>：自定义用户的注册、登录、注销（不用 Django 自带的 auth）</li>
+</ul>
+<h2 id="二-搭建项目"><a class="markdownIt-Anchor" href="#二-搭建项目"></a> 二、搭建项目</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 进入（或创建）虚拟环境</span></span><br><span class="line">conda activate py36_yangtuo</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 安装并创建项目</span></span><br><span class="line">pip install django==1.8.2</span><br><span class="line">django-admin startproject single_blog</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3. 创建应用</span></span><br><span class="line">cd single_blog</span><br><span class="line">python manage.py startapp myblog</span><br><span class="line">python manage.py startapp login</span><br></pre></td></tr></table></figure>
+<p><code>settings.py</code> 里要改的地方不多，但每一处都很关键：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = (</span><br><span class="line">    <span class="comment"># ...django 自带应用</span></span><br><span class="line">    <span class="string">&quot;DjangoUeditor&quot;</span>,   <span class="comment"># 富文本编辑器</span></span><br><span class="line">    <span class="string">&quot;haystack&quot;</span>,        <span class="comment"># 全文检索框架</span></span><br><span class="line">    <span class="string">&quot;myblog&quot;</span>,          <span class="comment"># 注册应用</span></span><br><span class="line">    <span class="string">&quot;login&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">TEMPLATES = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        <span class="string">&#x27;DIRS&#x27;</span>: [os.path.join(BASE_DIR, <span class="string">&quot;templates&quot;</span>)],   <span class="comment"># 模板目录</span></span><br><span class="line">    &#125;,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">LANGUAGE_CODE = <span class="string">&quot;zh-hans&quot;</span>            <span class="comment"># 界面中文</span></span><br><span class="line">TIME_ZONE = <span class="string">&quot;Asia/Shanghai&quot;</span>          <span class="comment"># 时区，默认 UTC 会让发布时间差 8 小时</span></span><br><span class="line"></span><br><span class="line">STATIC_URL = <span class="string">&#x27;/static/&#x27;</span></span><br><span class="line">STATICFILES_DIRS = [os.path.join(BASE_DIR, <span class="string">&quot;static&quot;</span>)]</span><br><span class="line"></span><br><span class="line">MEDIA_ROOT = os.path.join(BASE_DIR, <span class="string">&quot;static/media&quot;</span>)   <span class="comment"># 用户上传的文件</span></span><br><span class="line">MEDIA_URL = <span class="string">&#x27;/static/media/&#x27;</span></span><br><span class="line"></span><br><span class="line">THUMB_DIR = os.path.join(BASE_DIR, <span class="string">&quot;static/media/thumb&quot;</span>)   <span class="comment"># 缩略图目录</span></span><br></pre></td></tr></table></figure>
+<p>然后在项目根目录手动建两个文件夹：<code>templates/</code> 和 <code>static/</code>。<strong>模板放 templates，静态资源放 static，用户上传的图最终落在 static/media</strong>——三者不要混。</p>
+<h2 id="三-模型设计四张表说清一个博客"><a class="markdownIt-Anchor" href="#三-模型设计四张表说清一个博客"></a> 三、模型设计：四张表说清一个博客</h2>
+<p>先想清楚数据关系，再写代码：</p>
+<pre class="mermaid">erDiagram
+    User ||--o{ Post : "作者"
+    Post ||--o{ Comment : "拥有评论"
+    Post }o--o{ Tag : "标签"</pre>
+<ul>
+<li><strong>User</strong>：直接用 Django Admin 里的用户表（<code>django.contrib.auth.models.User</code>）</li>
+<li><strong>Post</strong>：文章主体，外键关联作者，多对多关联标签</li>
+<li><strong>Comment</strong>：评论，外键关联文章</li>
+<li><strong>Tag</strong>：标签</li>
+<li><strong>Sentence</strong>：每日一句，独立小表</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># myblog/models.py</span></span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> DjangoUeditor.models <span class="keyword">import</span> UEditorField</span><br><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> User</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sentence</span>(models.Model):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;每日一句&quot;&quot;&quot;</span></span><br><span class="line">    time = models.DateTimeField(auto_now=<span class="literal">True</span>)</span><br><span class="line">    content = models.TextField()</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        verbose_name_plural = <span class="string">&quot;每日一句&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.content</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Tag</span>(models.Model):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;标签&quot;&quot;&quot;</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">50</span>)</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        verbose_name_plural = <span class="string">&quot;标签&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.name</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Post</span>(models.Model):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;文章&quot;&quot;&quot;</span></span><br><span class="line">    title = models.CharField(<span class="string">&quot;标题&quot;</span>, max_length=<span class="number">50</span>)</span><br><span class="line">    content = UEditorField(<span class="string">&quot;内容&quot;</span>, width=<span class="number">800</span>, height=<span class="number">600</span>, imagePath=<span class="string">&quot;myblog/&quot;</span>)</span><br><span class="line">    img = models.ImageField(<span class="string">&quot;封面&quot;</span>)</span><br><span class="line">    thumb = models.ImageField(<span class="string">&quot;缩略图&quot;</span>)</span><br><span class="line">    pub_time = models.DateTimeField(<span class="string">&quot;创建时间&quot;</span>, auto_now_add=<span class="literal">True</span>)</span><br><span class="line">    modify_time = models.DateTimeField(<span class="string">&quot;修改时间&quot;</span>, auto_now=<span class="literal">True</span>)</span><br><span class="line">    source = models.CharField(<span class="string">&quot;来源&quot;</span>, max_length=<span class="number">100</span>)</span><br><span class="line">    choices = ((<span class="string">&quot;网站前端&quot;</span>, <span class="string">&quot;网站前端&quot;</span>), (<span class="string">&quot;后端技术&quot;</span>, <span class="string">&quot;后端技术&quot;</span>))</span><br><span class="line">    classify = models.CharField(<span class="string">&quot;分类&quot;</span>, max_length=<span class="number">20</span>, choices=choices)</span><br><span class="line">    author = models.ForeignKey(User)          <span class="comment"># 作者 → User 表</span></span><br><span class="line">    tags = models.ManyToManyField(Tag)        <span class="comment"># 标签 → 多对多</span></span><br><span class="line">    look = models.IntegerField(<span class="string">&quot;围观次数&quot;</span>, default=<span class="number">0</span>)</span><br><span class="line">    zan = models.IntegerField(<span class="string">&quot;点赞&quot;</span>, default=<span class="number">0</span>)</span><br><span class="line">    adv = models.BooleanField(<span class="string">&quot;广告位&quot;</span>, default=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        verbose_name_plural = <span class="string">&quot;文章&quot;</span></span><br><span class="line">        ordering = [<span class="string">&quot;-modify_time&quot;</span>]           <span class="comment"># 默认按修改时间倒序</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">author_</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.author.username</span><br><span class="line">    author_.short_description = <span class="string">&quot;作者&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">tag</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;/&quot;</span>.join([tag.name <span class="keyword">for</span> tag <span class="keyword">in</span> <span class="variable language_">self</span>.tags.<span class="built_in">all</span>()])</span><br><span class="line">    tag.short_description = <span class="string">&quot;标签&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Comment</span>(models.Model):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;评论&quot;&quot;&quot;</span></span><br><span class="line">    name = models.CharField(max_length=<span class="number">50</span>)       <span class="comment"># 昵称</span></span><br><span class="line">    email = models.CharField(max_length=<span class="number">50</span>)</span><br><span class="line">    content = models.CharField(max_length=<span class="number">1000</span>)</span><br><span class="line">    time = models.DateTimeField(auto_now_add=<span class="literal">True</span>)</span><br><span class="line">    post = models.ForeignKey(Post)               <span class="comment"># 评论属于哪篇文章</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Meta</span>:</span><br><span class="line">        verbose_name_plural = <span class="string">&quot;评论&quot;</span></span><br></pre></td></tr></table></figure>
+<p>几个设计要点：</p>
+<ol>
+<li><strong><code>ForeignKey</code> 与 <code>ManyToManyField</code> 的选择</strong>：一篇文章只有一个作者 → 外键；一篇文章可以有多个标签、一个标签可以属于多篇文章 → 多对多。</li>
+<li><strong><code>auto_now_add</code> 与 <code>auto_now</code></strong>：前者只在创建时写入，后者每次 <code>save()</code> 都更新，正好对应「发布时间」与「修改时间」。</li>
+<li><strong><code>choices</code> 做分类</strong>：数据库里存的是字符串本身，但 Admin 里会渲染成下拉框，比自由输入可控。</li>
+<li><strong><code>verbose_name_plural</code></strong>：让后台显示「文章」而不是「Posts」，纯中文站点的细节。</li>
+<li><strong><code>short_description</code></strong>：给自定义方法列起表头名（<code>author_</code>、<code>tag</code>），Admin 列表页就能显示作者名和标签串。</li>
+</ol>
+<p>改完模型必须迁移：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python manage.py makemigrations</span><br><span class="line">python manage.py migrate</span><br><span class="line">python manage.py createsuperuser</span><br></pre></td></tr></table></figure>
+<h2 id="四-admin-后台几十行换来一个运营系统"><a class="markdownIt-Anchor" href="#四-admin-后台几十行换来一个运营系统"></a> 四、Admin 后台：几十行换来一个运营系统</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># myblog/admin.py</span></span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">admin.site.register(Sentence)</span><br><span class="line">admin.site.register(Tag)</span><br><span class="line">admin.site.register(Comment)</span><br><span class="line"></span><br><span class="line"><span class="meta">@admin.register(<span class="params">Post</span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PostAdmin</span>(admin.ModelAdmin):</span><br><span class="line">    list_display = [<span class="string">&quot;title&quot;</span>, <span class="string">&quot;img&quot;</span>, <span class="string">&quot;pub_time&quot;</span>, <span class="string">&quot;modify_time&quot;</span>, <span class="string">&quot;source&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;classify&quot;</span>, <span class="string">&quot;look&quot;</span>, <span class="string">&quot;zan&quot;</span>, <span class="string">&quot;adv&quot;</span>, <span class="string">&quot;author_&quot;</span>, <span class="string">&quot;tag&quot;</span>]</span><br><span class="line">    fieldsets = [</span><br><span class="line">        (<span class="string">&quot;标题/正文&quot;</span>, &#123;<span class="string">&quot;fields&quot;</span>: [<span class="string">&quot;title&quot;</span>, <span class="string">&quot;content&quot;</span>]&#125;),</span><br><span class="line">        (<span class="string">&quot;分类/图片&quot;</span>, &#123;<span class="string">&quot;fields&quot;</span>: [<span class="string">&quot;classify&quot;</span>, <span class="string">&quot;img&quot;</span>, <span class="string">&quot;thumb&quot;</span>]&#125;),</span><br><span class="line">        (<span class="string">&quot;作者/标签&quot;</span>, &#123;<span class="string">&quot;fields&quot;</span>: [<span class="string">&quot;author&quot;</span>, <span class="string">&quot;tags&quot;</span>]&#125;),</span><br><span class="line">        (<span class="string">&quot;其他&quot;</span>, &#123;<span class="string">&quot;fields&quot;</span>: [<span class="string">&quot;look&quot;</span>, <span class="string">&quot;zan&quot;</span>, <span class="string">&quot;adv&quot;</span>, <span class="string">&quot;source&quot;</span>]&#125;),</span><br><span class="line">        (<span class="string">&quot;时间&quot;</span>, &#123;<span class="string">&quot;fields&quot;</span>: [<span class="string">&quot;pub_time&quot;</span>, <span class="string">&quot;modify_time&quot;</span>]&#125;),</span><br><span class="line">    ]</span><br><span class="line">    readonly_fields = [<span class="string">&quot;pub_time&quot;</span>, <span class="string">&quot;modify_time&quot;</span>, <span class="string">&quot;thumb&quot;</span>]</span><br><span class="line">    search_fields = [<span class="string">&quot;title&quot;</span>, <span class="string">&quot;content&quot;</span>, <span class="string">&quot;tags__name&quot;</span>, <span class="string">&quot;author__username&quot;</span>]</span><br><span class="line">    list_filter = [<span class="string">&quot;classify&quot;</span>, <span class="string">&quot;tags&quot;</span>]</span><br><span class="line">    list_per_page = <span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>这段代码的价值在于四点：</p>
+<ul>
+<li><code>list_display</code> 决定列表页显示哪些列（包括自定义方法列）；</li>
+<li><code>fieldsets</code> 把编辑页分组，几十个字段才不会挤成一团；</li>
+<li><code>search_fields</code> 支持<strong>跨关系搜索</strong>（<code>tags__name</code>、<code>author__username</code>），双下划线表示「跟着外键进去查」；</li>
+<li><code>readonly_fields</code> 把 <code>thumb</code> 设为只读，因为它由代码自动生成，不该手填。</li>
+</ul>
+<h2 id="五-模板继承-bootstrap-模板"><a class="markdownIt-Anchor" href="#五-模板继承-bootstrap-模板"></a> 五、模板：继承 Bootstrap 模板</h2>
+<p>课程给了一套 Bootstrap 个人技术博客模板，改造三步：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 把所有 html 复制到 templates/myblog/      （index.html、content.html、base.html…）</span><br><span class="line">2. 把 css/fonts/img/js 复制到 static/</span><br><span class="line">3. 批量替换 html 里的静态资源路径：</span><br><span class="line">     css/    → /static/css/</span><br><span class="line">     js/     → /static/js/</span><br><span class="line">     images/ → /static/images/</span><br></pre></td></tr></table></figure>
+<p>第 3 步最容易漏，漏了就会出现「本地打开正常、Django 跑起来样式全丢」。</p>
+<p>改造后的 <code>base.html</code> 用模板继承留出三个坑：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;% block head %&#125;</span><br><span class="line">   <span class="tag">&lt;<span class="name">title</span>&gt;</span>个人技术博客<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block body %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block script %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure>
+<p>子模板只填内容：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;% extends &quot;myblog/base.html&quot; %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block body %&#125;</span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;content&quot;</span>&gt;</span>...文章列表...<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>模板继承的意义</strong>：导航栏、页脚、公共脚本只写一次，几十个页面共享同一份骨架。</p>
+<h2 id="六-首页视图每日一句-分页-热门排行"><a class="markdownIt-Anchor" href="#六-首页视图每日一句-分页-热门排行"></a> 六、首页视图：每日一句 + 分页 + 热门排行</h2>
+<p>首页要同时呈现五块内容，视图里一次准备好：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># myblog/views.py</span></span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"><span class="keyword">from</span> django.core.paginator <span class="keyword">import</span> Paginator</span><br><span class="line"><span class="keyword">import</span> random, datetime</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>(<span class="params">request</span>):</span><br><span class="line">    <span class="comment"># 1. 每日一句：每次刷新随机取一条</span></span><br><span class="line">    sen = random.choice(Sentence.objects.<span class="built_in">all</span>())</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 2. 分类过滤：?classify=1 看前端，2 看后端，不传则全部</span></span><br><span class="line">    classify = request.GET.get(<span class="string">&quot;classify&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> classify <span class="keyword">or</span> classify == <span class="string">&quot;None&quot;</span>:</span><br><span class="line">        p_list = Post.objects.<span class="built_in">all</span>()</span><br><span class="line">    <span class="keyword">elif</span> classify == <span class="string">&quot;1&quot;</span>:</span><br><span class="line">        p_list = Post.objects.<span class="built_in">filter</span>(classify=<span class="string">&quot;网站前端&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        p_list = Post.objects.<span class="built_in">filter</span>(classify=<span class="string">&quot;后端技术&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3. 分页：每页 2 条</span></span><br><span class="line">    p = Paginator(p_list, <span class="number">2</span>)</span><br><span class="line">    page = request.GET.get(<span class="string">&quot;page&quot;</span>) <span class="keyword">or</span> <span class="number">1</span></span><br><span class="line">    p_list = p.page(page)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 4. 本周热门：算出本周一 0 点，取这段时间内围观数前 5</span></span><br><span class="line">    time_now = datetime.datetime.now()</span><br><span class="line">    time_now_zero = datetime.datetime.strptime(</span><br><span class="line">        datetime.datetime.strftime(time_now, <span class="string">&quot;%Y-%m-%d&quot;</span>), <span class="string">&quot;%Y-%m-%d&quot;</span>)</span><br><span class="line">    week_day = time_now.isoweekday()                       <span class="comment"># 周一=1</span></span><br><span class="line">    time_m = time_now_zero - datetime.timedelta(days=week_day - <span class="number">1</span>)</span><br><span class="line">    hop_post = Post.objects.<span class="built_in">filter</span>(pub_time__range=(time_m, time_now)) \</span><br><span class="line">                            .order_by(<span class="string">&quot;-look&quot;</span>)[:<span class="number">5</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> hop_post:                                       <span class="comment"># 本周还没有数据</span></span><br><span class="line">        hop_post = Post.objects.<span class="built_in">all</span>().order_by(<span class="string">&quot;-look&quot;</span>)[:<span class="number">5</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 5. 轮播图与右侧热门</span></span><br><span class="line">    adv = Post.objects.<span class="built_in">filter</span>(adv=<span class="literal">True</span>)</span><br><span class="line">    h_p = Post.objects.<span class="built_in">all</span>().order_by(<span class="string">&quot;-look&quot;</span>)[:<span class="number">5</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render(request, <span class="string">&quot;myblog/index.html&quot;</span>, &#123;</span><br><span class="line">        <span class="string">&quot;sen&quot;</span>: sen, <span class="string">&quot;p_list&quot;</span>: p_list, <span class="string">&quot;classify&quot;</span>: classify,</span><br><span class="line">        <span class="string">&quot;hop_post&quot;</span>: hop_post, <span class="string">&quot;adv&quot;</span>: adv, <span class="string">&quot;h_p&quot;</span>: h_p,</span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+<p>模板侧对应的分页条：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for p in p_list %&#125;</span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;news-list&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/static/media/&#123;&#123; p.img &#125;&#125;&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;&quot;</span> <span class="attr">style</span>=<span class="string">&quot;width:220px;height:143px&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/detail/?id=&#123;&#123; p.id &#125;&#125;&quot;</span>&gt;</span> &#123;&#123; p.title &#125;&#125; <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span> &#123;&#123; p.modify_time|date:&quot;Y-m-d&quot; &#125;&#125; <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span> 共 <span class="tag">&lt;<span class="name">strong</span>&gt;</span>&#123;&#123; p.look &#125;&#125;<span class="tag">&lt;/<span class="name">strong</span>&gt;</span> 人围观<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">&#123;% endfor %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% if p_list.has_previous %&#125;</span><br><span class="line">  <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/index/?page=&#123;&#123; p_list.previous_page_number &#125;&#125;&amp;classify=&#123;&#123; classify &#125;&#125;&quot;</span>&gt;</span>上一页<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">&#123;% endif %&#125;</span><br><span class="line">&#123;% for page in p_list.paginator.page_range %&#125;</span><br><span class="line">  &#123;% if p_list.number == page %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;current&quot;</span>&gt;</span>&#123;&#123; page &#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">  &#123;% else %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/index/?page=&#123;&#123; page &#125;&#125;&amp;classify=&#123;&#123; classify &#125;&#125;&quot;</span>&gt;</span>&#123;&#123; page &#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">  &#123;% endif %&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有两个高频坑：</p>
+<ul>
+<li><code>p_list</code> 是 <strong>Page 对象</strong>而不是 QuerySet，循环它得到当前页数据，<code>p_list.paginator.page_range</code> 才是总页数；</li>
+<li>翻页链接必须把 <code>classify</code> 一起带上，否则一翻页分类筛选就丢了。</li>
+</ul>
+<h2 id="七-详情页上下篇与相关推荐"><a class="markdownIt-Anchor" href="#七-详情页上下篇与相关推荐"></a> 七、详情页：上下篇与相关推荐</h2>
+<p>详情页除了正文，还有两个提升体验的小功能：<strong>上一篇 / 下一篇</strong>，以及<strong>按标签相关推荐</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.views.generic <span class="keyword">import</span> ListView</span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> get_object_or_404</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Detail</span>(<span class="title class_ inherited__">Index</span>):</span><br><span class="line">    template_name = <span class="string">&quot;myblog/content.html&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_context_data</span>(<span class="params">self, **kwargs</span>):</span><br><span class="line">        cont = <span class="built_in">super</span>().get_context_data()</span><br><span class="line">        id_ = <span class="variable language_">self</span>.request.GET.get(<span class="string">&quot;id&quot;</span>)</span><br><span class="line">        detail_post = get_object_or_404(Post, pk=id_)</span><br><span class="line">        cont[<span class="string">&quot;detail_post&quot;</span>] = detail_post</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 上一篇 / 下一篇（按 id 大小取相邻的一篇）</span></span><br><span class="line">        cont[<span class="string">&quot;prev_post&quot;</span>] = Post.objects.<span class="built_in">filter</span>(id__lt=id_).order_by(<span class="string">&quot;-id&quot;</span>).first()</span><br><span class="line">        cont[<span class="string">&quot;next_post&quot;</span>] = Post.objects.<span class="built_in">filter</span>(id__gt=id_).order_by(<span class="string">&quot;id&quot;</span>).first()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 相关推荐：找出与该文章共享标签的其他文章</span></span><br><span class="line">        tag_post_list_all = []</span><br><span class="line">        <span class="keyword">for</span> tag <span class="keyword">in</span> detail_post.tags.<span class="built_in">all</span>():</span><br><span class="line">            tag_post_list_all.extend(tag.post_set.<span class="built_in">all</span>())     <span class="comment"># 反向查询：标签 → 文章</span></span><br><span class="line">        tag_post_list_all = [p <span class="keyword">for</span> p <span class="keyword">in</span> tag_post_list_all <span class="keyword">if</span> p.<span class="built_in">id</span> != detail_post.<span class="built_in">id</span>]</span><br><span class="line">        tag_post_list_all = <span class="built_in">list</span>(<span class="built_in">set</span>(tag_post_list_all))      <span class="comment"># 去重</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(tag_post_list_all) &gt;= <span class="number">8</span>:                       <span class="comment"># 够 8 篇就随机取 8 篇</span></span><br><span class="line">            random_post_list = random.sample(tag_post_list_all, <span class="number">8</span>)</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">len</span>(tag_post_list_all) == <span class="number">0</span>:</span><br><span class="line">            random_post_list = []</span><br><span class="line">        <span class="keyword">else</span>:                                                 <span class="comment"># 不够就重复补足</span></span><br><span class="line">            random_post_list = tag_post_list_all.copy()</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span> - <span class="built_in">len</span>(tag_post_list_all)):</span><br><span class="line">                random_post_list.append(random.choice(tag_post_list_all))</span><br><span class="line"></span><br><span class="line">        cont[<span class="string">&quot;random_post_list&quot;</span>] = random_post_list</span><br><span class="line">        <span class="keyword">return</span> cont</span><br></pre></td></tr></table></figure>
+<p>三个值得记住的点：</p>
+<ol>
+<li><strong><code>tag.post_set.all()</code></strong>：多对多/外键的<strong>反向查询</strong>，从一个标签对象拿到它关联的所有文章（也可以用 <code>related_name</code> 自定义名字）；</li>
+<li><strong>去重</strong>：一篇文章命中多个相同标签会被取到多次，用 <code>set()</code> 去重（顺便注意 QuerySet 元素可哈希）；</li>
+<li><strong><code>get_object_or_404</code></strong>：url 参数被乱改时直接返回 404，比抛 <code>DoesNotExist</code> 友好。</li>
+</ol>
+<h2 id="八-新版-django-写法对照"><a class="markdownIt-Anchor" href="#八-新版-django-写法对照"></a> 八、新版 Django 写法对照</h2>
+<p>课程代码是 Django 1.8 的写法，现在（Django 4/5）主要差两处：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.8：url() + 正则</span></span><br><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r&#x27;^index/&#x27;</span>, Index.as_view()),</span><br><span class="line">    url(<span class="string">r&#x27;^detail/&#x27;</span>, Detail.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 4/5：path() + 转换器（需要正则时用 re_path）</span></span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> path, re_path</span><br><span class="line">urlpatterns = [</span><br><span class="line">    path(<span class="string">&#x27;index/&#x27;</span>, Index.as_view(), name=<span class="string">&#x27;index&#x27;</span>),</span><br><span class="line">    path(<span class="string">&#x27;detail/&#x27;</span>, Detail.as_view(), name=<span class="string">&#x27;detail&#x27;</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.8：外键必须显式写 on_delete 之前的版本 —— 升级时会报 TypeError</span></span><br><span class="line">author = models.ForeignKey(User)</span><br><span class="line"><span class="comment"># 4/5：必须指定删除策略</span></span><br><span class="line">author = models.ForeignKey(User, on_delete=models.CASCADE)</span><br></pre></td></tr></table></figure>
+<p>另外 <code>MIDDLEWARE_CLASSES</code> 已改名为 <code>MIDDLEWARE</code>，<code>django.contrib.auth.middleware.SessionAuthenticationMiddleware</code> 已被移除。<strong>如果你也想照着这门课的项目练手，建议直接用新版 Django 重写一遍</strong>，踩一遍升级的坑比看文档印象深。</p>
+<h2 id="九-上线前必须改的两处"><a class="markdownIt-Anchor" href="#九-上线前必须改的两处"></a> 九、上线前必须改的两处</h2>
+<p>课程为了调试方便，把这两个值留成了开发配置，部署前一定要改：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># settings.py —— 开发环境</span></span><br><span class="line">DEBUG = <span class="literal">True</span></span><br><span class="line">ALLOWED_HOSTS = []</span><br><span class="line">SECRET_KEY = <span class="string">&#x27;写死在代码里的密钥&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生产环境</span></span><br><span class="line">DEBUG = <span class="literal">False</span></span><br><span class="line">ALLOWED_HOSTS = [<span class="string">&#x27;你的域名或服务器IP&#x27;</span>]</span><br><span class="line">SECRET_KEY = os.environ.get(<span class="string">&#x27;DJANGO_SECRET_KEY&#x27;</span>)   <span class="comment"># 从环境变量读，不进仓库</span></span><br></pre></td></tr></table></figure>
+<p><code>DEBUG=True</code> 在生产会暴露完整的报错堆栈和配置信息，<code>SECRET_KEY</code> 泄露则等于会话签名被公开。这两条是安全底线，不是可选项。</p>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>上篇走完了「项目骨架 → 数据模型 → 后台 → 模板 → 首页/详情页」这条主线，其中最有价值的三件事是：<strong>先把表关系画清楚再写模型</strong>、<strong>Admin 用 <code>fieldsets</code> + 跨关系 <code>search_fields</code> 变成可用后台</strong>、<strong>分页要记住 Page 对象与 QuerySet 的区别</strong>。</p>
+<p>下篇接着写扩展部分：自定义用户的注册登录（session + sha1）、评论与点赞（AJAX + 按天限流）、富文本与自动缩略图、haystack + whoosh 中文全文检索，以及最后用 nginx + uwsgi 部署到 Linux。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>Author: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>Permalink: </strong><a href="https://utdog.github.io/en/2025/05/06/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8A/">https://utdog.github.io/en/2025/05/06/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8A/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>License: </strong>All articles on this blog are licensed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> license agreement unless otherwise stated. Please indicate the source when reprinting!</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">Sponsor</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">Buy me a coffee</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=Django%20%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%EF%BC%88%E4%B8%8A%EF%BC%89%EF%BC%9A%E5%BB%BA%E9%A1%B9%E7%9B%AE%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E9%A6%96%E9%A1%B5&amp;desc=%E8%AF%BE%E7%A8%8B%E9%A1%B9%E7%9B%AE%20single_blog%20%E5%AE%8C%E6%95%B4%E5%A4%8D%E7%8E%B0%EF%BC%9Aconda%20%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%81%E5%9B%9B%E5%BC%A0%E8%A1%A8%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E3%80%81Admin%20%E5%90%8E%E5%8F%B0%E5%AE%9A%E5%88%B6%E3%80%81Bootstrap%20%E6%A8%A1%E6%9D%BF%E7%BB%A7%E6%89%BF%EF%BC%8C%E4%BB%A5%E5%8F%8A%E9%A6%96%E9%A1%B5%E7%9A%84%E6%AF%8F%E6%97%A5%E4%B8%80%E5%8F%A5%E3%80%81%E5%88%86%E9%A1%B5%E4%B8%8E%E7%83%AD%E9%97%A8%E6%8E%92%E8%A1%8C%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="Django 博客项目实战（上）：建项目、设计模型与首页">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="Django 博客项目实战（上）：建项目、设计模型与首页">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/Django/" rel="tag">Django</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/" rel="tag">项目实战</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/34.jpg" data-sizes="auto" alt="Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索" class="lazyload">
+        
+        <a href="/en/2025/05/07/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8B/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Django 博客项目实战（下）：登录注册、评论点赞、缩略图与全文检索
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/42.jpg" data-sizes="auto" alt="python全栈爬虫" class="lazyload">
+      
+      <a href="/en/2025/05/05/python%E5%85%A8%E6%A0%88%E7%88%AC%E8%99%AB/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          python全栈爬虫
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#django-%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E4%B8%8A%E5%BB%BA%E9%A1%B9%E7%9B%AE-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E9%A6%96%E9%A1%B5"><span class="toc-number">1.</span> <span class="toc-text"> Django 博客项目实战（上）：建项目、设计模型与首页</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、项目概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%90%AD%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、搭建项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E5%9B%9B%E5%BC%A0%E8%A1%A8%E8%AF%B4%E6%B8%85%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、模型设计：四张表说清一个博客</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-admin-%E5%90%8E%E5%8F%B0%E5%87%A0%E5%8D%81%E8%A1%8C%E6%8D%A2%E6%9D%A5%E4%B8%80%E4%B8%AA%E8%BF%90%E8%90%A5%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、Admin 后台：几十行换来一个运营系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%A8%A1%E6%9D%BF%E7%BB%A7%E6%89%BF-bootstrap-%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、模板：继承 Bootstrap 模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E9%A6%96%E9%A1%B5%E8%A7%86%E5%9B%BE%E6%AF%8F%E6%97%A5%E4%B8%80%E5%8F%A5-%E5%88%86%E9%A1%B5-%E7%83%AD%E9%97%A8%E6%8E%92%E8%A1%8C"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、首页视图：每日一句 + 分页 + 热门排行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E8%AF%A6%E6%83%85%E9%A1%B5%E4%B8%8A%E4%B8%8B%E7%AF%87%E4%B8%8E%E7%9B%B8%E5%85%B3%E6%8E%A8%E8%8D%90"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、详情页：上下篇与相关推荐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E6%96%B0%E7%89%88-django-%E5%86%99%E6%B3%95%E5%AF%B9%E7%85%A7"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、新版 Django 写法对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E4%B8%8A%E7%BA%BF%E5%89%8D%E5%BF%85%E9%A1%BB%E6%94%B9%E7%9A%84%E4%B8%A4%E5%A4%84"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、上线前必须改的两处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "Django 博客项目实战（上）：建项目、设计模型与首页",
+          url: "https://utdog.github.io/2025/05/06/Django%E5%8D%9A%E5%AE%A2%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98-%E4%B8%8A/",
+          excerpt: "",
+          description: "课程项目 single_blog 完整复现：conda 环境搭建、四张表模型设计、Admin 后台定制、Bootstrap 模板继承，以及首页的每日一句、分页与热门排行。",
+          stripContent: " Django 博客项目实战（上）：建项目、设计模型与首页  前言 Django 班的收官项目是一个完整的个人技术博客 single_blog：文章发布、分类标签、评论点赞、登录注册、富文本编辑、全文检索，最后还要部署到 Linux 服务器。这是课程里第一个「能拿出去给人看」的东西。 我把整个过程分上下两篇记录。上篇是地基：环境与项目搭建、模型设计、Admin 后台、模板继承、首页与详情页；下篇讲扩展：登录注册、评论点赞、富文本与缩略图、haystack 全文检索。  课程用的是 Django ",
+          date: "Tue May 06 2025 21:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:09:44 GMT+0800",
+          cover: "/images/33.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

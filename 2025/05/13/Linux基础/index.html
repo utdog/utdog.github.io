@@ -1,0 +1,1587 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    Linux 基础：服务器上的常用命令 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="课件整理：目录树与命令格式、文件目录操作、用户用户组与 rwx 权限（含 chmod 字母法与数字法）、find&#x2F;locate&#x2F;grep 查找与管道重定向、打包压缩、ssh 与 scp 远程管理、top&#x2F;ps&#x2F;kill 进程管理，以及 vim 三种模式速查。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 基础：服务器上的常用命令">
+<meta property="og:url" content="https://utdog.github.io/2025/05/13/Linux%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="课件整理：目录树与命令格式、文件目录操作、用户用户组与 rwx 权限（含 chmod 字母法与数字法）、find&#x2F;locate&#x2F;grep 查找与管道重定向、打包压缩、ssh 与 scp 远程管理、top&#x2F;ps&#x2F;kill 进程管理，以及 vim 三种模式速查。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-13T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:19:51.404Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="搜索"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">简体中文</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" class="selected">简体中文</li>
+          
+            <li data-value="en" >English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/13/Linux基础/';
+            
+              langMap['en'] = '/en/2025/05/13/Linux基础/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/13/Linux基础/';
+            
+              langMap['ja'] = '/ja/2025/05/13/Linux基础/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/43.jpg" alt="Linux 基础：服务器上的常用命令">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Linux 基础：服务器上的常用命令</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux-%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text"> Linux 基础：服务器上的常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%85%88%E5%BB%BA%E7%AB%8B%E4%B8%A4%E4%B8%AA%E7%9B%B4%E8%A7%89"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、先建立两个直觉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E4%B8%8E%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、文件与目录操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%A8%E6%88%B7-%E7%94%A8%E6%88%B7%E7%BB%84%E4%B8%8E%E6%9D%83%E9%99%90%E9%87%8D%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、用户、用户组与权限（重点）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E4%B8%8E%E7%94%A8%E6%88%B7%E7%BB%84"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 用户与用户组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E4%B8%89%E7%BB%84%E4%BA%BA-%E4%B8%89%E7%A7%8D%E6%9D%83%E9%99%90"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 权限：三组人 + 三种权限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%9F%A5%E6%89%BE%E4%B8%8E%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、查找与文本处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#which-whereis%E6%9F%A5%E5%91%BD%E4%BB%A4%E5%9C%A8%E5%93%AA"><span class="toc-number">1.4.1.</span> <span class="toc-text"> which &#x2F; whereis：查命令在哪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#find%E6%8C%89%E6%9D%A1%E4%BB%B6%E6%89%BE%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.2.</span> <span class="toc-text"> find：按条件找文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#locate%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BF%AB%E4%BD%86%E5%8F%AF%E8%83%BD%E4%B8%8D%E5%87%86"><span class="toc-number">1.4.3.</span> <span class="toc-text"> locate：查数据库，快但可能不准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#grep%E5%9C%A8%E6%96%87%E6%9C%AC%E9%87%8C%E6%89%BE%E5%86%85%E5%AE%B9"><span class="toc-number">1.4.4.</span> <span class="toc-text"> grep：在文本里找内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%E4%B8%8E%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.4.5.</span> <span class="toc-text"> 管道与重定向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%89%93%E5%8C%85-%E5%8E%8B%E7%BC%A9%E4%B8%8E%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、打包、压缩与装软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86ssh-%E4%B8%8E-scp"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、远程管理：ssh 与 scp</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh%E5%8A%A0%E5%AF%86%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95"><span class="toc-number">1.6.1.</span> <span class="toc-text"> ssh：加密远程登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#scp%E8%B7%A8%E4%B8%BB%E6%9C%BA%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="toc-number">1.6.2.</span> <span class="toc-text"> scp：跨主机传文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E4%B8%8E%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、系统信息与进程管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-vim%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%E9%80%9F%E6%9F%A5"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、vim：三种模式速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E8%B8%A9%E5%9D%91%E4%B8%8E%E6%98%93%E5%BF%98%E7%82%B9"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、踩坑与易忘点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Linux基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-13T12:00:00.000Z" itemprop="datePublished">2025-05-13</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="linux-基础服务器上的常用命令"><a class="markdownIt-Anchor" href="#linux-基础服务器上的常用命令"></a> Linux 基础：服务器上的常用命令</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>课程最后一课是 Linux，理由很直接：<strong>服务器上跑的基本都是 Linux</strong>。前面写的 Django 项目最终要部署到 Linux 服务器，用的就是这些命令——<code>cd</code> 进项目目录、<code>vim</code> 改配置、<code>chmod</code> 给静态目录权限、<code>ps</code> 查进程、<code>kill</code> 杀掉卡住的 uwsgi。</p>
+<p>这篇按课件顺序整理：先建立「目录树」和「命令格式」两个直觉，再是文件操作、用户与权限、查找与文本处理、远程管理、系统信息和 vim。课程是在 VMware 里装的 Ubuntu 虚拟机练的。</p>
+<h2 id="一-先建立两个直觉"><a class="markdownIt-Anchor" href="#一-先建立两个直觉"></a> 一、先建立两个直觉</h2>
+<p><strong>1. 没有盘符，只有一棵树。</strong></p>
+<p>Windows 打开「我的电脑」看到 C、D、E 多个盘符，每个盘符各自是一棵树的根；Linux <strong>只有一个根目录 <code>/</code></strong>，所有设备、文件都挂在这棵树下（<code>/home</code> 是用户家目录，<code>/etc</code> 是配置，<code>/var</code> 是可变数据，<code>/usr</code> 是程序……）。</p>
+<p><strong>2. 命令都是「命令 + 选项 + 参数」的格式。</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command [-options] [parameter]</span><br></pre></td></tr></table></figure>
+<p>查帮助有两种方式，选项和参数都忘了就查：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls --help            # 查看命令帮助信息</span><br><span class="line">man ls               # 查看完整使用手册（man 手册里按 q 退出）</span><br></pre></td></tr></table></figure>
+<p>几个能省大量时间的技巧（课件里的「学习技巧」）：</p>
+<ul>
+<li><strong>命令不用背</strong>：Tab 键补全，有歧义按两次 Tab 会列出候选；</li>
+<li><strong>上下箭头</strong>翻出用过的命令，<code>history</code> 看全部历史；</li>
+<li><strong><code>ctrl+c</code></strong> 取消当前命令（比如 <code>ping</code> 停不下来时）；</li>
+<li><strong><code>ctrl+u</code></strong> 清空已输入的内容。</li>
+</ul>
+<h2 id="二-文件与目录操作"><a class="markdownIt-Anchor" href="#二-文件与目录操作"></a> 二、文件与目录操作</h2>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>常用选项</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ls</code></td>
+<td>查看目录内容</td>
+<td><code>-a</code> 显示隐藏文件、<code>-l</code> 列表详情、<code>-h</code> 人性化大小、<code>-R</code> 递归</td>
+</tr>
+<tr>
+<td><code>cd</code></td>
+<td>切换目录</td>
+<td><code>.</code> 当前、<code>..</code> 上级、<code>~</code> 家目录、<code>-</code> 上次目录</td>
+</tr>
+<tr>
+<td><code>touch</code></td>
+<td>新建文件</td>
+<td>可一次建多个</td>
+</tr>
+<tr>
+<td><code>mkdir</code></td>
+<td>新建目录</td>
+<td><code>-p</code> 递归创建（<code>mkdir -p a/b/c</code>）</td>
+</tr>
+<tr>
+<td><code>rmdir</code></td>
+<td>删除目录</td>
+<td><strong>只能删空目录</strong></td>
+</tr>
+<tr>
+<td><code>rm</code></td>
+<td>删除文件/目录</td>
+<td><code>-r</code> 递归、<code>-f</code> 强制</td>
+</tr>
+<tr>
+<td><code>mv</code></td>
+<td>移动 / 重命名</td>
+<td>同目录下移动就是重命名</td>
+</tr>
+<tr>
+<td><code>cp</code></td>
+<td>复制</td>
+<td><code>-r</code> 复制目录、<code>-i</code> 覆盖前询问</td>
+</tr>
+<tr>
+<td><code>cat</code></td>
+<td>查看/合并文件</td>
+<td><code>-n</code> 行号、<code>-s</code> 压缩空行、<code>-b</code> 非空行编号</td>
+</tr>
+<tr>
+<td><code>more</code></td>
+<td>分页查看</td>
+<td>内容多的文件用它</td>
+</tr>
+<tr>
+<td><code>history</code></td>
+<td>历史命令</td>
+<td><code>history -c</code> 清空记录</td>
+</tr>
+<tr>
+<td><code>sudo</code></td>
+<td>以 root 权限执行</td>
+<td>Ubuntu 默认不允许 root 直接登录</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ls -lh                       # 列表 + 人性化大小</span><br><span class="line">cd /etc &amp;&amp; cd -              # 进 /etc 再回到刚才的目录</span><br><span class="line">mkdir -p project/app/utils   # 一次把三层目录都建出来</span><br><span class="line">cp -r demo demo_bak          # 复制目录必须加 -r</span><br><span class="line">cat a.txt b.txt &gt; all.txt    # 合并两个文件</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>⚠️ <code>rm -rf</code> 是这套命令里最危险的一条：<strong>Linux 下没有回收站</strong>，删掉就找不回来。执行前一定 <code>pwd</code> + <code>ls</code> 确认自己在哪、要删什么。</p>
+</blockquote>
+<h2 id="三-用户-用户组与权限重点"><a class="markdownIt-Anchor" href="#三-用户-用户组与权限重点"></a> 三、用户、用户组与权限（重点）</h2>
+<h3 id="用户与用户组"><a class="markdownIt-Anchor" href="#用户与用户组"></a> 用户与用户组</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">用户</span></span><br><span class="line">sudo useradd -m -s /bin/bash hanmeimei   # 建用户：-m 建家目录、-s 指定 shell</span><br><span class="line">sudo userdel -r 用户名                    # 删用户：-r 连带家目录一起删</span><br><span class="line">sudo usermod -u 4004 -g Linux lilei      # 改 ID / 所属组</span><br><span class="line">su - 用户名                               # 切换用户，加 - 会同时切到家目录</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">用户组</span></span><br><span class="line">sudo groupadd -g 3000 stu                # 建组并指定 GID</span><br><span class="line">sudo groupdel 组名</span><br><span class="line">sudo groupmod -g 新GID 组名</span><br></pre></td></tr></table></figure>
+<p>两条容易踩的规则（课件特别提示）：</p>
+<ol>
+<li><strong>创建用户时会默认创建一个和用户名同名的组</strong>；</li>
+<li><strong>新创建的用户没有 sudo 权限</strong>，需要把它加到 <code>adm</code>、<code>sudo</code> 这两个组里才拥有 sudo 权限，否则你只能一直 <code>su</code> 过去。</li>
+</ol>
+<p>用户信息存在 <code>/etc/passwd</code>，组信息在 <code>/etc/group</code>，可以直接 <code>grep</code> 查：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep luohuihua /etc/passwd /etc/group</span><br></pre></td></tr></table></figure>
+<h3 id="权限三组人-三种权限"><a class="markdownIt-Anchor" href="#权限三组人-三种权限"></a> 权限：三组人 + 三种权限</h3>
+<p><code>ls -l</code> 看到的这一串就是权限：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-rw-r--r-- 1 root root 0 6月 28 11:03 test.txt</span><br><span class="line"> ↑↑↑ ↑↑↑ ↑↑↑</span><br><span class="line"> 所有者 所属组 其他人</span><br></pre></td></tr></table></figure>
+<ul>
+<li>三组分别对应 <strong>u（所有者）/ g（所属组）/ o（其他人）</strong>；</li>
+<li>每组三个位置依次是 <strong>r（读）/ w（写）/ x（执行）</strong>；</li>
+<li>数字表示法：<strong>r = 4，w = 2，x = 1</strong>，所以 <code>rwx</code> = 7、<code>rw-</code> = 6、<code>r--</code> = 4。</li>
+</ul>
+<p>改权限有两种写法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 字母法：+ 增加、- 取消、= 直接设定</span></span><br><span class="line">chmod u+x script.sh</span><br><span class="line">chmod g=r a.text                     # 所属组只读</span><br><span class="line">chmod u=rw,g=r,o=--- a.text          # 所有者读写、组只读、其他人无权限</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 数字法：三个数字依次是 所有者/所属组/其他人</span></span><br><span class="line">chmod 755 filename</span><br></pre></td></tr></table></figure>
+<p><code>chmod 755</code> 拆开看就是：<strong>所有者 7（rwx）、所属组 5（r-x）、其他人 5（r-x）</strong>——这是目录和可执行脚本最常见的权限。</p>
+<p>课件里那组练习值得照着做一遍（答案就是课上的命令）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 建用户 lilei：ID 2002，基本组 stu(3000)，附加组 Linux</span></span><br><span class="line">sudo groupadd -g 3000 stu</span><br><span class="line">sudo groupadd Linux</span><br><span class="line">sudo useradd -u 2002 -g stu -G Linux lilei</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 建用户 hanmeimei：默认建家目录，shell 为 /bin/bash</span></span><br><span class="line">sudo useradd -m -s /bin/bash hanmeimei</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3. 改 lilei 的 ID 和所属组</span></span><br><span class="line">sudo usermod -u 4004 -g Linux lilei</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">4. 建系统用户 zhaoyu 且不允许登录</span></span><br><span class="line">sudo useradd -r -s &#x27;/sbin/nologin&#x27; zhaoyu</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">5. 桌面建文件 → 查看权限 → 改权限</span></span><br><span class="line">touch a.text &amp;&amp; ls -l a.text</span><br><span class="line">chmod g=r a.text</span><br><span class="line">chmod u=rw,g=r,o=--- a.text</span><br></pre></td></tr></table></figure>
+<p><strong>为什么部署时老要 <code>chmod</code></strong>：nginx 要读静态文件目录，Django 要往 <code>media</code> 里写上传的图片，权限不对就会出现「文件明明在，就是 403/404」。部署课件里那句 <code>sudo chmod 777 /var/www/myblog/static/</code> 就是为这个。</p>
+<h2 id="四-查找与文本处理"><a class="markdownIt-Anchor" href="#四-查找与文本处理"></a> 四、查找与文本处理</h2>
+<h3 id="which-whereis查命令在哪"><a class="markdownIt-Anchor" href="#which-whereis查命令在哪"></a> which / whereis：查命令在哪</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">which pwd                 # /bin/pwd</span><br><span class="line">echo $PATH                # which 就是在这串路径里找</span><br><span class="line">whereis pwd               # 连帮助文档位置一起列出来</span><br></pre></td></tr></table></figure>
+<p><code>which</code> 在 <code>$PATH</code> 里搜索可执行文件（还会显示别名），<code>whereis</code> 还会列出帮助文档路径。</p>
+<h3 id="find按条件找文件"><a class="markdownIt-Anchor" href="#find按条件找文件"></a> find：按条件找文件</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find [搜索路径] [搜索选项] 文件名</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-name</code></td>
+<td>按文件名</td>
+<td><code>find /etc -name init*</code></td>
+</tr>
+<tr>
+<td><code>-size</code></td>
+<td>按大小（<strong>单位是块，512 字节=1 块</strong>）</td>
+<td><code>find /etc -size +10k</code></td>
+</tr>
+<tr>
+<td><code>-user</code> / <code>-group</code></td>
+<td>按所有者 / 所属组</td>
+<td><code>find /home -user root</code></td>
+</tr>
+<tr>
+<td><code>-mtime</code> <code>-atime</code> <code>-ctime</code></td>
+<td>按天：修改 / 访问 / 属性变更</td>
+<td><code>find /etc -mtime -1</code></td>
+</tr>
+<tr>
+<td><code>-mmin</code> <code>-amin</code> <code>-cmin</code></td>
+<td>按分钟（更常用）</td>
+<td><code>find /etc -amin -60</code></td>
+</tr>
+<tr>
+<td><code>-type</code></td>
+<td>按类型（f 文件、d 目录、l 链接）</td>
+<td><code>find /etc -type f</code></td>
+</tr>
+<tr>
+<td><code>-inum</code></td>
+<td>按 i 节点号</td>
+<td><code>find . -inum 159341</code></td>
+</tr>
+<tr>
+<td><code>-a</code> / <code>-o</code></td>
+<td>逻辑与 / 或</td>
+<td><code>find /etc -size +10k -a -size -20k</code></td>
+</tr>
+<tr>
+<td><code>-exec</code> / <code>-ok</code></td>
+<td>对结果执行命令（<code>&#123;&#125;</code> 代表结果，<code>\;</code> 结尾）</td>
+<td><code>find . -name &quot;*.tmp&quot; -exec rm -f &#123;&#125; \;</code></td>
+</tr>
+</tbody>
+</table>
+<p>时间选项的记忆法（课件原话）：</p>
+<ul>
+<li><strong>c</strong>hange：属性被改过（所有者、权限）</li>
+<li><strong>a</strong>ccess：被浏览过</li>
+<li><strong>m</strong>odify：内容被改过</li>
+<li><code>-</code> 表示「多少时间之内」，<code>+</code> 表示「超过多少时间」</li>
+</ul>
+<p>一个很实用的例子——<strong>按 i 节点删除文件名带空格的文件</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -inum 159341 -exec rm -f &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>课件提醒：<strong>尽量缩小查找范围</strong>，别一上来就 <code>find /</code>，又慢又占资源；实在要全盘找，选服务器压力小的时候。</p>
+</blockquote>
+<h3 id="locate查数据库快但可能不准"><a class="markdownIt-Anchor" href="#locate查数据库快但可能不准"></a> locate：查数据库，快但可能不准</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">locate /etc/sh            # 秒出结果</span><br><span class="line">sudo updatedb             # 更新数据库（只有 root 能执行）</span><br></pre></td></tr></table></figure>
+<p><code>locate</code> 是在<strong>文件数据库</strong>里查，所以快；但如果数据库没更新，新建的文件就查不到。而且系统在 <code>/etc/updatedb.conf</code> 里配了搜索限制（<code>PRUNEFS</code>、<code>PRUNENAMES</code>、<code>PRUNEPATHS</code>），某些路径本来就不会被收录——<code>which</code>、<code>whereis</code> 也遵守同样的限制。</p>
+<h3 id="grep在文本里找内容"><a class="markdownIt-Anchor" href="#grep在文本里找内容"></a> grep：在文本里找内容</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;python&quot; filename               # 找到并打印匹配的行</span><br><span class="line">grep luohuihua -n /etc/passwd        # -n 显示行号</span><br><span class="line">grep luohuihua -c /etc/passwd /etc/group   # -c 统计匹配行数</span><br><span class="line">grep -E &quot;(home)|(sbin)&quot; /etc/passwd  # -E 用正则表达式</span><br></pre></td></tr></table></figure>
+<h3 id="管道与重定向"><a class="markdownIt-Anchor" href="#管道与重定向"></a> 管道与重定向</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ps -ajx | grep ssh          # 管道：把左边命令的输出当成右边命令的输入</span><br><span class="line">ls &gt; test.txt               # 重定向：把输出写进文件（覆盖）</span><br><span class="line">echo &quot;好的&quot; &gt;&gt; test.txt      # 追加重定向：不清空原内容</span><br><span class="line">ls &lt; test.txt               # 输入重定向</span><br><span class="line">ll /etc | grep -E &quot;.*&quot; -c   # 统计行数（管道 + 计数）</span><br></pre></td></tr></table></figure>
+<p><strong>管道 <code>|</code> 是 Linux 最优雅的设计之一</strong>：每个命令只做一件事，通过管道把多个小工具拼起来。</p>
+<h2 id="五-打包-压缩与装软件"><a class="markdownIt-Anchor" href="#五-打包-压缩与装软件"></a> 五、打包、压缩与装软件</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">打包（只打包不压缩）</span></span><br><span class="line">tar -cvf luohuihua.tar ./      # -c 创建归档、-v 显示过程、-f 指定归档文件</span><br><span class="line">tar -xvf luohuihua.tar         # -x 解包</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">打包 + gzip 压缩（.tar.gz）</span></span><br><span class="line">tar -zcvf py.tar.gz a.txt b.txt c.txt</span><br><span class="line">tar -zxvf py.tar.gz</span><br><span class="line">tar -zxvf 打包文件.tar.gz -C 目标路径    # -C 指定解压到哪（目录必须已存在）</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">打包 + bzip2 压缩（.tar.bz2，把 z 换成 j）</span></span><br><span class="line">tar -jcvf py.tar.bz2 a.txt b.txt c.txt</span><br><span class="line">tar -jxvf py.tar.bz2</span><br></pre></td></tr></table></figure>
+<p>⚠️ <strong><code>-f</code> 必须放在选项的最后</strong>（因为紧跟它的是文件名），这条课件专门提示过。</p>
+<p>Ubuntu 装软件用 <code>apt</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install sl        # 安装（课件用它的小火车动画演示）</span><br><span class="line">sudo apt remove sl         # 卸载</span><br><span class="line">sudo apt upgrade           # 更新已安装的包</span><br></pre></td></tr></table></figure>
+<h2 id="六-远程管理ssh-与-scp"><a class="markdownIt-Anchor" href="#六-远程管理ssh-与-scp"></a> 六、远程管理：ssh 与 scp</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ifconfig                   # 查看本机 IP</span><br><span class="line">ping www.baidu.com         # 检查网络连通（Linux 下默认不停，ctrl+c 结束）</span><br><span class="line">ping -c 10 -s 1024 www.baidu.com   # -c 指定包数、-s 指定包大小</span><br></pre></td></tr></table></figure>
+<h3 id="ssh加密远程登录"><a class="markdownIt-Anchor" href="#ssh加密远程登录"></a> ssh：加密远程登录</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service sshd status        # 查看 sshd 服务是否开启（active(running) 才算开启）</span><br><span class="line">ssh -p 22 用户名@主机地址    # -p 指定端口，默认 22</span><br></pre></td></tr></table></figure>
+<p>Windows 下常用 Xshell 或 PuTTY 连接（它们只是图形化的 ssh 客户端）。</p>
+<h3 id="scp跨主机传文件"><a class="markdownIt-Anchor" href="#scp跨主机传文件"></a> scp：跨主机传文件</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 远程 → 本地</span></span><br><span class="line">scp python@192.168.254.131:/home/python/a/e.txt /home/python/Desktop</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 本地 → 远程</span></span><br><span class="line">scp Desktop/requirements.txt python@192.168.254.131:/home/python</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3. 复制整个目录（必须加 -r）</span></span><br><span class="line">scp -r demo user@remote:Desktop</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">4. 远程目录 → 本地桌面</span></span><br><span class="line">scp -r python@192.168.254.131:/home/python/a Desktop</span><br></pre></td></tr></table></figure>
+<p>Windows 上传下载文件可以用 WinSCP（图形化 scp）。部署 Django 项目时，「把项目传上服务器」这一步用的就是它。</p>
+<h2 id="七-系统信息与进程管理"><a class="markdownIt-Anchor" href="#七-系统信息与进程管理"></a> 七、系统信息与进程管理</h2>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>date</code></td>
+<td>查看系统时间</td>
+</tr>
+<tr>
+<td><code>df -TH</code></td>
+<td>查看磁盘分区与挂载情况</td>
+</tr>
+<tr>
+<td><code>du -sh 目录</code> / <code>du -h 文件</code></td>
+<td>查看目录 / 文件大小</td>
+</tr>
+<tr>
+<td><code>uname -a</code></td>
+<td>内核、操作系统、CPU 信息（<code>-r</code> 内核版本、<code>-m</code> CPU）</td>
+</tr>
+<tr>
+<td><code>top</code></td>
+<td>实时进程与资源占用，按 <code>q</code> 退出</td>
+</tr>
+<tr>
+<td><code>ps -ajx</code></td>
+<td>查看所有进程状态</td>
+</tr>
+<tr>
+<td><code>kill 进程号</code> / <code>kill -9 进程号</code></td>
+<td>结束进程（<code>-9</code> 强制、<code>-15</code> 温和）</td>
+</tr>
+</tbody>
+</table>
+<p><code>top</code> 的内存字段容易看混，记这三个就够：</p>
+<ul>
+<li><strong>VIRT</strong>：虚拟内存总量（= SWAP + RES）</li>
+<li><strong>RES</strong>：实际占用的物理内存</li>
+<li><strong>SHR</strong>：共享内存</li>
+</ul>
+<p>进程状态：<strong>R</strong> 运行、<strong>S</strong> 睡眠、<strong>D</strong> 不可中断、<strong>T</strong> 停止、<strong>Z</strong> 僵尸。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps -ajx | grep uwsgi        # 配合管道查某个进程</span><br><span class="line">kill -9 1281                # 强制杀掉</span><br></pre></td></tr></table></figure>
+<p>⚠️ <strong>1 号进程（init）是所有进程的祖先，不能被结束</strong>。</p>
+<h2 id="八-vim三种模式速查"><a class="markdownIt-Anchor" href="#八-vim三种模式速查"></a> 八、vim：三种模式速查</h2>
+<p>vim 没有菜单，只有命令，核心是<strong>三种模式的切换</strong>：</p>
+<pre class="mermaid">graph LR
+    A[命令模式<br/>打开就是它] -->|i I a A o O| B[输入模式<br/>可以打字]
+    B -->|Esc| A
+    A -->|: /| C[末行模式<br/>保存 查找 替换]
+    C -->|Esc| A</pre>
+<p><strong>打开方式</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim filename            # 打开或新建</span><br><span class="line">vim +n filename         # 光标停在第 n 行</span><br><span class="line">vim + filename          # 光标停在最后一行</span><br><span class="line">vim +/pattern filename  # 光标停在第一个匹配处</span><br><span class="line">vim -r filename         # 上次编辑时崩溃，恢复文件</span><br></pre></td></tr></table></figure>
+<p><strong>命令模式（移动与编辑）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>按键</th>
+<th>作用</th>
+<th>按键</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>h j k l</code></td>
+<td>左下上右</td>
+<td><code>0</code> / <code>$</code></td>
+<td>行首 / 行尾</td>
+</tr>
+<tr>
+<td><code>w</code> / <code>b</code></td>
+<td>下一个字 / 上一个字</td>
+<td><code>gg</code> / <code>G</code></td>
+<td>首行 / 末行</td>
+</tr>
+<tr>
+<td><code>nG</code></td>
+<td>跳到第 n 行</td>
+<td><code>ctrl+f</code> / <code>ctrl+b</code></td>
+<td>翻页</td>
+</tr>
+<tr>
+<td><code>dd</code></td>
+<td>删除当前行</td>
+<td><code>3dd</code></td>
+<td>删除当前行起 3 行</td>
+</tr>
+<tr>
+<td><code>d$</code> / <code>d0</code></td>
+<td>删到行尾 / 行首</td>
+<td><code>yy</code> / <code>2yy</code></td>
+<td>复制 1 行 / 2 行</td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td>粘贴</td>
+<td><code>u</code> / <code>ctrl+r</code></td>
+<td>撤销 / 反撤销</td>
+</tr>
+</tbody>
+</table>
+<p><strong>输入模式</strong>：<code>i</code> 光标前插入、<code>I</code> 行首、<code>a</code> 光标后、<code>A</code> 行尾、<code>o</code> 下一行新开、<code>O</code> 上一行新开。</p>
+<p><strong>末行模式</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">:q          退出          :wq 或 :x   保存并退出</span><br><span class="line">:q!         不保存退出     :w          保存</span><br><span class="line">/string     查找 string，n 下一个、N 上一个</span><br><span class="line">:set nu     显示行号      :set nonu   取消行号</span><br><span class="line">:1,$s/word1/word2/g        全文替换（g 表示全部替换）</span><br><span class="line">:1,$s/word1/word2/gc       全文替换并逐个确认（常用）</span><br><span class="line">:n1,n2s/word1/word2/g      只替换 n1 到 n2 行</span><br></pre></td></tr></table></figure>
+<p><strong>可视模式</strong>：命令模式按 <code>v</code>（按字符选中）或 <code>V</code>（按行选中），再配合 <code>d</code>（删除）、<code>y</code>（复制）、<code>&gt;&gt;</code>/<code>&lt;&lt;</code>（缩进）。</p>
+<p>在服务器上改配置文件基本就是这个流程：<code>vim 文件</code> → <code>/关键词</code> 找到位置 → <code>i</code> 进入输入模式改 → <code>Esc</code> → <code>:wq</code> 保存退出。</p>
+<h2 id="九-踩坑与易忘点"><a class="markdownIt-Anchor" href="#九-踩坑与易忘点"></a> 九、踩坑与易忘点</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Permission denied</code></td>
+<td>当前用户没这个文件的权限</td>
+<td>前面加 <code>sudo</code>，或 <code>chmod</code> 改权限</td>
+</tr>
+<tr>
+<td>新用户不能用 <code>sudo</code></td>
+<td>没加入 sudo 组</td>
+<td><code>usermod -a -G sudo,adm 用户名</code></td>
+</tr>
+<tr>
+<td><code>rmdir</code> 删不掉目录</td>
+<td>它只能删空目录</td>
+<td>用 <code>rm -r</code></td>
+</tr>
+<tr>
+<td><code>cp</code> 目录报错</td>
+<td>少了递归选项</td>
+<td><code>cp -r</code></td>
+</tr>
+<tr>
+<td><code>tar</code> 报「文件是归档文件」</td>
+<td><code>-f</code> 没放在选项最后</td>
+<td>写成 <code>tar -zcvf x.tar.gz 文件…</code></td>
+</tr>
+<tr>
+<td><code>ping</code> 停不下来</td>
+<td>默认无限发包</td>
+<td><code>ctrl+c</code>，或用 <code>-c 10</code> 限制包数</td>
+</tr>
+<tr>
+<td><code>locate</code> 找不到刚建的文件</td>
+<td>文件数据库没更新</td>
+<td><code>sudo updatedb</code></td>
+</tr>
+<tr>
+<td><code>find /</code> 卡很久</td>
+<td>查找范围太大</td>
+<td>指定具体目录，别从根目录找</td>
+</tr>
+<tr>
+<td>改了配置没生效</td>
+<td>没重启服务</td>
+<td><code>service xxx restart</code> 或重跑进程</td>
+</tr>
+<tr>
+<td><code>kill</code> 杀不掉</td>
+<td>进程在内核态或需要权限</td>
+<td><code>kill -9</code> + <code>sudo</code>；1 号进程杀不掉</td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>Linux 命令看起来又多又杂，其实可以按「四个问题」归类：</p>
+<ol>
+<li><strong>我在哪、这有什么</strong> → <code>pwd</code> / <code>ls</code> / <code>cd</code></li>
+<li><strong>我要动它</strong> → <code>mkdir</code> / <code>touch</code> / <code>cp</code> / <code>mv</code> / <code>rm</code>，配合 <code>chmod</code> 管权限</li>
+<li><strong>我要找它</strong> → <code>find</code>（按条件找文件）/ <code>grep</code>（按内容找行）/ <code>which</code>（找命令）</li>
+<li><strong>我要连它</strong> → <code>ssh</code> 登录 / <code>scp</code> 传文件 / <code>ps</code> + <code>kill</code> 管进程 / <code>df</code> + <code>top</code> 看状态</li>
+</ol>
+<p>真正常用的只有二十来条，剩下的用 <code>--help</code> 和 <code>man</code> 现查就行。课件里那句话我很有共鸣：<strong>常用命令不用死记硬背，用多了自然就记得了。</strong></p>
+<blockquote>
+<p>说明：本文依据课件《06-linux基础》《07-Linux权限与远程管理》《08-文件查找与编辑》整理，命令、选项与练习均来自课件；其中「<code>rm -rf</code> 的危险提示」「四个问题归类」「vim 三模式切换图」是我补充的。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>本文作者：</strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>本文链接：</strong><a href="https://utdog.github.io/2025/05/13/Linux%E5%9F%BA%E7%A1%80/">https://utdog.github.io/2025/05/13/Linux%E5%9F%BA%E7%A1%80/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>本文版权：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> 许可协议。转载请注明出处！</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">赞助</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">请作者喝杯咖啡吧</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=Linux%20%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4&amp;desc=%E8%AF%BE%E4%BB%B6%E6%95%B4%E7%90%86%EF%BC%9A%E7%9B%AE%E5%BD%95%E6%A0%91%E4%B8%8E%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E3%80%81%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C%E3%80%81%E7%94%A8%E6%88%B7%E7%94%A8%E6%88%B7%E7%BB%84%E4%B8%8E%20rwx%20%E6%9D%83%E9%99%90%EF%BC%88%E5%90%AB%20chmod%20%E5%AD%97%E6%AF%8D%E6%B3%95%E4%B8%8E%E6%95%B0%E5%AD%97%E6%B3%95%EF%BC%89%E3%80%81find%2Flocate%2Fgrep%20%E6%9F%A5%E6%89%BE%E4%B8%8E%E7%AE%A1%E9%81%93%E9%87%8D%E5%AE%9A%E5%90%91%E3%80%81%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9%E3%80%81ssh%20%E4%B8%8E%20scp%20%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86%E3%80%81top%2Fps%2Fkill%20%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86%EF%BC%8C%E4%BB%A5%E5%8F%8A%20vim%20%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%E9%80%9F%E6%9F%A5%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="Linux 基础：服务器上的常用命令">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="Linux 基础：服务器上的常用命令">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/29.jpg" data-sizes="auto" alt="前端入门：HTML 标签与页面结构" class="lazyload">
+        
+        <a href="/2025/05/14/%E5%89%8D%E7%AB%AF%E5%85%A5%E9%97%A8-HTML/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            前端入门：HTML 标签与页面结构
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/41.jpg" data-sizes="auto" alt="Git 与 Gitee：从单人版本控制到多人协作" class="lazyload">
+      
+      <a href="/2025/05/12/Git%E4%B8%8EGitee/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          Git 与 Gitee：从单人版本控制到多人协作
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux-%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text"> Linux 基础：服务器上的常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%85%88%E5%BB%BA%E7%AB%8B%E4%B8%A4%E4%B8%AA%E7%9B%B4%E8%A7%89"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、先建立两个直觉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E4%B8%8E%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、文件与目录操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E7%94%A8%E6%88%B7-%E7%94%A8%E6%88%B7%E7%BB%84%E4%B8%8E%E6%9D%83%E9%99%90%E9%87%8D%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、用户、用户组与权限（重点）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E4%B8%8E%E7%94%A8%E6%88%B7%E7%BB%84"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 用户与用户组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E4%B8%89%E7%BB%84%E4%BA%BA-%E4%B8%89%E7%A7%8D%E6%9D%83%E9%99%90"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 权限：三组人 + 三种权限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%9F%A5%E6%89%BE%E4%B8%8E%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、查找与文本处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#which-whereis%E6%9F%A5%E5%91%BD%E4%BB%A4%E5%9C%A8%E5%93%AA"><span class="toc-number">1.4.1.</span> <span class="toc-text"> which &#x2F; whereis：查命令在哪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#find%E6%8C%89%E6%9D%A1%E4%BB%B6%E6%89%BE%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.2.</span> <span class="toc-text"> find：按条件找文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#locate%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BF%AB%E4%BD%86%E5%8F%AF%E8%83%BD%E4%B8%8D%E5%87%86"><span class="toc-number">1.4.3.</span> <span class="toc-text"> locate：查数据库，快但可能不准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#grep%E5%9C%A8%E6%96%87%E6%9C%AC%E9%87%8C%E6%89%BE%E5%86%85%E5%AE%B9"><span class="toc-number">1.4.4.</span> <span class="toc-text"> grep：在文本里找内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%E4%B8%8E%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.4.5.</span> <span class="toc-text"> 管道与重定向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%89%93%E5%8C%85-%E5%8E%8B%E7%BC%A9%E4%B8%8E%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、打包、压缩与装软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86ssh-%E4%B8%8E-scp"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、远程管理：ssh 与 scp</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ssh%E5%8A%A0%E5%AF%86%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95"><span class="toc-number">1.6.1.</span> <span class="toc-text"> ssh：加密远程登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#scp%E8%B7%A8%E4%B8%BB%E6%9C%BA%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="toc-number">1.6.2.</span> <span class="toc-text"> scp：跨主机传文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E4%B8%8E%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、系统信息与进程管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-vim%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%E9%80%9F%E6%9F%A5"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、vim：三种模式速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D-%E8%B8%A9%E5%9D%91%E4%B8%8E%E6%98%93%E5%BF%98%E7%82%B9"><span class="toc-number">1.9.</span> <span class="toc-text"> 九、踩坑与易忘点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.10.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "Linux 基础：服务器上的常用命令",
+          url: "https://utdog.github.io/2025/05/13/Linux%E5%9F%BA%E7%A1%80/",
+          excerpt: "",
+          description: "课件整理：目录树与命令格式、文件目录操作、用户用户组与 rwx 权限（含 chmod 字母法与数字法）、find/locate/grep 查找与管道重定向、打包压缩、ssh 与 scp 远程管理、top/ps/kill 进程管理，以及 vim 三种模式速查。",
+          stripContent: " Linux 基础：服务器上的常用命令  前言 课程最后一课是 Linux，理由很直接：服务器上跑的基本都是 Linux。前面写的 Django 项目最终要部署到 Linux 服务器，用的就是这些命令——cd 进项目目录、vim 改配置、chmod 给静态目录权限、ps 查进程、kill 杀掉卡住的 uwsgi。 这篇按课件顺序整理：先建立「目录树」和「命令格式」两个直觉，再是文件操作、用户与权限、查找与文本处理、远程管理、系统信息和 vim。课程是在 VMware 里装的 Ubuntu 虚拟机",
+          date: "Tue May 13 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:19:51 GMT+0800",
+          cover: "/images/43.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+

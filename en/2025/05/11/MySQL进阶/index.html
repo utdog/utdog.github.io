@@ -1,0 +1,1496 @@
+
+  <!DOCTYPE html>
+  <html lang="en"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.clipboard_tips = {"success":{"en":"Copy successfully (*^▽^*)","zh-CN":"复制成功 (*^▽^*)","zh-TW":"複製成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"en":"Copy failed (ﾟ⊿ﾟ)ﾂ","zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","zh-TW":"複製失敗 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":true,"count":25,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = 'All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://utdog.github.io';window.REIMU_CONFIG.i18n_languages = ["en","zh-TW","ja"];</script>
+  
+  <title>
+    MySQL 进阶：外键、视图、存储过程、触发器与事务 |
+    
+    MyBlog
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/regular.min.css" integrity="sha384-k5640LgghgAohDLPwSqVWa96yQwWouT6wsAL+J1g0CFJVITNKYkIh1XpPLYKQe7Y" crossorigin="anonymous">
+<link rel="stylesheet" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/solid.min.css" integrity="sha384-8yO&#x2F;A&#x2F;BtltnG0hDxdwmmkza8UAleyDoAD1FhXiH6rsOQQsCho1P6WZP9TpBBH3YP" crossorigin="anonymous">
+
+    <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/brands.min.css" integrity="sha384-&#x2F;BRyRRN0wxxRgh&#x2F;DAXU621go9pdoMHl6LFPiX5Pp8PZYZlKBQCDXj9X9DHx6LOud" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v5-font-face.min.css" integrity="sha384-&#x2F;mBKnLlGtog8q2qQrgugURRDV+iHWHAPvM5KulYXT1C2ErKOKkBI0vbff8ZPq7rL" crossorigin="anonymous">
+<link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/@fortawesome/fontawesome-free@6.5.1/css/v4-font-face.min.css" integrity="sha384-d2Yn1&#x2F;9Iw78r3oqwk5B+EcpRcmepXR5LyhmRF2a+WoSe9mpRGvVk0ZviFwDGDOTO" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="课件整理：三种表关系与外键级联、笛卡尔积与内外连接、视图的本质与增删改查、delimiter 与函数&#x2F;存储过程的 in&#x2F;out&#x2F;inout、事件驱动的触发器，以及事务隔离级别、设计范式与存储引擎。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 进阶：外键、视图、存储过程、触发器与事务">
+<meta property="og:url" content="https://utdog.github.io/en/2025/05/11/MySQL%E8%BF%9B%E9%98%B6/index.html">
+<meta property="og:site_name" content="MyBlog">
+<meta property="og:description" content="课件整理：三种表关系与外键级联、笛卡尔积与内外连接、视图的本质与增删改查、delimiter 与函数&#x2F;存储过程的 in&#x2F;out&#x2F;inout、事件驱动的触发器，以及事务隔离级别、设计范式与存储引擎。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-11T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-15T08:17:53.587Z">
+<meta property="article:author" content="单婉贺">
+<meta property="article:tag" content="SQL">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="MyBlog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload&#x3D;null;this.rel&#x3D;&#39;stylesheet&#39;" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL&#x2F;toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx&#x2F;1oA&#x2F;0l8ysE" crossorigin="anonymous">
+  
+    
+      
+        
+<link rel="stylesheet" href="https://npm.webcache.cn/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6&#x2F;jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx&#x2F;&#x2F;Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+
+      
+    
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" integrity="sha384-4NN3fZ5AokFyHuoihl7A9qWaCt+HsAtOaUsXwJGRb4&#x2F;SMBtFr2vcNSHR5E8dg0Wk" crossorigin="anonymous">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      
+      
+        
+      
+      <div class="loading-word">Loading...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf015;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/">Home</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf07b;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/archives">Archives</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf129;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/about">About</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon ">
+             
+              
+                &#xf0c0;
+              
+             
+          </div>
+          <a class="main-nav-link" href="/en/friend">Friend</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed" target="_blank"></a>
+    
+    
+    
+      <a id="nav-search-btn" class="nav-icon popup-trigger" title="Search"></a>
+    
+  </nav>
+  
+    
+    <nav id="i18n-nav">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">English</span>
+        </div>
+        <ul class="select-items" id="select-items">
+          
+            <li data-value="zh-CN" >简体中文</li>
+          
+            <li data-value="en" class="selected">English</li>
+          
+            <li data-value="zh-TW" >正體中文</li>
+          
+            <li data-value="ja" >日本語</li>
+          
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+            
+              langMap['zh-CN'] = '/2025/05/11/MySQL进阶/';
+            
+              langMap['en'] = '/en/2025/05/11/MySQL进阶/';
+            
+              langMap['zh-TW'] = '/zh-TW/2025/05/11/MySQL进阶/';
+            
+              langMap['ja'] = '/ja/2025/05/11/MySQL进阶/';
+            
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+          }
+        });
+      </script>
+    </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img crossorigin="anonymous" fetchpriority="high" src="/images/39.jpg" alt="MySQL 进阶：外键、视图、存储过程、触发器与事务">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">MySQL 进阶：外键、视图、存储过程、触发器与事务</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql-%E8%BF%9B%E9%98%B6%E5%A4%96%E9%94%AE-%E8%A7%86%E5%9B%BE-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B-%E8%A7%A6%E5%8F%91%E5%99%A8%E4%B8%8E%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text"> MySQL 进阶：外键、视图、存储过程、触发器与事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F%E4%B8%8E%E4%B8%89%E7%A7%8D%E8%A1%A8%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、外键约束与三种表关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E8%A1%A8%E5%85%B3%E7%B3%BB%E6%80%8E%E4%B9%88%E8%A1%A8%E8%BE%BE"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 三种表关系怎么表达</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%A1%A8%E8%BF%9E%E6%8E%A5%E5%85%88%E7%9C%8B%E6%87%82%E7%AC%9B%E5%8D%A1%E5%B0%94%E7%A7%AF"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、表连接：先看懂笛卡尔积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%A7%86%E5%9B%BE%E5%8F%AA%E5%AD%98%E5%AE%9A%E4%B9%89%E4%B8%8D%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、视图：只存定义，不存数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%87%BD%E6%95%B0%E4%B8%8E%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、函数与存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%86%99-delimiter"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 为什么要写 delimiter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E4%B8%8E%E4%B8%89%E7%A7%8D%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 存储过程与三种参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84-sql"><span class="toc-number">1.4.3.</span> <span class="toc-text"> 触发器：事件驱动的 SQL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、事务与隔离级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96%E8%8C%83%E5%BC%8F-%E5%BC%95%E6%93%8E-%E6%8B%86%E8%A1%A8"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、数据库优化：范式、引擎、拆表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E8%8C%83%E5%BC%8F"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 设计范式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 存储引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%AE%E7%9A%84%E8%AE%BE%E7%BD%AE%E4%B8%8E%E8%A1%A8%E6%8B%86%E5%88%86"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 键的设置与表拆分</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-pymysql%E5%85%AD%E6%AD%A5%E8%B5%B0"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、pymysql：六步走</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-MySQL进阶" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-11T12:00:00.000Z" itemprop="datePublished">2025-05-11</time>
+    <time style="display: none;" id="post-update-time">2026-10-15</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/en/categories/Study-Log/" data-aos="zoom-in">Study Log</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="mysql-进阶外键-视图-存储过程-触发器与事务"><a class="markdownIt-Anchor" href="#mysql-进阶外键-视图-存储过程-触发器与事务"></a> MySQL 进阶：外键、视图、存储过程、触发器与事务</h1>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>基础篇解决的是「怎么把数据存进去、查出来」，进阶篇解决的是**「怎么让数据库自己保证数据是对的、并且扛得住用」**：用外键约束保住关联完整性、用视图简化复杂查询、用存储过程和触发器把逻辑下沉到数据库、用事务保证一组操作要么全成功要么全失败，最后还要考虑范式、存储引擎和拆表。</p>
+<p>这篇按课程（课件《19-MySQL进阶》+ day06–day10 笔记）的顺序整理，示例沿用课上的部门/员工、学生/班级那几张表。</p>
+<h2 id="一-外键约束与三种表关系"><a class="markdownIt-Anchor" href="#一-外键约束与三种表关系"></a> 一、外键约束与三种表关系</h2>
+<p>先看没有约束会发生什么：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> dept (</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">PRIMARY KEY</span> AUTO_INCREMENT,</span><br><span class="line">    dname <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">NOT NULL</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> person (</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">PRIMARY KEY</span> AUTO_INCREMENT,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    salary <span class="type">decimal</span>(<span class="number">10</span>,<span class="number">2</span>) <span class="keyword">DEFAULT</span> <span class="number">250.00</span>,</span><br><span class="line">    hire_date <span class="type">date</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    dept_id <span class="type">int</span>            <span class="comment">-- 只是普通字段</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>此时「人员可以不属于任何部门」，也可以填一个根本不存在的 <code>dept_id</code>——数据看着能存，逻辑上却是错的。加上外键就锁住了这层关系：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> person (</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">PRIMARY KEY</span> AUTO_INCREMENT,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    salary <span class="type">decimal</span>(<span class="number">10</span>,<span class="number">2</span>) <span class="keyword">DEFAULT</span> <span class="number">250.00</span>,</span><br><span class="line">    hire_date <span class="type">date</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    dept_id <span class="type">int</span>,</span><br><span class="line">    <span class="keyword">CONSTRAINT</span> dept_fk <span class="keyword">FOREIGN KEY</span> (dept_id) <span class="keyword">REFERENCES</span> dept(id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>外键的完整语法还带<strong>级联动作</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[CONSTRAINT symbol] FOREIGN KEY（外键字段）</span><br><span class="line">REFERENCES tbl_name (主表主键)</span><br><span class="line">[ON DELETE &#123;RESTRICT | CASCADE | SET NULL | NO ACTION&#125;]</span><br><span class="line">[ON UPDATE &#123;RESTRICT | CASCADE | SET NULL | NO ACTION&#125;]</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>级联动作</th>
+<th>主表删除记录时</th>
+<th>主表改主键值时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RESTRICT</code>（默认）</td>
+<td>从表有关联记录则<strong>不允许删除</strong></td>
+<td>从表有关联则不允许修改</td>
+</tr>
+<tr>
+<td><code>CASCADE</code></td>
+<td>从表相关记录<strong>一起删除</strong></td>
+<td>从表外键值<strong>级联更新</strong></td>
+</tr>
+<tr>
+<td><code>SET NULL</code></td>
+<td>从表外键字段变为 <code>NULL</code></td>
+<td>从表外键字段变为 <code>NULL</code></td>
+</tr>
+</tbody>
+</table>
+<p>用外键时课件总结了四条顺序上的注意点（踩过就知道）：</p>
+<ol>
+<li><strong>先创建被关联的表</strong>，再创建带外键的表；</li>
+<li><strong>先插入被关联表的数据</strong>，再插入带外键的数据；</li>
+<li>外键字段的值<strong>只能是被关联表中已存在的值</strong>；</li>
+<li>修改/删除要<strong>先处理外键字段</strong>（或者依赖级联动作）。</li>
+</ol>
+<h3 id="三种表关系怎么表达"><a class="markdownIt-Anchor" href="#三种表关系怎么表达"></a> 三种表关系怎么表达</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1. 一对一：在从表的外键上加唯一约束</span></span><br><span class="line"><span class="keyword">create table</span> user_info2(</span><br><span class="line">  id <span class="type">int</span> <span class="keyword">PRIMARY key</span> auto_increment,</span><br><span class="line">  age <span class="type">int</span> <span class="keyword">not null</span>,</span><br><span class="line">  id_card <span class="type">char</span>(<span class="number">18</span>),</span><br><span class="line">  user_info_id <span class="type">int</span> <span class="keyword">unique</span>,                       <span class="comment">-- 唯一 = 一对一</span></span><br><span class="line">  <span class="keyword">FOREIGN key</span>(user_info_id) <span class="keyword">REFERENCES</span> user_2(id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 2. 一对多：外键放在&quot;多&quot;的那一边（一个部门多个员工）</span></span><br><span class="line"><span class="keyword">create table</span> staff(</span><br><span class="line">  id <span class="type">int</span> <span class="keyword">PRIMARY key</span> auto_increment,</span><br><span class="line">  name <span class="type">char</span>(<span class="number">10</span>),</span><br><span class="line">  dept_staff_id <span class="type">INT</span>,</span><br><span class="line">  <span class="keyword">FOREIGN key</span>(dept_staff_id) <span class="keyword">REFERENCES</span> dept(id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 3. 多对多：必须用第三张中间表</span></span><br><span class="line"><span class="keyword">create table</span> stu_tea(</span><br><span class="line">  id <span class="type">int</span> <span class="keyword">PRIMARY key</span> auto_increment,</span><br><span class="line">  stu_id <span class="type">int</span>,  <span class="keyword">FOREIGN key</span>(stu_id) <span class="keyword">REFERENCES</span> student(id),</span><br><span class="line">  tea_id <span class="type">int</span>,  <span class="keyword">FOREIGN key</span>(tea_id) <span class="keyword">REFERENCES</span> teacher(id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>记住这个对应关系：<strong>一对一把唯一约束加在外键上，一对多把外键放在多的一方，多对多靠中间表</strong>。</p>
+<h2 id="二-表连接先看懂笛卡尔积"><a class="markdownIt-Anchor" href="#二-表连接先看懂笛卡尔积"></a> 二、表连接：先看懂笛卡尔积</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> user_1, user_info;</span><br></pre></td></tr></table></figure>
+<p>这条语句不会「智能匹配」，而是把 A 表每条记录和 B 表每条记录<strong>强行拼起来</strong>——所以 n 条 × m 条就会返回 n×m 条，这就是<strong>笛卡尔积</strong>。想要正确结果，得在 <code>where</code> 里补上关联条件，或者直接用连接语法（官方更推荐后者）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 内连接：只返回两表都匹配上的记录</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> user_1 <span class="keyword">as</span> a</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> user_info <span class="keyword">as</span> b</span><br><span class="line"><span class="keyword">on</span> a.id <span class="operator">=</span> b.user_id;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 左连接：以 join 左边的表为主表，右表没匹配到就补 NULL</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> user_1 <span class="keyword">as</span> a</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> user_info <span class="keyword">as</span> b</span><br><span class="line"><span class="keyword">on</span> a.id <span class="operator">=</span> b.user_id;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 右连接：以右边的表为主表</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> user_1 <span class="keyword">as</span> a</span><br><span class="line"><span class="keyword">right</span> <span class="keyword">join</span> user_info <span class="keyword">as</span> b</span><br><span class="line"><span class="keyword">on</span> a.id <span class="operator">=</span> b.user_id;</span><br></pre></td></tr></table></figure>
+<p>一句话区分：<strong>内连接是「交集」，左/右连接是「保留某一侧的全部，另一侧没有就补 NULL」</strong>。「查出没有部门的员工」就要用左连接 + <code>where b.id is null</code>。</p>
+<h2 id="三-视图只存定义不存数据"><a class="markdownIt-Anchor" href="#三-视图只存定义不存数据"></a> 三、视图：只存定义，不存数据</h2>
+<p>视图是一张<strong>虚拟表</strong>：有行有列，但数据库里只存它的<strong>定义</strong>，数据仍然来自它引用的真实表；真实表一变，视图查出来的结果跟着变。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建视图</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">view</span> test_1_1 <span class="keyword">as</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test1 <span class="keyword">where</span> score <span class="operator">&gt;</span> <span class="number">70</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> score;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 像表一样使用</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test_1_1;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test_1_1 <span class="keyword">where</span> score <span class="operator">=</span> <span class="number">78</span>;</span><br><span class="line"><span class="keyword">update</span> test_1_1 <span class="keyword">set</span> score <span class="operator">=</span> <span class="number">79</span> <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">7</span>;   <span class="comment">-- 也能更新（受真实表约束限制）</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看库里所有视图</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">full</span> tables <span class="keyword">in</span> day06 <span class="keyword">where</span> table_type <span class="keyword">like</span> <span class="string">&#x27;VIEW&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除 / 修改（把 create 换成 alter）</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">view</span> test_1_1;</span><br></pre></td></tr></table></figure>
+<p>课件的两点提醒很关键：</p>
+<ul>
+<li><strong>视图的增删改查和普通表一样</strong>，但真实表的约束（非空、唯一、外键）依然生效；</li>
+<li>视图的价值在于<strong>筛选与安全</strong>：可以把用户不需要、或者不该看到的列屏蔽掉，对外只暴露一个视图。</li>
+</ul>
+<p>视图的四个典型作用：<strong>简化复杂查询、数据安全性、数据抽象、重用性</strong>。</p>
+<h2 id="四-函数与存储过程"><a class="markdownIt-Anchor" href="#四-函数与存储过程"></a> 四、函数与存储过程</h2>
+<p>两者都是「把编译好的 SQL 存进数据库，用的时候调用」，区别在于：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>函数</th>
+<th>存储过程</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>返回值</td>
+<td><strong>有且只有一个</strong></td>
+<td>不能有返回值（返回结果集）</td>
+</tr>
+<tr>
+<td>参数</td>
+<td>只有输入参数</td>
+<td>可以有 <code>in</code> / <code>out</code> / <code>inout</code></td>
+</tr>
+<tr>
+<td>调用方式</td>
+<td>可以作为查询语句的一部分，<code>select f1()</code></td>
+<td>独立执行，<code>call p1()</code></td>
+</tr>
+<tr>
+<td>侧重</td>
+<td>计算并返回一个值</td>
+<td>执行一套流程</td>
+</tr>
+</tbody>
+</table>
+<h3 id="为什么要写-delimiter"><a class="markdownIt-Anchor" href="#为什么要写-delimiter"></a> 为什么要写 delimiter</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">delimiter $.                    <span class="comment">-- 先把语句结束符临时改成 $.</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> f1() <span class="keyword">returns</span> <span class="type">int</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">select</span> score <span class="keyword">from</span> test1 <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;刘皇叔&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span> $.                          <span class="comment">-- 这里用 $. 结束整个定义</span></span><br><span class="line">delimiter ;                     <span class="comment">-- 再改回分号</span></span><br></pre></td></tr></table></figure>
+<p>如果不改结束符，MySQL 一看到 <code>begin</code> 里面第一个 <code>;</code> 就以为「语句结束了」，定义会被截断。<strong><code>delimiter</code> 就是给整个函数/过程让路的临时结束符</strong>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 带参函数</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> f2(name1 <span class="type">char</span>(<span class="number">5</span>)) <span class="keyword">returns</span> <span class="type">int</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">select</span> score <span class="keyword">from</span> test1 <span class="keyword">where</span> `name` <span class="operator">=</span> name1);</span><br><span class="line"><span class="keyword">end</span> $.</span><br><span class="line">delimiter ;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- SQL 里也能用变量</span></span><br><span class="line"><span class="keyword">set</span> <span class="variable">@name</span> <span class="operator">=</span> <span class="string">&#x27;关羽&#x27;</span>;</span><br><span class="line"><span class="keyword">select</span> f2(<span class="variable">@name</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="存储过程与三种参数"><a class="markdownIt-Anchor" href="#存储过程与三种参数"></a> 存储过程与三种参数</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 无参：一次执行多条查询</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> b()</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test1;</span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test1 <span class="keyword">where</span> gender <span class="operator">=</span> <span class="string">&#x27;男&#x27;</span>;</span><br><span class="line"><span class="keyword">end</span> $.</span><br><span class="line"></span><br><span class="line"><span class="comment">-- in 参数：只能传进去用，内部改了外面看不到</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> b1(<span class="keyword">in</span> score1 <span class="type">int</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test1 <span class="keyword">where</span> score <span class="operator">&gt;</span> score1;</span><br><span class="line"><span class="keyword">end</span> $.</span><br><span class="line"></span><br><span class="line"><span class="comment">-- out 参数：专门用来把结果带出来（内部一开始是 NULL）</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> b2(<span class="keyword">out</span> score1 <span class="type">int</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">into</span> score1 <span class="keyword">from</span> test1 <span class="keyword">where</span> score <span class="operator">&gt;</span> <span class="number">90</span>;</span><br><span class="line"><span class="keyword">end</span> $.</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> <span class="variable">@score2</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="keyword">call</span> b2(<span class="variable">@score2</span>);</span><br><span class="line"><span class="keyword">select</span> <span class="variable">@score2</span>;                 <span class="comment">-- 拿到存储过程算出来的值</span></span><br></pre></td></tr></table></figure>
+<p>三种参数的区别（课件原话整理）：</p>
+<ul>
+<li><strong><code>in</code></strong>：可以接变量或常量，内部随便用，<strong>修改传不回外部</strong>；</li>
+<li><strong><code>out</code></strong>：只能接一个变量，<strong>内部不能使用它原本的值</strong>（进来是 NULL），但可以把结果写进去，外部能拿到；</li>
+<li><strong><code>inout</code></strong>：既能读原值，也能把修改带出去。</li>
+</ul>
+<p>配套的管理语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">procedure</span> status;                       <span class="comment">-- 查看存储过程信息</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">procedure</span> b2;                    <span class="comment">-- 查看定义</span></span><br><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> mysql.proc <span class="keyword">where</span> db<span class="operator">=</span><span class="string">&#x27;day06&#x27;</span> <span class="keyword">and</span> type<span class="operator">=</span><span class="string">&#x27;procedure&#x27;</span>;</span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> if <span class="keyword">exists</span> b2;</span><br></pre></td></tr></table></figure>
+<h3 id="触发器事件驱动的-sql"><a class="markdownIt-Anchor" href="#触发器事件驱动的-sql"></a> 触发器：事件驱动的 SQL</h3>
+<p>触发器的特点是<strong>不由程序调用，也不手动执行</strong>，而是对某张表做 <code>insert</code>/<code>update</code>/<code>delete</code> 时自动激活——课件用「打开开关，灯就亮」来类比。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">trigger</span> 触发器名称 触发时间 触发条件 <span class="keyword">on</span> 表名 <span class="keyword">for</span> <span class="keyword">each</span> <span class="type">row</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    触发内容</span><br><span class="line"><span class="keyword">end</span> $.</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>触发时间</strong>：<code>before</code>（动作之前）/ <code>after</code>（动作之后）</li>
+<li><strong>触发条件</strong>：<code>insert</code> / <code>update</code> / <code>delete</code></li>
+<li><strong><code>new</code></strong>：新增或修改时的<strong>新数据</strong>；<strong><code>old</code></strong>：修改或删除时的<strong>旧数据</strong></li>
+<li><strong><code>for each row</code></strong>：固定写法，表示每行都触发</li>
+</ul>
+<p>课上那个例子很实用——<strong>新增一个学生，班级人数自动 +1</strong>：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">trigger</span> add_stu after <span class="keyword">insert</span> <span class="keyword">on</span> cls_stu <span class="keyword">for</span> <span class="keyword">each</span> <span class="type">row</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">DECLARE</span> num <span class="type">int</span>;                        <span class="comment">-- 声明变量</span></span><br><span class="line">    <span class="keyword">set</span> num <span class="operator">=</span> (<span class="keyword">select</span> cls_stu_num <span class="keyword">from</span> class <span class="keyword">where</span> class_num <span class="operator">=</span> new.class_num);</span><br><span class="line">    <span class="keyword">update</span> class <span class="keyword">set</span> cls_stu_num <span class="operator">=</span> num <span class="operator">+</span> <span class="number">1</span> <span class="keyword">where</span> class_num <span class="operator">=</span> new.class_num;</span><br><span class="line"><span class="keyword">end</span> $.</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert into</span> cls_stu <span class="keyword">values</span>(<span class="number">4</span>, <span class="string">&#x27;赵六&#x27;</span>, <span class="string">&#x27;2022&#x27;</span>);   <span class="comment">-- 班级人数自动变 1</span></span><br></pre></td></tr></table></figure>
+<p>触发器的优点是<strong>自动执行、级联更新、强化约束、跟踪变化、强制业务规则</strong>；代价是逻辑藏在数据库里，<strong>排查问题时不容易发现</strong>，而且触发器里再写触发器会让链路变得难以追踪。所以工程上常用「业务层显式处理」替代复杂触发器。</p>
+<h2 id="五-事务与隔离级别"><a class="markdownIt-Anchor" href="#五-事务与隔离级别"></a> 五、事务与隔离级别</h2>
+<p>事务是一组<strong>要么都执行、要么都不执行</strong>的 SQL 命令序列，典型场景就是订票、银行转账。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">begin</span>;                          <span class="comment">-- 开启事务</span></span><br><span class="line"><span class="keyword">update</span> account <span class="keyword">set</span> balance <span class="operator">=</span> balance <span class="operator">-</span> <span class="number">100</span> <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="keyword">update</span> account <span class="keyword">set</span> balance <span class="operator">=</span> balance <span class="operator">+</span> <span class="number">100</span> <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"><span class="keyword">commit</span>;                         <span class="comment">-- 全部成功则提交</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 中途出错则：</span></span><br><span class="line"><span class="keyword">rollback</span>;                       <span class="comment">-- 回滚到初始状态</span></span><br></pre></td></tr></table></figure>
+<p><strong>ACID 四大特性</strong>（课件定义）：</p>
+<ul>
+<li><strong>原子性</strong>：事务中的操作是一个不可分割的整体，要么全成功要么全失败；</li>
+<li><strong>一致性</strong>：事务前后数据都要处于一致状态，不能损坏数据；</li>
+<li><strong>隔离性</strong>：并发事务之间互不干扰；</li>
+<li><strong>持久性</strong>：提交后的修改永久保存，即使系统故障也不丢。</li>
+</ul>
+<p>隔离性是四个里最容易出问题的，因为<strong>隔离级别不同，能观察到的并发现象也不同</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>能读到什么</th>
+<th>会有什么问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>read uncommitted</code> 读未提交</td>
+<td>别人<strong>未提交</strong>的数据也能读到</td>
+<td>脏读（级别最低，理论存在）</td>
+</tr>
+<tr>
+<td><code>read committed</code> 读已提交</td>
+<td>别人<strong>提交后</strong>才能读到</td>
+<td>避免脏读，但会<strong>不可重复读</strong></td>
+</tr>
+<tr>
+<td><code>repeatable read</code> 可重复读</td>
+<td>别人提交了也读不到，本事务内一致</td>
+<td><strong>MySQL 默认级别</strong>，但会有<strong>幻读</strong></td>
+</tr>
+<tr>
+<td><code>serializable</code> 串行化</td>
+<td>事务排队执行</td>
+<td>避免幻读，但吞吐量太低</td>
+</tr>
+</tbody>
+</table>
+<p>一句话记住三种现象：<strong>脏读=读到没提交的；不可重复读=同一事务里两次读结果不一样；幻读=同一查询两次返回的行数不一样。</strong></p>
+<h2 id="六-数据库优化范式-引擎-拆表"><a class="markdownIt-Anchor" href="#六-数据库优化范式-引擎-拆表"></a> 六、数据库优化：范式、引擎、拆表</h2>
+<h3 id="设计范式"><a class="markdownIt-Anchor" href="#设计范式"></a> 设计范式</h3>
+<table>
+<thead>
+<tr>
+<th>范式</th>
+<th>要求</th>
+<th>课件例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1NF</strong></td>
+<td>每一列都是<strong>不可再分的原子项</strong></td>
+<td>姓名在国内算原子；在国外要拆成 FIRST NAME / LAST NAME 才符合</td>
+</tr>
+<tr>
+<td><strong>2NF</strong></td>
+<td>每条记录能被<strong>唯一区分</strong>（有主键），所有属性依赖主属性</td>
+<td>简单理解：给表设一个主键</td>
+</tr>
+<tr>
+<td><strong>3NF</strong></td>
+<td>属性之间<strong>不传递依赖</strong>，不包含其他表已有的非主键信息</td>
+<td>合理使用外键，避免不同表里存重复字段</td>
+</tr>
+</tbody>
+</table>
+<p>课件也点出了代价：<strong>范式越高冗余越小，但表拆得越细，多表连接的开销越大</strong>——所以工程上通常做到第三范式即可。</p>
+<h3 id="存储引擎"><a class="markdownIt-Anchor" href="#存储引擎"></a> 存储引擎</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> engines;                              <span class="comment">-- 查看所有引擎</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">create table</span> 表名;                     <span class="comment">-- 查看某张表的引擎</span></span><br><span class="line"><span class="keyword">create table</span> 表名(...) engine<span class="operator">=</span>MyISAM;       <span class="comment">-- 建表时指定</span></span><br><span class="line"><span class="keyword">alter table</span> 表名 engine<span class="operator">=</span>InnoDB;             <span class="comment">-- 改引擎</span></span><br></pre></td></tr></table></figure>
+<p>常用的两个：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>InnoDB</th>
+<th>MyISAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>锁</td>
+<td><strong>行级锁</strong>（只锁指定记录）</td>
+<td><strong>表级锁</strong>（锁表期间别人不能写，写锁连读都不行）</td>
+</tr>
+<tr>
+<td>事务/外键</td>
+<td><strong>支持</strong>事务、回滚、外键</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>文件</td>
+<td><code>.frm</code> 表结构 + <code>.ibd</code> 记录与索引</td>
+<td><code>.frm</code> 结构、<code>.MYI</code> 索引、<code>.MYD</code> 数据</td>
+</tr>
+</tbody>
+</table>
+<p>选型结论（课件）：<strong>查操作多的表用 MyISAM，写操作多的表用 InnoDB</strong>。现在的新项目基本默认 InnoDB。</p>
+<h3 id="键的设置与表拆分"><a class="markdownIt-Anchor" href="#键的设置与表拆分"></a> 键的设置与表拆分</h3>
+<p>课件的四条建议：</p>
+<ol>
+<li>InnoDB 不设主键也会自建隐含主键，<strong>最好自己显式设置</strong>；</li>
+<li>主键<strong>尽量选占用空间小的字段</strong>；</li>
+<li>外键能保证完整性，但<strong>会降低导入和操作效率</strong>，高并发下要慎用；</li>
+<li>不用外键时，<strong>也要在关联字段上建索引</strong>，否则连接查询会很慢。</li>
+</ol>
+<p>表拆分的两种思路：</p>
+<ul>
+<li><strong>垂直拆分</strong>：列太多就拆表，常查的放一起，<code>blob</code>/<code>text</code> 这类大字段单独放一张表；</li>
+<li><strong>水平拆分</strong>：数据量太大就按关键字把行拆到多张表（分表/分库）。</li>
+</ul>
+<h2 id="七-pymysql六步走"><a class="markdownIt-Anchor" href="#七-pymysql六步走"></a> 七、pymysql：六步走</h2>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 建立连接    db = pymysql.connect(host, port, database, user, password, charset)</span><br><span class="line">2. 创建游标    cur = db.cursor()</span><br><span class="line">3. 执行 SQL    cur.execute(&quot;insert ...&quot;)</span><br><span class="line">4. 提交或取数  db.commit() / cur.fetchall()</span><br><span class="line">5. 关闭游标    cur.close()</span><br><span class="line">6. 断开连接    db.close()</span><br></pre></td></tr></table></figure>
+<p>课上的示例代码（节选，注意下面提到的写法问题）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql, datetime</span><br><span class="line"></span><br><span class="line">conn = pymysql.connect(host=<span class="string">&#x27;127.0.0.1&#x27;</span>, user=<span class="string">&#x27;root&#x27;</span>, password=<span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">                       charset=<span class="string">&#x27;utf8mb4&#x27;</span>, db=<span class="string">&#x27;day06&#x27;</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    cursor = conn.cursor()</span><br><span class="line">    cursor.execute(create_table_sql)</span><br><span class="line">    conn.commit()                                  <span class="comment"># 增删改要提交，查询不用</span></span><br><span class="line"></span><br><span class="line">    cursor.execute(insert_table_sql.<span class="built_in">format</span>(username=<span class="string">&#x27;石头&#x27;</span>, age=<span class="number">19</span>,</span><br><span class="line">                                           birthday=datetime.date.today()))</span><br><span class="line">    conn.commit()</span><br><span class="line"></span><br><span class="line">    cursor.execute(<span class="string">&#x27;select * from user_t1;&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> data <span class="keyword">in</span> cursor.fetchall():</span><br><span class="line">        <span class="built_in">print</span>(data[<span class="number">0</span>], data[<span class="number">1</span>], data[<span class="number">2</span>], data[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    conn.close()                                   <span class="comment"># 一定要放在 finally 里</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>这里有一处必须改掉的写法</strong>：课上用 <code>'...values (&quot;&#123;username&#125;&quot;, ...)'.format(...)</code> 拼 SQL。这种<strong>字符串拼接</strong>一旦遇上用户输入里的引号，就会变成 SQL 注入。正确写法是<strong>参数化</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sql = <span class="string">&#x27;insert into user_t1(username, age, birthday) values (%s, %s, %s)&#x27;</span></span><br><span class="line">cursor.execute(sql, (<span class="string">&#x27;石头&#x27;</span>, <span class="number">19</span>, datetime.date.today()))</span><br><span class="line"><span class="comment"># 批量插入用 executemany</span></span><br><span class="line">cursor.executemany(sql, [(<span class="string">&#x27;石头1&#x27;</span>, <span class="number">20</span>, datetime.date.today()),</span><br><span class="line">                         (<span class="string">&#x27;石头2&#x27;</span>, <span class="number">21</span>, datetime.date.today())])</span><br></pre></td></tr></table></figure>
+<p>课件的写法适合看懂流程，<strong>照抄进项目就会留漏洞</strong>——这也是我写这篇时特意标出来的地方。</p>
+</blockquote>
+<h2 id="八-踩坑记录"><a class="markdownIt-Anchor" href="#八-踩坑记录"></a> 八、踩坑记录</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cannot add or update a child row: a foreign key constraint fails</code></td>
+<td>外键值在被关联表里不存在</td>
+<td>先插主表数据，或用 <code>SET NULL</code>/<code>CASCADE</code></td>
+</tr>
+<tr>
+<td><code>Cannot delete or update a parent row</code></td>
+<td>从表还有关联记录（默认 RESTRICT）</td>
+<td>先删从表，或设置级联动作</td>
+</tr>
+<tr>
+<td>建函数/过程报语法错误</td>
+<td>没改 <code>delimiter</code>，<code>begin</code> 里的 <code>;</code> 被当成结束</td>
+<td>定义前 <code>delimiter $.</code>，定义后改回 <code>delimiter ;</code></td>
+</tr>
+<tr>
+<td><code>out</code> 参数拿不到值</td>
+<td>没用变量接收，或忘记 <code>select ... into 参数</code></td>
+<td><code>set @v = 0; call p(@v); select @v;</code></td>
+</tr>
+<tr>
+<td>触发器没生效</td>
+<td>触发时间/条件写错（如把 <code>after insert</code> 写成 <code>before delete</code>）</td>
+<td>按「时间 + 事件 + 表 + for each row」逐项核对</td>
+</tr>
+<tr>
+<td>事务没回滚</td>
+<td>用了 MyISAM 引擎，或不支持事务的语句</td>
+<td>表改成 InnoDB，明确 <code>begin</code>/<code>commit</code>/<code>rollback</code></td>
+</tr>
+<tr>
+<td>别人没提交的数据我读到了</td>
+<td>隔离级别是 <code>read uncommitted</code></td>
+<td>改成 <code>read committed</code> 及以上</td>
+</tr>
+<tr>
+<td>代码里 SQL 拼接被注入</td>
+<td>用 <code>format</code>/<code>+</code> 拼 SQL</td>
+<td>一律用 <code>%s</code> 参数化 + <code>executemany</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="小结"><a class="markdownIt-Anchor" href="#小结"></a> 小结</h2>
+<p>进阶篇里我最想记住的是三句话：</p>
+<ol>
+<li><strong>外键的价值是「让数据库替你把关」</strong>，代价是插入顺序受限、并发下效率下降；</li>
+<li><strong>视图、函数、存储过程、触发器都是「把逻辑下沉到数据库」</strong>——它们能让应用层代码变简单，但逻辑一旦藏进数据库，排查和迁移都会变难，所以要克制使用；</li>
+<li><strong>事务的难点是隔离级别</strong>：默认的 <code>repeatable read</code> 在 MySQL 里够用，但要清楚它并不能避免幻读。</li>
+</ol>
+<p>下一篇换个方向：Git 与 Linux 基础——把代码管起来、把服务器用起来。</p>
+<blockquote>
+<p>说明：本文内容来自课件《19-MySQL进阶》、day06–day10 课堂笔记与 <code>python连接数据库.py</code> 源码；其中「参数化查询」「行级锁/表级锁对比」「幻读与不可重复读的区分」等标注处，是我在课程内容之外补充或明确的。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <blockquote class="article-copyright">
+    <p><strong><span class="icon-user icon"></span>Author: </strong>单婉贺 @ MyBlog</p>
+    <p><strong><span class="icon-link icon"></span>Permalink: </strong><a href="https://utdog.github.io/en/2025/05/11/MySQL%E8%BF%9B%E9%98%B6/">https://utdog.github.io/en/2025/05/11/MySQL%E8%BF%9B%E9%98%B6/</a></p>
+    
+    
+    
+    <p><strong><span class="icon-copyright icon"></span>License: </strong>All articles on this blog are licensed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener external nofollow noreferrer" target="_blank"><span class="icon-creative-commons"></span>BY-NC-SA</a> license agreement unless otherwise stated. Please indicate the source when reprinting!</p>
+    <span class="icon-creative-commons article-copyright-bg"></span>
+  </blockquote>
+      
+      
+        <div class="sponsor-wrapper">
+  <div class="sponsor-button-wrapper">
+    <div class="sponsor-icon rotate"></div>
+    <div class="sponsor-title">Sponsor</div>
+    <div class="sponsor-icon rotate"></div>
+  </div>
+  
+  
+    
+  
+  <div class="sponsor-tip">Buy me a coffee</div>
+  
+    <div class="sponsor-qr">
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/1.jpg" alt=支付宝 width="200" />
+          <p class="sponsor-qr-name">支付宝</p>
+        </div>
+      
+        <div class="sponsor-qr-image-wrapper">
+          <img src="/sponsor/2.jpg" alt=微信 width="200" />
+          <p class="sponsor-qr-name">微信</p>
+        </div>
+      
+    </div>
+  
+</div>
+      
+      
+        <div class="share-wrapper">
+  
+    <a href="https://connect.qq.com/widget/shareqq/index.html?url=www.baidu.com&amp;title=MySQL%20%E8%BF%9B%E9%98%B6%EF%BC%9A%E5%A4%96%E9%94%AE%E3%80%81%E8%A7%86%E5%9B%BE%E3%80%81%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E3%80%81%E8%A7%A6%E5%8F%91%E5%99%A8%E4%B8%8E%E4%BA%8B%E5%8A%A1&amp;desc=%E8%AF%BE%E4%BB%B6%E6%95%B4%E7%90%86%EF%BC%9A%E4%B8%89%E7%A7%8D%E8%A1%A8%E5%85%B3%E7%B3%BB%E4%B8%8E%E5%A4%96%E9%94%AE%E7%BA%A7%E8%81%94%E3%80%81%E7%AC%9B%E5%8D%A1%E5%B0%94%E7%A7%AF%E4%B8%8E%E5%86%85%E5%A4%96%E8%BF%9E%E6%8E%A5%E3%80%81%E8%A7%86%E5%9B%BE%E7%9A%84%E6%9C%AC%E8%B4%A8%E4%B8%8E%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E3%80%81delimiter%20%E4%B8%8E%E5%87%BD%E6%95%B0%2F%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E7%9A%84%20in%2Fout%2Finout%E3%80%81%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84%E8%A7%A6%E5%8F%91%E5%99%A8%EF%BC%8C%E4%BB%A5%E5%8F%8A%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E3%80%81%E8%AE%BE%E8%AE%A1%E8%8C%83%E5%BC%8F%E4%B8%8E%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E3%80%82&amp;source=https%3A%2F%2Futdog.github.io" target="_blank" rel="noopener noreferrer" title="MySQL 进阶：外键、视图、存储过程、触发器与事务">
+      <div class="share-icon icon icon-qq">
+        
+      </div>
+    </a>
+  
+    <a href="javascript:;"  title="MySQL 进阶：外键、视图、存储过程、触发器与事务">
+      <div class="share-icon icon icon-weixin">
+        
+          <div id="share-weixin">
+            <div class="share-weixin-dom">
+              <div class="share-weixin-content">
+                <img id="share-weixin-banner" alt=""> 
+                <div id="share-weixin-title"></div>
+                <div id="share-weixin-desc"></div>
+              </div>
+              <div class="share-weixin-qrcode">
+                <div class="share-weixin-info">
+                  <div id="share-weixin-author"></div>
+                  <div id="share-weixin-theme">Powered By hexo-theme-reimu</div>
+                </div>
+                <img id="share-weixin-qr" alt="" >
+              </div>
+            </div>
+            <div class="share-weixin-canvas"></div>
+          </div>
+        
+      </div>
+    </a>
+  
+</div>
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/SQL/" rel="tag">SQL</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/en/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          <img data-src="/images/41.jpg" data-sizes="auto" alt="Git 与 Gitee：从单人版本控制到多人协作" class="lazyload">
+        
+        <a href="/en/2025/05/12/Git%E4%B8%8EGitee/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Git 与 Gitee：从单人版本控制到多人协作
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/38.jpg" data-sizes="auto" alt="Python 并发编程：进程、线程与协程怎么选" class="lazyload">
+      
+      <a href="/en/2025/05/10/Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"></a>
+      <div class="article-nav-caption">Older</div>
+      <h3 class="article-nav-title">
+        
+          Python 并发编程：进程、线程与协程怎么选
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2025-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      单婉贺
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.Reimu
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        <!-- 全站总字数 -->
+        92k
+        &nbsp;|&nbsp;
+        <!-- 我们自己算一下所有文章的阅读时长之和 -->
+        
+        366分钟
+      </div>
+    
+    
+    
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql-%E8%BF%9B%E9%98%B6%E5%A4%96%E9%94%AE-%E8%A7%86%E5%9B%BE-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B-%E8%A7%A6%E5%8F%91%E5%99%A8%E4%B8%8E%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text"> MySQL 进阶：外键、视图、存储过程、触发器与事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.0.1.</span> <span class="toc-text"> 前言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F%E4%B8%8E%E4%B8%89%E7%A7%8D%E8%A1%A8%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.</span> <span class="toc-text"> 一、外键约束与三种表关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E8%A1%A8%E5%85%B3%E7%B3%BB%E6%80%8E%E4%B9%88%E8%A1%A8%E8%BE%BE"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 三种表关系怎么表达</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%A1%A8%E8%BF%9E%E6%8E%A5%E5%85%88%E7%9C%8B%E6%87%82%E7%AC%9B%E5%8D%A1%E5%B0%94%E7%A7%AF"><span class="toc-number">1.2.</span> <span class="toc-text"> 二、表连接：先看懂笛卡尔积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%A7%86%E5%9B%BE%E5%8F%AA%E5%AD%98%E5%AE%9A%E4%B9%89%E4%B8%8D%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.</span> <span class="toc-text"> 三、视图：只存定义，不存数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%87%BD%E6%95%B0%E4%B8%8E%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text"> 四、函数与存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%86%99-delimiter"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 为什么要写 delimiter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E4%B8%8E%E4%B8%89%E7%A7%8D%E5%8F%82%E6%95%B0"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 存储过程与三种参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E7%9A%84-sql"><span class="toc-number">1.4.3.</span> <span class="toc-text"> 触发器：事件驱动的 SQL</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E4%BA%8B%E5%8A%A1%E4%B8%8E%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">1.5.</span> <span class="toc-text"> 五、事务与隔离级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96%E8%8C%83%E5%BC%8F-%E5%BC%95%E6%93%8E-%E6%8B%86%E8%A1%A8"><span class="toc-number">1.6.</span> <span class="toc-text"> 六、数据库优化：范式、引擎、拆表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E8%8C%83%E5%BC%8F"><span class="toc-number">1.6.1.</span> <span class="toc-text"> 设计范式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-number">1.6.2.</span> <span class="toc-text"> 存储引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%AE%E7%9A%84%E8%AE%BE%E7%BD%AE%E4%B8%8E%E8%A1%A8%E6%8B%86%E5%88%86"><span class="toc-number">1.6.3.</span> <span class="toc-text"> 键的设置与表拆分</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-pymysql%E5%85%AD%E6%AD%A5%E8%B5%B0"><span class="toc-number">1.7.</span> <span class="toc-text"> 七、pymysql：六步走</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.8.</span> <span class="toc-text"> 八、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text"> 小结</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="单婉贺" class="lazyload">
+  <div class="sidebar-author-name">单婉贺</div>
+  <div class="sidebar-description">单婉贺的技术学习日志：Hexo 静态博客搭建、前端实践与 Python 全栈开发笔记。</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Post</div>
+    <div class="sidebar-state-number">28</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Category</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tag</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-github sidebar-social-icon">
+      <a href=https://github.com/utdog itemprop="url" target="_blank" aria-label="github" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-google sidebar-social-icon">
+      <a href=https://plus.google.com/bo itemprop="url" target="_blank" aria-label="google" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://www.bilibili.com/ itemprop="url" target="_blank" aria-label="bilibili" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+    <div class="icon-steam sidebar-social-icon">
+      <a href=https://steamcommunity.com/id/原神大王 itemprop="url" target="_blank" aria-label="steam" rel="noopener external nofollow noreferrer"></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/" aria-label="Home"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf015;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Home</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/archives" aria-label="Archives"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf07b;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Archives</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/about" aria-label="About"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf129;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">About</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/en/friend" aria-label="Friend"></a>
+        <div class="sidebar-menu-icon icon ">
+          
+            
+              &#xf0c0;
+            
+          
+        </div>
+        <div class="sidebar-menu-link">Friend</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+      <div class="site-search">
+        <div class="reimu-popup popup">
+          <div class="reimu-search">
+            <div class="reimu-search-input-icon"></div>
+            <div class="reimu-search-input" id="reimu-search-input"></div>
+            <div class="popup-btn-close"></div>
+          </div>
+          <div class="reimu-results">
+            <div id="reimu-stats"></div>
+            <div id="reimu-hits"></div>
+            <div id="reimu-pagination" class="reimu-pagination"></div>
+          </div>
+          <img class="reimu-bg" src="/images/reimu.png" alt=""/>
+        </div>
+      </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+  
+<script src="https://npm.webcache.cn/material-theme@1.0.0/dist/material-theme.umd.js" integrity="sha384-vLev0II0HKFaxkcm+&#x2F;7kX5IGwVFBASkGchU311wmU&#x2F;veIj2bB0UcBkQbW6yw2asK" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+  
+<script src="/js/generator_search.js" defer></script>
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  <script>
+    function loadScripts(scripts, index) {
+      if (index < scripts.length) {
+        const script = scripts[index];
+        const src = script.getAttribute('src');
+
+        const loadScript = (scriptContent) => {
+          return new Promise((resolve, reject) => {
+            const scriptElement = document.createElement('script');
+            if (script.type) {
+              scriptElement.type = script.type;
+            }
+            if (script.src) {
+              scriptElement.src = script.src;
+              if (script.integrity) {
+                scriptElement.integrity = script.integrity;
+              }
+              if (script.crossOrigin) {
+                scriptElement.crossOrigin = script.crossOrigin;
+              }
+              scriptElement.onload = resolve;
+              scriptElement.onerror = reject;
+            }
+            if (scriptContent) {
+              scriptElement.text = scriptContent;
+            }
+            document.head.appendChild(scriptElement);
+            if (!script.src) {
+              resolve();
+            }
+          })
+          
+        }
+
+        ;(src ? loadScript() : loadScript(script.text))
+          .then(() => loadScripts(scripts, index + 1))
+          .catch(error => {
+            console.error(`Failed to load script: ${src || 'inline script'}`, error);
+            loadScripts(scripts, index + 1);
+          });
+      }
+    }
+    if (window.Pjax) {
+      Pjax.prototype.getElements = function() {
+        const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
+        const baseUrl = window.REIMU_CONFIG.base;
+        let basePathname = new URL(baseUrl).pathname;
+        if (!basePathname.endsWith('/')) {
+          basePathname += '/';  
+        }
+        const currentUrl = window.location.href;
+        const currentPathname = new URL(currentUrl).pathname.replace(basePathname, '');
+        const aLinks = document.querySelectorAll('a[href]');
+        const pjaxLinks = [];
+        for(let i = 0; i < aLinks.length; i++) {
+          const aLink = aLinks[i];
+          const aLinkHref = aLink.getAttribute('href');
+          const isExternal = aLink.getAttribute('target') === '_blank' || aLink.getAttribute('rel')?.includes('noopener');
+          if (isExternal || aLinkHref.startsWith('mailto:') || aLinkHref.startsWith('tel:') || aLinkHref.startsWith('javascript:') || aLinkHref.startsWith("data:") || aLinkHref.startsWith("vbscript:")) {
+            continue;
+          }
+          if (!i18nLanguages) {
+            // 多语言功能未打开
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const absoluteUrl = new URL(aLinkHref, currentUrl).href;
+          const absolutePathname = new URL(absoluteUrl).pathname.replace(basePathname, '');
+
+          if (!absolutePathname || !currentPathname) {
+            pjaxLinks.push(aLink);
+            continue;
+          }
+
+          const currentLangIndex = i18nLanguages.findIndex(lang => currentPathname.startsWith(lang));
+          if (currentLangIndex > -1) {
+            // 当前属于多语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === currentLangIndex) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          } else {
+            // 当前属于默认语言站点
+            const absoluteLangIndex = i18nLanguages.findIndex(lang => absolutePathname.startsWith(lang));
+            if (absoluteLangIndex === -1) {
+              // 同一语言站点，可以使用 pjax
+              pjaxLinks.push(aLink);
+            }
+          }
+        }
+        return pjaxLinks;
+      }
+    }
+    window.Pjax && new window.Pjax({
+      selectors: [
+        "#header>img",
+        "#header>picture",
+        "head title",
+        "#header-title",
+        "#subtitle-wrap",
+        "#main",
+        "#content",
+        ".sidebar-widget",
+        ".sidebar-wrapper",
+        '#mobile-nav',
+        '#lazy-script',
+        '#i18n-nav'
+      ],
+      switches: {
+        "#content": function(oldEl, newEl) {
+          // for sidebar change
+          oldEl.className = newEl.className;
+          this.onSwitch();
+        },
+        "#header-title": Pjax.switches.outerHTML,
+        "#subtitle-wrap": Pjax.switches.outerHTML,
+        "#main": function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.outerHTML = newEl.outerHTML
+          this.onSwitch()
+        },
+        "#mobile-nav": Pjax.switches.outerHTML,
+        '#lazy-script': function(oldEl, newEl) {
+          const scripts = [...newEl.querySelectorAll('script')];
+          loadScripts(scripts, 0);
+          oldEl.innerHTML = newEl.innerHTML
+          this.onSwitch()
+        },
+      },
+      cacheBust: false
+    })
+  </script>
+  
+<script src="/js/pjax.js"></script>
+
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "单婉贺",
+          title: "MySQL 进阶：外键、视图、存储过程、触发器与事务",
+          url: "https://utdog.github.io/2025/05/11/MySQL%E8%BF%9B%E9%98%B6/",
+          excerpt: "",
+          description: "课件整理：三种表关系与外键级联、笛卡尔积与内外连接、视图的本质与增删改查、delimiter 与函数/存储过程的 in/out/inout、事件驱动的触发器，以及事务隔离级别、设计范式与存储引擎。",
+          stripContent: " MySQL 进阶：外键、视图、存储过程、触发器与事务  前言 基础篇解决的是「怎么把数据存进去、查出来」，进阶篇解决的是**「怎么让数据库自己保证数据是对的、并且扛得住用」**：用外键约束保住关联完整性、用视图简化复杂查询、用存储过程和触发器把逻辑下沉到数据库、用事务保证一组操作要么全成功要么全失败，最后还要考虑范式、存储引擎和拆表。 这篇按课程（课件《19-MySQL进阶》+ day06–day10 笔记）的顺序整理，示例沿用课上的部门/员工、学生/班级那几张表。  一、外键约束与三种表关系",
+          date: "Sun May 11 2025 20:00:00 GMT+0800",
+          updated: "Thu Oct 15 2026 16:17:53 GMT+0800",
+          cover: "/images/39.jpg",
+        };
+      </script>
+       
+    
+      
+<script src="https://npm.webcache.cn/mermaid@9.4.3/dist/mermaid.min.js" integrity="sha384-aG3Gai4tbCHF0iXo48HwLoOZyut7mBl50oMC9GD1m75xyHfJDv6w8hD&#x2F;kZRD47aJ" crossorigin="anonymous" data-pjax></script>
+
+      
+<script src="https://npm.webcache.cn/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+
+      <script data-pjax>
+        if (window.mermaid) {
+          // https://github.com/mermaid-js/mermaid/issues/1945
+          const elementCode = '.mermaid'
+          const saveOriginalData = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if (element.getAttribute('data-original-code') == null){
+                    element.setAttribute('data-original-code', element.innerHTML)
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          }
+          const resetProcessed = () => {
+            return new Promise((resolve, reject) => {
+              try {
+                let els = _$$(elementCode),
+                    count = els.length;
+                els.forEach(element => {
+                  if(element.getAttribute('data-original-code') != null){
+                    element.removeAttribute('data-processed')
+                    element.innerHTML = DOMPurify.sanitize(element.getAttribute('data-original-code'))
+                  }
+                  count--
+                  if(count == 0){
+                    resolve()
+                  }
+                });
+              } catch (error) {
+              reject(error) 
+              }
+            })
+          } 
+          const loadMermaid = (theme) => {
+            window.mermaid.initialize({theme})
+            window.mermaid.init({theme}, _$$(elementCode))
+          }
+          document.body.addEventListener('dark-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          })
+          document.body.addEventListener('light-theme-set', () => {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          })
+          if(localStorage.getItem('dark_mode') == 'true') {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('dark'))
+            .catch(console.error)
+          } else {
+            saveOriginalData()
+            .then(resetProcessed())
+            .then(loadMermaid('default'))
+            .catch(console.error)
+          }
+        }
+      </script>
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+          
+<script src="https://npm.webcache.cn/html-to-image@1.11.11/dist/html-to-image.js" integrity="sha384-UbfRVKN3&#x2F;elS1r7JcK2FhmPP+KlJ4CvYwbyYD7tH+uTkbT9bNJr9eJeQ0FoFbAgz" crossorigin="anonymous" defer data-pjax></script>
+
+          
+<script src="https://npm.webcache.cn/qrcode@1.4.4/build/qrcode.min.js" integrity="sha384-0RsG1yo&#x2F;crf&#x2F;1Qc14sho26SXXOTngNCjgJw7fuvXBt9W&#x2F;OChF&#x2F;Ijx+aUuBDqQwEk" crossorigin="anonymous" defer data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.4' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha384-HeUHqi0nVsPUm&#x2F;E0ss7OfnIV&#x2F;yD96JWB8ehZvUuoVax9DpNHL17jj9pdfXHzqDxm" crossorigin="anonymous" defer></script>
+
+  <script data-pjax>
+    if (document.readyState === "loading") {
+      document.addEventListener('DOMContentLoaded', () => {
+        pangu?.spacingPage();
+      });
+    } else {
+      pangu?.spacingPage();
+    }
+  </script>
+
+    
+  </body>
+  </html>
+
